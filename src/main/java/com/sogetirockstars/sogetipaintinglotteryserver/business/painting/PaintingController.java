@@ -79,8 +79,8 @@ public class PaintingController {
         return new RedirectView("getAll", true);
     }
 
-    @GetMapping(value="/add")
-    public RedirectView addPainting(
+    @PutMapping(value="/add")
+    public ResponseEntity<Painting> addPainting(
         @RequestParam(defaultValue="")                   String title,
         @RequestParam(defaultValue="")                   String artist,
         @RequestParam(defaultValue="")                   String description
@@ -88,7 +88,14 @@ public class PaintingController {
     ) {
         Painting painting = service.save(new Painting(title, artist, description)); // Save new painting on sql so we get an id from sql.
         System.out.println("added painting " + painting.getTitle() );
-        return new RedirectView("get?id="+painting.getId(), true);
+        return ResponseEntity.ok().body( painting );
+    }
+
+    @PutMapping(value="/addNew")
+    public ResponseEntity<Painting> addPainting( Painting painting) {
+        service.save(painting); // Save new painting on sql so we get an id from sql.
+        System.out.println("added painting " + painting.getTitle() + " id: " + painting.getId() );
+        return ResponseEntity.ok().body( painting );
     }
 
     @PutMapping(path = "{paintingId}")
