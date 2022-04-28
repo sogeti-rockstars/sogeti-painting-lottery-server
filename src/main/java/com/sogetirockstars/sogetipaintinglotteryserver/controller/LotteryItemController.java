@@ -35,14 +35,10 @@ public class LotteryItemController {
         this.fileUploadUtil = new FileUploadUtil("src/main/resources/cache/photos");
     }
 
-    @GetMapping(value = "/getAll")
+    @GetMapping(value = "/get-all")
     public ResponseEntity<List<LotteryItem>> getAllPaintings() {
         List<LotteryItem> lotteryItems = service.getAllPaintings();
-
-        ResponseEntity<List<LotteryItem>> resp = ResponseEntity.ok().body(lotteryItems);
-
-        return resp;
-        // return service.getAllPaintings();
+        return ResponseEntity.ok().body(lotteryItems);
     }
 
     @GetMapping(value = "/get/{id}")
@@ -82,18 +78,16 @@ public class LotteryItemController {
     }
     // /Todo: Which one to use??
 
-    @PostMapping("/upload")
-    public RedirectView uploadPicture(@RequestPart("image") MultipartFile multipartFile, @RequestParam Long id) throws IOException {
+    @PutMapping("/update-image/{id}")
+    public ResponseEntity<InputStreamResource> uploadPicture(@PathVariable Long id, @RequestPart("image") MultipartFile multipartFile) throws IOException {
         LotteryItem lotteryItem = service.getPainting(id);
-
         String filename = lotteryItem.getId() + ".jpg";
-
         String localUrl = fileUploadUtil.saveFile(filename, multipartFile);
 
         lotteryItem.setPictureUrl(localUrl);
         service.save(lotteryItem);
 
-        return new RedirectView("getAll", true);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping(value = "/add")
