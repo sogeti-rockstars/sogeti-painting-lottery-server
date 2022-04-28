@@ -11,16 +11,17 @@ public class Contestant {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
+    String employeeId;
     String name;
-    String address;
+    String email;
+    String teleNumber;
+    String address;              // Todo: take out to it's own object
+    // String addressStreetName; // Todo: take out to it's own object
+    // String addressNumber;     // Todo: take out to it's own object
+    // String addressZipCode;    // Todo: take out to it's own object
+    // String addressCity;       // Todo: take out to it's own object
 
     public Contestant() {
-    }
-
-    public Contestant(Long id, String name, String address) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
     }
 
     public Contestant(String name, String address) {
@@ -28,28 +29,51 @@ public class Contestant {
         this.address = address;
     }
 
-    public Long getId() {
-        return id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getAddress() {
-        return address;
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setTeleNumber(String teleNumber) {
+        this.teleNumber = teleNumber;
     }
 
     public void setAddress(String address) {
         this.address = address;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getTeleNumber() {
+        return teleNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
 }
