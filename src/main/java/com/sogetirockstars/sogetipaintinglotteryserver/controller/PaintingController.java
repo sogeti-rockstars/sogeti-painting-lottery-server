@@ -57,7 +57,7 @@ public class PaintingController {
     public byte[] getPaintingImage(@RequestParam Long id) {
         Painting reqPainting = service.getPainting(id);
         try {
-            return Files.readAllBytes(Path.of(reqPainting.getUrl()));
+            return Files.readAllBytes(Path.of(reqPainting.getPictureUrl()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,47 +66,44 @@ public class PaintingController {
 
     @PostMapping("/upload")
     public RedirectView uploadPicture(@RequestPart("image") MultipartFile multipartFile, @RequestParam Long id) throws IOException {
-        // Painting painting = service.save(new Painting("hello world")); // Save new painting on sql so we get an id from sql.
         Painting painting = service.getPainting(id);
 
         String filename = painting.getId() + ".jpg";
 
-        // 15.jpg => /home/len/dev/sogeti-rockstars/hello-spring/src/main/resources/cache/photos/15.jpg
         String localUrl = fileUploadUtil.saveFile(filename, multipartFile);
 
-        painting.setUrl(localUrl);
+        painting.setPictureUrl(localUrl);
         service.save(painting);
 
         return new RedirectView("getAll", true);
     }
 
     @PutMapping(value = "/add")
-    public ResponseEntity<Painting> addPainting(
-            @RequestParam(defaultValue = "") String title,
+    public ResponseEntity<Painting> addPainting(@RequestParam(defaultValue = "") String title,
             @RequestParam(defaultValue = "") String artist,
             @RequestParam(defaultValue = "") String description
 
     ) {
-        Painting painting = service.save(new Painting(title, artist, description)); // Save new painting on sql so we get an id from sql.
-        System.out.println("added painting " + painting.getTitle());
+        Painting painting = service.save(new Painting(title, artist)); // Save new painting on sql
+                                                                       // so we get an id from sql.
+        System.out.println("added painting " + painting.getItemName());
         return ResponseEntity.ok().body(painting);
     }
 
     @PutMapping(value = "/addNew")
     public ResponseEntity<Painting> addPainting(Painting painting) {
         service.save(painting); // Save new painting on sql so we get an id from sql.
-        System.out.println("added painting " + painting.getTitle() + " id: " + painting.getId());
+        System.out.println("added painting " + painting.getItemName() + " id: " + painting.getId());
         return ResponseEntity.ok().body(painting);
     }
 
     @PutMapping(path = "{paintingId}")
-    public void updatePainting(
-            @PathVariable("paintingId") Long paintingId,
+    public void updatePainting(@PathVariable("paintingId") Long paintingId,
             @RequestParam(required = false) String artist,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String picture_url,
             @RequestParam(required = false) String title) {
-        service.updatePainting(paintingId, artist, description, picture_url, title);
+        service.updatePainting(paintingId, artist, description, picture_url);
     }
 
 }

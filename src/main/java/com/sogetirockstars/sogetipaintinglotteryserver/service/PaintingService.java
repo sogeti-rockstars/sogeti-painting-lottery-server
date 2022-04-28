@@ -36,13 +36,12 @@ public class PaintingService {
     }
 
     @Transactional
-    public void updatePainting(Long paintingId, String artist, String description, String picture_url,
-                               String title) {
-        Painting painting = repository.findById(paintingId).orElseThrow(() -> new
-                IllegalStateException("painting with id " + paintingId + " does not exist"));
-        painting.setArtist(artist);
-        painting.setDescription(description);
-        painting.setUrl(picture_url);
-        painting.setTitle(title);
+    public void updatePainting(Long paintingId, String artist, String itemName, String pictureUrl) {
+        Painting painting = repository.findById(paintingId).orElseThrow(() -> new IllegalStateException(
+                "painting with id " + paintingId + " does not exist"));
+
+        painting.setArtistName(artist);
+        painting.setItemName(itemName);
+        painting.setPictureUrl(pictureUrl);
     }
 }
