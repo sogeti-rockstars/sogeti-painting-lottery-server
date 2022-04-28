@@ -25,24 +25,24 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "api/v1/painting")
 public class LotteryItemController {
-    private final LotteryItemService service;
-    private final PhotoService fileUploadUtil;
+    private final LotteryItemService lotteryItemService;
+    private final PhotoService photoService;
 
     @Autowired
-    public LotteryItemController(LotteryItemService service) throws IOException {
-        this.service = service;
-        this.fileUploadUtil = new PhotoService();
+    public LotteryItemController(LotteryItemService service, PhotoService photoService) throws IOException {
+        this.lotteryItemService = service;
+        this.photoService = photoService;
     }
 
     @GetMapping(value = "/get-all")
     public ResponseEntity<List<LotteryItem>> getAllPaintings() {
-        List<LotteryItem> lotteryItems = service.getAllPaintings();
+        List<LotteryItem> lotteryItems = lotteryItemService.getAllPaintings();
         return ResponseEntity.ok().body(lotteryItems);
     }
 
     @GetMapping(value = "/get/{id}")
     public ResponseEntity<LotteryItem> getPainting(@PathVariable("id") Long id) {
-        LotteryItem lotteryItem = service.getPainting(id);
+        LotteryItem lotteryItem = lotteryItemService.getPainting(id);
         System.out.println("Sending painting with id " + lotteryItem.getId());
         ResponseEntity<LotteryItem> resp = ResponseEntity.ok().body(lotteryItem);
 
@@ -52,14 +52,14 @@ public class LotteryItemController {
     // Todo: Which one to use??
     @GetMapping(value = "/get-image-raw/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getPaintingImageRaw(@PathVariable Long id) throws IOException {
-        LotteryItem reqLotteryItem = service.getPainting(id);
+        LotteryItem reqLotteryItem = lotteryItemService.getPainting(id);
         ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
         return StreamUtils.copyToByteArray(imgFile.getInputStream());
     }
 
     @GetMapping(value = "/get-image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public void getPaintingImageRaw(HttpServletResponse response, @PathVariable Long id) throws IOException {
-        LotteryItem reqLotteryItem = service.getPainting(id);
+        LotteryItem reqLotteryItem = lotteryItemService.getPainting(id);
         ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
         StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
@@ -67,7 +67,7 @@ public class LotteryItemController {
 
     @GetMapping(value = "/get-image2/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<InputStreamResource> getPaintingImage2(@PathVariable Long id) throws IOException {
-        LotteryItem reqLotteryItem = service.getPainting(id);
+        LotteryItem reqLotteryItem = lotteryItemService.getPainting(id);
         ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
 
         return ResponseEntity
@@ -79,12 +79,12 @@ public class LotteryItemController {
 
     @PutMapping("/update-image/{id}")
     public ResponseEntity<InputStreamResource> uploadPicture(@PathVariable Long id, @RequestPart("image") MultipartFile multipartFile) throws IOException {
-        LotteryItem lotteryItem = service.getPainting(id);
+        LotteryItem lotteryItem = lotteryItemService.getPainting(id);
         String filename = lotteryItem.getId() + ".jpg";
-        String localUrl = fileUploadUtil.saveFile(filename, multipartFile);
+        String localUrl = photoService.saveFile(filename, multipartFile);
 
         lotteryItem.setPictureUrl(localUrl);
-        service.save(lotteryItem);
+        lotteryItemService.save(lotteryItem);
 
         return ResponseEntity.ok().build();
     }
@@ -95,7 +95,7 @@ public class LotteryItemController {
                                                    @RequestParam(defaultValue = "") String description
 
     ) {
-        LotteryItem lotteryItem = service.save(new LotteryItem(title, artist)); // Save new painting on sql
+        LotteryItem lotteryItem = lotteryItemService.save(new LotteryItem(title, artist)); // Save new painting on sql
         // so we get an id from sql.
         System.out.println("added painting " + lotteryItem.getItemName());
         return ResponseEntity.ok().body(lotteryItem);
@@ -103,7 +103,7 @@ public class LotteryItemController {
 
     @PutMapping(value = "/addNew")
     public ResponseEntity<LotteryItem> addPainting(LotteryItem lotteryItem) {
-        service.save(lotteryItem); // Save new painting on sql so we get an id from sql.
+        lotteryItemService.save(lotteryItem); // Save new painting on sql so we get an id from sql.
         System.out.println("added painting " + lotteryItem.getItemName() + " id: " + lotteryItem.getId());
         return ResponseEntity.ok().body(lotteryItem);
     }
@@ -114,7 +114,7 @@ public class LotteryItemController {
                                @RequestParam(required = false) String description,
                                @RequestParam(required = false) String picture_url,
                                @RequestParam(required = false) String title) {
-        service.updatePainting(paintingId, artist, description, picture_url);
+        lotteryItemService.updatePainting(paintingId, artist, description, picture_url);
     }
 
 }

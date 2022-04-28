@@ -1,5 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+@Service
 public class PhotoService {
     private final static Path uploadPath = Paths.get("src/main/resources/cache/photos");
 
