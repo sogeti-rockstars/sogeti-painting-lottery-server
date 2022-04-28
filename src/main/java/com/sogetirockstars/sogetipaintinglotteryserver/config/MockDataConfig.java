@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
@@ -54,7 +55,7 @@ public class MockDataConfig {
         Path src = Paths.get(mockPhotosSrc + "/" + item.getId() + ".jpg" );
         Path dst = Paths.get(photosDst + "/" + item.getId() + ".jpg" );
         try {
-            Files.copy(src, dst);
+            Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }

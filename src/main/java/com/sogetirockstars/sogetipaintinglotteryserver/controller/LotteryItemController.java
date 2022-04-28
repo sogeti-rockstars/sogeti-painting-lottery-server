@@ -89,33 +89,33 @@ public class LotteryItemController {
         return ResponseEntity.ok().build();
     }
 
+    // @PutMapping(value = "/add")
+    // public ResponseEntity<LotteryItem> addPainting(@RequestParam(defaultValue = "") String title,
+    //                                                @RequestParam(defaultValue = "") String artist,
+    //                                                @RequestParam(defaultValue = "") String description
+    //
+    // ) {
+    //     LotteryItem lotteryItem = lotteryItemService.save(new LotteryItem(title, artist)); // Save new painting on sql
+    //     // so we get an id from sql.
+    //     System.out.println("added painting " + lotteryItem.getItemName());
+    //     return ResponseEntity.ok().body(lotteryItem);
+    // }
+
     @PutMapping(value = "/add")
-    public ResponseEntity<LotteryItem> addPainting(@RequestParam(defaultValue = "") String title,
-                                                   @RequestParam(defaultValue = "") String artist,
-                                                   @RequestParam(defaultValue = "") String description
-
-    ) {
-        LotteryItem lotteryItem = lotteryItemService.save(new LotteryItem(title, artist)); // Save new painting on sql
-        // so we get an id from sql.
-        System.out.println("added painting " + lotteryItem.getItemName());
-        return ResponseEntity.ok().body(lotteryItem);
-    }
-
-    @PutMapping(value = "/addNew")
     public ResponseEntity<LotteryItem> addPainting(LotteryItem lotteryItem) {
         lotteryItemService.save(lotteryItem); // Save new painting on sql so we get an id from sql.
         System.out.println("added painting " + lotteryItem.getItemName() + " id: " + lotteryItem.getId());
         return ResponseEntity.ok().body(lotteryItem);
     }
 
-    @PutMapping(path = "{paintingId}")
-    public void updatePainting(@PathVariable("paintingId") Long paintingId,
-                               @RequestParam(required = false) String artist,
-                               @RequestParam(required = false) String description,
-                               @RequestParam(required = false) String picture_url,
-                               @RequestParam(required = false) String title) {
-        lotteryItemService.updatePainting(paintingId, artist, description, picture_url);
-    }
+    // @PutMapping(path = "{paintingId}")
+    // public void updatePainting(@PathVariable("paintingId") Long paintingId,
+    //                            @RequestParam(required = false) String artist,
+    //                            @RequestParam(required = false) String description,
+    //                            @RequestParam(required = false) String picture_url,
+    //                            @RequestParam(required = false) String title) {
+    //     lotteryItemService.updatePainting(paintingId, artist, description, picture_url);
+    // }
 
 }
 
