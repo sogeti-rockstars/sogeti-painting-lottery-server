@@ -2,7 +2,7 @@ package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.LotteryItemService;
-import com.sogetirockstars.sogetipaintinglotteryserver.util.FileUploadUtil;
+import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -27,12 +26,12 @@ import java.util.List;
 @RequestMapping(path = "api/v1/painting")
 public class LotteryItemController {
     private final LotteryItemService service;
-    private final FileUploadUtil fileUploadUtil;
+    private final PhotoService fileUploadUtil;
 
     @Autowired
     public LotteryItemController(LotteryItemService service) throws IOException {
         this.service = service;
-        this.fileUploadUtil = new FileUploadUtil("src/main/resources/cache/photos");
+        this.fileUploadUtil = new PhotoService("src/main/resources/cache/photos");
     }
 
     @GetMapping(value = "/get-all")

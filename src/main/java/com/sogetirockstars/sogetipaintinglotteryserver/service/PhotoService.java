@@ -1,4 +1,4 @@
-package com.sogetirockstars.sogetipaintinglotteryserver.util;
+package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,10 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-public class FileUploadUtil {
+public class PhotoService {
     private final Path uploadPath;
 
-    public FileUploadUtil(String uploadPath) throws IOException {
+    public PhotoService(String uploadPath) throws IOException {
         try {
             this.uploadPath = Paths.get(uploadPath);
             if (!Files.exists(this.uploadPath))
