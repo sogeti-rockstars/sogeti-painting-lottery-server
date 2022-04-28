@@ -7,7 +7,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table
-public class Painting {
+public class LotteryItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id; // Internal object id;
@@ -21,15 +21,16 @@ public class Painting {
     private String value; // String so we can store currency and formatting for now.
     private String technique;
 
-    public Painting() {}
+    public LotteryItem() {
+    }
 
-    public Painting(String itemName, String artistName) {
+    public LotteryItem(String itemName, String artistName) {
         this.artistName = artistName;
         this.itemName = itemName;
     }
 
-    public Painting(int lotteryId, String pictureUrl, String itemName, String artistName,
-            String size, String frameDescription, String value, String technique) {
+    public LotteryItem(int lotteryId, String pictureUrl, String itemName, String artistName,
+                       String size, String frameDescription, String value, String technique) {
         this.lotteryId = lotteryId;
         this.pictureUrl = pictureUrl;
         this.itemName = itemName;
