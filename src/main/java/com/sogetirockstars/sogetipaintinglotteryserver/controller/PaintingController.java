@@ -1,5 +1,8 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
+import java.io.IOException;
+import java.util.List;
+import javax.servlet.http.HttpServletResponse;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Painting;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.PaintingService;
 import com.sogetirockstars.sogetipaintinglotteryserver.util.FileUploadUtil;
@@ -10,15 +13,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * PaintingController:
