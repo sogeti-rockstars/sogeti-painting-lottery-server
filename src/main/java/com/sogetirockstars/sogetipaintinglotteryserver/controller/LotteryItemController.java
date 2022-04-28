@@ -31,7 +31,7 @@ public class LotteryItemController {
     @Autowired
     public LotteryItemController(LotteryItemService service) throws IOException {
         this.service = service;
-        this.fileUploadUtil = new PhotoService("src/main/resources/cache/photos");
+        this.fileUploadUtil = new PhotoService();
     }
 
     @GetMapping(value = "/get-all")

@@ -10,13 +10,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class PhotoService {
-    private final Path uploadPath;
+    private final static Path uploadPath = Paths.get("src/main/resources/cache/photos");
 
-    public PhotoService(String uploadPath) throws IOException {
+    public PhotoService() throws IOException {
         try {
-            this.uploadPath = Paths.get(uploadPath);
-            if (!Files.exists(this.uploadPath))
-                Files.createDirectories(this.uploadPath);
+            if (!Files.exists(uploadPath))
+                Files.createDirectories(uploadPath);
         } catch (IOException ioe) {
             throw new IOException("Could not create upload directory: " + uploadPath, ioe);
         }
