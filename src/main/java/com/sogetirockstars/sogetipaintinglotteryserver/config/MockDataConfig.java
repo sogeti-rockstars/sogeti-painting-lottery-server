@@ -15,6 +15,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MockDataConfig {
+    private String srcBase = "src/main/resources/mock-photos";
+    private String dstBase = "src/main/resources/cache/photos";
+
     @Bean
     CommandLineRunner cmdLineRunnerContestant(ContestantRepository repo) {
         return (String[] args) -> {
@@ -29,26 +32,26 @@ public class MockDataConfig {
         };
     }
 
+    private void updatePictureUrl(LotteryItem item) {
+        Path src = Paths.get(srcBase + "/" + item.getId() + ".jpg" );
+        Path dst = Paths.get(dstBase + "/" + item.getId() + ".jpg" );
+        try {
+			Files.copy(src, dst);
+		} catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Bean
     CommandLineRunner cmdLineRunnerArtItem(LotteryItemRepository repo) throws IOException {
-        String srcBase = "mock-photos";
-        String dstBase = "src/main/resources/cache";
-
         List<LotteryItem> items = List.of(
-            new LotteryItem(1, dstBase + "/0.jpg", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil"),
-            new LotteryItem(2, dstBase + "/1.jpg", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil"),
-            new LotteryItem(3, dstBase + "/2.jpg", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil"),
-            new LotteryItem(4, dstBase + "/3.jpg", "David", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
-            new LotteryItem(5, dstBase + "/4.jpg", "Mona lisa", "Da vinci", "10x10m", "wood", "999.999.999kr", "oil")
+            new LotteryItem(1, "", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil"),
+            new LotteryItem(2, "", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil"),
+            new LotteryItem(3, "", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil"),
+            new LotteryItem(4, "", "David", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
+            new LotteryItem(5, "", "Mona lisa", "Da vinci", "10x10m", "wood", "999.999.999kr", "oil")
         );
 
-        for ( int i=0; i<items.size(); i++ ){
-            Path src = Paths.get(srcBase + "/" + i + ".jpg" );
-            Path dst = Paths.get(dstBase + "/" + i + ".jpg" );
-            Files.copy(src, dst);
-        }
-
-        // Files.copy(src, dst);
-        return (String[] args) -> { repo.saveAll( items ); };
+        return (String[] args) -> { repo.saveAll( items ).stream().forEach(i-> updatePictureUrl( i ) ); };
     }
 }
