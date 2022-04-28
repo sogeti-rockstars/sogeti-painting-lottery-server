@@ -10,12 +10,12 @@ import javax.persistence.*;
 public class Contestant {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    Long id;
-    String employeeId;
-    String name;
-    String email;
-    String teleNumber;
-    String address;              // Todo: take out to it's own object
+    private Long id;
+    private String employeeId;
+    private String name;
+    private String email;
+    private String teleNumber;
+    private String address;              // Todo: take out to it's own object
     // String addressStreetName; // Todo: take out to it's own object
     // String addressNumber;     // Todo: take out to it's own object
     // String addressZipCode;    // Todo: take out to it's own object
