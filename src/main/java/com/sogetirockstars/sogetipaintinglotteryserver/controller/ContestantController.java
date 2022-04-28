@@ -1,13 +1,12 @@
-package com.sogetirockstars.sogetipaintinglotteryserver.business.contestant;
+package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
-import java.util.List;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
+import com.sogetirockstars.sogetipaintinglotteryserver.service.ContestantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * ContestantController
@@ -26,13 +25,13 @@ public class ContestantController {
 
     @GetMapping("/getAll")
     @ResponseBody
-    public List<Contestant> getAllContestants(){
+    public List<Contestant> getAllContestants() {
         return service.getAllContestants();
     }
 
     @GetMapping("/get")
     @ResponseBody
-    public Contestant getPainting(@RequestParam Long id){
+    public Contestant getPainting(@RequestParam Long id) {
         return service.getContestant(id);
     }
 }

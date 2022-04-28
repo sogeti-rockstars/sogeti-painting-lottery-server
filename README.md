@@ -1,1 +1,1 @@
-# sogeti-painting-lottery-server
+# sogeti-lotteryItem-lottery-server
