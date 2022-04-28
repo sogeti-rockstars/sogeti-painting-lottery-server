@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MockDataConfig {
-    private String srcBase = "src/main/resources/mock-photos";
-    private String dstBase = "src/main/resources/cache/photos";
+    private String mockPhotosSrc = "src/main/resources/mock-photos";
+    private String photosDst = "src/main/resources/cache/photos";
 
     @Bean
     CommandLineRunner cmdLineRunnerContestant(ContestantRepository repo) {
@@ -32,16 +32,6 @@ public class MockDataConfig {
         };
     }
 
-    private void updatePictureUrl(LotteryItem item) {
-        Path src = Paths.get(srcBase + "/" + item.getId() + ".jpg" );
-        Path dst = Paths.get(dstBase + "/" + item.getId() + ".jpg" );
-        try {
-			Files.copy(src, dst);
-		} catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Bean
     CommandLineRunner cmdLineRunnerArtItem(LotteryItemRepository repo) throws IOException {
         List<LotteryItem> items = List.of(
@@ -54,4 +44,20 @@ public class MockDataConfig {
 
         return (String[] args) -> { repo.saveAll( items ).stream().forEach(i-> updatePictureUrl( i ) ); };
     }
+
+    /*
+     * Called by Spring when running the CommandLineRunner above.
+     * We need to save the items to the database to get a valid id from SQL so we copy the mockdata-photos after we've
+     * gotten an id...
+     */
+    private void updatePictureUrl(LotteryItem item) {
+        Path src = Paths.get(mockPhotosSrc + "/" + item.getId() + ".jpg" );
+        Path dst = Paths.get(photosDst + "/" + item.getId() + ".jpg" );
+        try {
+            Files.copy(src, dst);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
