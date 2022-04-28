@@ -19,7 +19,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * PaintingController:
  */
 @Component
-@CrossOrigin(origins = "http://localhost:4200")
+// @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping(path = "api/v1/painting")
 public class PaintingController {
@@ -32,6 +32,11 @@ public class PaintingController {
         this.fileUploadUtil = new FileUploadUtil("src/main/resources/cache/photos");
     }
 
+    @CrossOrigin(
+        origins = "http://localhost:4200",
+        maxAge = 3600,
+        allowedHeaders={"x-auth-token", "x-requested-with", "x-xsrf-token"}
+    )
     @GetMapping(value="/getAll")
     public ResponseEntity<List<Painting>> getAllPaintings() {
         List<Painting> paintings = service.getAllPaintings();
