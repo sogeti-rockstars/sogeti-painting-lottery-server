@@ -4,9 +4,12 @@ import com.sogetirockstars.sogetipaintinglotteryserver.model.Painting;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.PaintingService;
 import com.sogetirockstars.sogetipaintinglotteryserver.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
@@ -15,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * PaintingController:
@@ -52,17 +56,33 @@ public class PaintingController {
         return resp;
     }
 
-    @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
-    @ResponseBody
-    public byte[] getPaintingImage(@RequestParam Long id) {
+    // Todo: Which one to use??
+    @GetMapping(value = "/get-image-raw/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] getPaintingImageRaw(@PathVariable Long id) throws IOException {
         Painting reqPainting = service.getPainting(id);
-        try {
-            return Files.readAllBytes(Path.of(reqPainting.getPictureUrl()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new byte[0];
+        ClassPathResource imgFile = new ClassPathResource(reqPainting.getPictureUrl());
+        return StreamUtils.copyToByteArray(imgFile.getInputStream());
     }
+
+    @GetMapping(value = "/get-image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public void getPaintingImageRaw(HttpServletResponse response, @PathVariable Long id) throws IOException {
+        Painting reqPainting = service.getPainting(id);
+        ClassPathResource imgFile = new ClassPathResource(reqPainting.getPictureUrl());
+        StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+    }
+
+    @GetMapping(value = "/get-image2/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<InputStreamResource> getPaintingImage2(@PathVariable Long id) throws IOException {
+        Painting reqPainting = service.getPainting(id);
+        ClassPathResource imgFile = new ClassPathResource(reqPainting.getPictureUrl());
+
+        return ResponseEntity
+            .ok()
+            .contentType(MediaType.IMAGE_JPEG)
+            .body(new InputStreamResource(imgFile.getInputStream()));
+    }
+    // /Todo: Which one to use??
 
     @PostMapping("/upload")
     public RedirectView uploadPicture(@RequestPart("image") MultipartFile multipartFile, @RequestParam Long id) throws IOException {
