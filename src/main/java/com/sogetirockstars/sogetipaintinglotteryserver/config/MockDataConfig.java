@@ -52,16 +52,17 @@ public class MockDataConfig {
      * gotten an id...
      */
     private void updatePictureUrl(LotteryItem item, LotteryItemRepository repo) {
-        Path src = Paths.get(mockPhotosSrc + "/" + item.getId() + ".jpg" );
-        Path dst = Paths.get(photosDst + "/" + item.getId() + ".jpg" );
-        String nPath = "cache/photos/" + item.getId() + ".jpg" ;
-        System.out.println( "Setting photo path:" + dst.toString() );
         try {
+            Path src = Paths.get(mockPhotosSrc + "/" + item.getId() + ".jpg" );
+            Path dst = Paths.get(photosDst + "/" + item.getId() + ".jpg" );
+            String nPath = "cache/photos/" + item.getId() + ".jpg" ;
+            System.out.println( "Setting photo path:" + dst.toString() );
             Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
             item.setPictureUrl(nPath);
             repo.save(item);
         } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Mock data failed to be created");
         }
     }
 
