@@ -29,9 +29,9 @@ public class ContestantController {
         return service.getAllContestants();
     }
 
-    @GetMapping("/get")
+    @GetMapping("/get/{contestantId}")
     @ResponseBody
-    public Contestant getPainting(@RequestParam Long id) {
-        return service.getContestant(id);
+    public Contestant getPainting(@PathVariable("contestantId") Long contestantId) {
+        return service.getContestant(contestantId);
     }
 }

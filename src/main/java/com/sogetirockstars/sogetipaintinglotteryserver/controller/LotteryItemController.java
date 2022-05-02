@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -94,6 +95,19 @@ public class LotteryItemController {
         System.out.println("added painting " + lotteryItem.getItemName() + " id: " + lotteryItem.getId());
         lotteryItemService.save(lotteryItem);
         return ResponseEntity.ok().body(lotteryItem);
+    }
+
+    @PutMapping(path = "{id}")
+    public void updateStudent(@PathVariable("id") Long id,
+                              @RequestParam(required = false) int lotteryId,
+                              @RequestParam(required = false) String pictureUrl,
+                              @RequestParam(required = false) String itemName,
+                              @RequestParam(required = false) String artistName,
+                              @RequestParam(required = false) String size,
+                              @RequestParam(required = false) String frameDescription,
+                              @RequestParam(required = false) String value,
+                              @RequestParam(required = false) String technique) {
+        lotteryItemService.updatePainting(id, lotteryId, pictureUrl, itemName, artistName, size, frameDescription, value, technique);
     }
 }
 

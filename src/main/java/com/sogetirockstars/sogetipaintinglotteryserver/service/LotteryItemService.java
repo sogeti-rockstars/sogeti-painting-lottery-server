@@ -36,12 +36,21 @@ public class LotteryItemService {
     }
 
     @Transactional
-    public void updatePainting(Long paintingId, String artist, String itemName, String pictureUrl) {
-        LotteryItem lotteryItem = repository.findById(paintingId).orElseThrow(() -> new IllegalStateException(
-                "painting with id " + paintingId + " does not exist"));
-
-        lotteryItem.setArtistName(artist);
-        lotteryItem.setItemName(itemName);
+    public void updatePainting(Long id, int lotteryId,
+    String pictureUrl,
+    String itemName,
+    String artistName,
+    String size, String frameDescription,
+    String value, String technique) {
+        LotteryItem lotteryItem = repository.findById(id).orElseThrow(() -> new IllegalStateException(
+                "painting with id " + id + " does not exist"));
+        lotteryItem.setLotteryId(lotteryId);
         lotteryItem.setPictureUrl(pictureUrl);
+        lotteryItem.setItemName(itemName);
+        lotteryItem.setArtistName(artistName);
+        lotteryItem.setSize(size);
+        lotteryItem.setFrameDescription(frameDescription);
+        lotteryItem.setValue(value);
+        lotteryItem.setTechnique(technique);
     }
 }
