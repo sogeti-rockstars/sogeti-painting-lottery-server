@@ -41,6 +41,7 @@ public class LotteryItemController {
         return ResponseEntity.ok().body(lotteryItems);
     }
 
+    // JQ: är ResponseEntity<LotteryItem> bra??
     @GetMapping(value = "/{id}")
     public ResponseEntity<LotteryItem> getPainting(@PathVariable("id") Long id) {
         LotteryItem lotteryItem = lotteryItemService.getItem(id);
@@ -94,7 +95,7 @@ public class LotteryItemController {
     }
 
     @PostMapping(value = "/add-new")
-    public ResponseEntity<LotteryItem> addPainting(@RequestBody LotteryItem lotteryItem) {
+    public ResponseEntity<LotteryItem> addNew(@RequestBody LotteryItem lotteryItem) {
         System.out.println("added painting " + lotteryItem.getItemName() + " id: " + lotteryItem.getId());
         return ResponseEntity.ok().body(lotteryItemService.add(lotteryItem));
     }
@@ -114,8 +115,8 @@ public class LotteryItemController {
     // JQ: Ska vi updatera objekt genom att skicka värden i HTTP body eller ska vi uppdatera dem genom HTTP parameters?
     @PutMapping(path = "update")
     public ResponseEntity<LotteryItem> update(@RequestBody LotteryItem item) {
-        if ( lotteryItemService.getItem(item.getId() ) == null )
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if ( ! lotteryItemService.existsById(item.getId() ) )
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);  // JQ: Är det här bra felhantering?
         return new ResponseEntity<>(lotteryItemService.update(item), HttpStatus.OK);
     }
 

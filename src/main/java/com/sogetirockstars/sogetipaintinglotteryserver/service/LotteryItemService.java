@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * ContestantService
  */
 @Service
-public class LotteryItemService {
+public class LotteryItemService implements SqlService<LotteryItem> {
     private final LotteryItemRepository repository;
 
     @Autowired
@@ -43,11 +43,12 @@ public class LotteryItemService {
     }
 
     public LotteryItem update(LotteryItem newItem){
-        if ( !repository.existsById( newItem.getId() ) )
-            return newItem;
-
         LotteryItem origItem = repository.getById( newItem.getId() );
         return save( mergeItems( origItem, newItem) );
+    }
+
+    public boolean existsById(Long id){
+        return repository.existsById(id);
     }
 
     // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt att skapa JSON
