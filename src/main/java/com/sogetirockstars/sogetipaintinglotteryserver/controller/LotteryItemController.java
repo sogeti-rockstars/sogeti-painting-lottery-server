@@ -59,27 +59,7 @@ public class LotteryItemController {
         return resp;
     }
 
-    // JQ: Vilken av de följande tre ska vi använda?? Spelar det nåpgon roll? Alla funkar...
-    // bör det vara item/{id}/image eller item/image/{id} ?
-    // - Ska det vara {id}/image eller image/{id}
-    @GetMapping(value = "/image-raw/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public byte[] getPaintingImageRaw(@PathVariable Long id) throws IOException {
-        LotteryItem reqLotteryItem = lotteryItemService.getItem(id);
-        ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
-        return StreamUtils.copyToByteArray(imgFile.getInputStream());
-    }
-
     @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public void getPaintingImageRaw(HttpServletResponse response, @PathVariable Long id) throws IOException {
-        LotteryItem reqLotteryItem = lotteryItemService.getItem(id);
-        ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
-        System.out.println("Serving file at: " + imgFile.getPath() );
-
-        StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-    }
-
-    @GetMapping(value = "/image2/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<InputStreamResource> getPaintingImage2(@PathVariable Long id) throws IOException {
         LotteryItem reqLotteryItem = lotteryItemService.getItem(id);
         ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
