@@ -1,13 +1,10 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
+import java.util.List;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.List;
 
 /**
  * ContestantService
@@ -21,13 +18,11 @@ public class LotteryItemService {
         this.repository = repository;
     }
 
-    @GetMapping
     public List<LotteryItem> getAllPaintings() {
         return repository.findAll();
     }
 
-    @GetMapping
-    public LotteryItem getPainting(Long id) {
+    public LotteryItem getItem(Long id) {
         return repository.findById(id).get();
     }
 
@@ -42,30 +37,39 @@ public class LotteryItemService {
         return true;
     }
 
-    @Transactional
-    public void updatePainting(Long id, Integer lotteryId,
-    String pictureUrl,
-    String itemName,
-    String artistName,
-    String size, String frameDescription,
-    String value, String technique) {
-        LotteryItem lotteryItem = repository.findById(id).orElseThrow(() -> new IllegalStateException(
-                "painting with id " + id + " does not exist"));
-        if(lotteryId!=null)
-        lotteryItem.setLotteryId(lotteryId);
-        if(pictureUrl!=null)
-        lotteryItem.setPictureUrl(pictureUrl);
-        if(itemName!=null)
-        lotteryItem.setItemName(itemName);
-        if(artistName!=null)
-        lotteryItem.setArtistName(artistName);
-        if(size!=null)
-        lotteryItem.setSize(size);
-        if(frameDescription!=null)
-        lotteryItem.setFrameDescription(frameDescription);
-        if(value!=null)
-        lotteryItem.setValue(value);
-        if(technique!=null)
-        lotteryItem.setTechnique(technique);
+    public LotteryItem add(LotteryItem item){
+        item.setId(null);
+        return save(item);
+    }
+
+    public LotteryItem update(LotteryItem newItem){
+        if ( !repository.existsById( newItem.getId() ) )
+            return newItem;
+
+        LotteryItem origItem = repository.getById( newItem.getId() );
+        return save( mergeItems( origItem, newItem) );
+    }
+
+    // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt att skapa JSON
+    //       objekt och bara skriva över värden som har ett värde och inte NULL;
+    private LotteryItem mergeItems(LotteryItem origItem, LotteryItem newItem){
+        if (newItem.getLotteryId() != null)
+            origItem.setLotteryId(newItem.getLotteryId());
+        if (newItem.getPictureUrl()!=null)
+            origItem.setPictureUrl(newItem.getPictureUrl());
+        if (newItem.getItemName()!=null)
+            origItem.setItemName(newItem.getItemName());
+        if (newItem.getArtistName()!=null)
+            origItem.setArtistName(newItem.getArtistName());
+        if (newItem.getSize()!=null)
+            origItem.setSize(newItem.getSize());
+        if (newItem.getFrameDescription()!=null)
+            origItem.setFrameDescription(newItem.getFrameDescription());
+        if (newItem.getValue()!=null)
+            origItem.setValue(newItem.getValue());
+        if (newItem.getTechnique()!=null)
+            origItem.setTechnique(newItem.getTechnique());
+
+        return origItem;
     }
 }

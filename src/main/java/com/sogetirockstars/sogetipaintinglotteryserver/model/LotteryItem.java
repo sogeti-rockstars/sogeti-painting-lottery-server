@@ -45,7 +45,7 @@ public class LotteryItem {
         return id;
     }
 
-    public int getLotteryId() {
+    public Integer getLotteryId() {
         return lotteryId;
     }
 

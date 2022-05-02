@@ -43,7 +43,7 @@ public class LotteryItemController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<LotteryItem> getPainting(@PathVariable("id") Long id) {
-        LotteryItem lotteryItem = lotteryItemService.getPainting(id);
+        LotteryItem lotteryItem = lotteryItemService.getItem(id);
         System.out.println("Sending painting with id " + lotteryItem.getId());
         ResponseEntity<LotteryItem> resp = ResponseEntity.ok().body(lotteryItem);
 
@@ -52,16 +52,17 @@ public class LotteryItemController {
 
     // JQ: Vilken av de följande tre ska vi använda?? Spelar det nåpgon roll? Alla funkar...
     // bör det vara item/{id}/image eller item/image/{id} ?
+    // - Ska det vara {id}/image eller image/{id}
     @GetMapping(value = "/image-raw/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getPaintingImageRaw(@PathVariable Long id) throws IOException {
-        LotteryItem reqLotteryItem = lotteryItemService.getPainting(id);
+        LotteryItem reqLotteryItem = lotteryItemService.getItem(id);
         ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
         return StreamUtils.copyToByteArray(imgFile.getInputStream());
     }
 
     @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public void getPaintingImageRaw(HttpServletResponse response, @PathVariable Long id) throws IOException {
-        LotteryItem reqLotteryItem = lotteryItemService.getPainting(id);
+        LotteryItem reqLotteryItem = lotteryItemService.getItem(id);
         ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
         System.out.println("Serving file at: " + imgFile.getPath() );
 
@@ -71,7 +72,7 @@ public class LotteryItemController {
 
     @GetMapping(value = "/image2/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<InputStreamResource> getPaintingImage2(@PathVariable Long id) throws IOException {
-        LotteryItem reqLotteryItem = lotteryItemService.getPainting(id);
+        LotteryItem reqLotteryItem = lotteryItemService.getItem(id);
         ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
 
         return ResponseEntity
@@ -82,7 +83,7 @@ public class LotteryItemController {
 
     @PutMapping("/update-image/{id}")
     public ResponseEntity<InputStreamResource> uploadPicture(@PathVariable Long id, @RequestPart("image") MultipartFile multipartFile) throws IOException {
-        LotteryItem lotteryItem = lotteryItemService.getPainting(id);
+        LotteryItem lotteryItem = lotteryItemService.getItem(id);
         String filename = lotteryItem.getId() + ".jpg";
         String localUrl = photoService.saveFile(filename, multipartFile);
 
@@ -92,13 +93,13 @@ public class LotteryItemController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/add-new") // Todo: Fix/ensure it's working, I don't think it is!
-    public ResponseEntity<LotteryItem> addPainting(LotteryItem lotteryItem) {
+    @PostMapping(value = "/add-new")
+    public ResponseEntity<LotteryItem> addPainting(@RequestBody LotteryItem lotteryItem) {
         System.out.println("added painting " + lotteryItem.getItemName() + " id: " + lotteryItem.getId());
-        lotteryItemService.save(lotteryItem);
-        return ResponseEntity.ok().body(lotteryItem);
+        return ResponseEntity.ok().body(lotteryItemService.add(lotteryItem));
     }
 
+    // JQ: Ska vi explicera i url:en vad det görs eller ska det bestämmas av vilken HTTP method man använder?
     @DeleteMapping(value = "{id}")
     public ResponseEntity<Boolean> deletePost(@PathVariable Long id) {
         boolean isRemoved = lotteryItemService.delete(id);
@@ -110,17 +111,27 @@ public class LotteryItemController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    @PutMapping(path = "{id}")
-    public void updateStudent(@PathVariable("id") Long id,
-            @RequestParam(required = false) Integer lotteryId,
-            @RequestParam(required = false) String pictureUrl,
-            @RequestParam(required = false) String itemName,
-            @RequestParam(required = false) String artistName,
-            @RequestParam(required = false) String size,
-            @RequestParam(required = false) String frameDescription,
-            @RequestParam(required = false) String value,
-            @RequestParam(required = false) String technique) {
-            lotteryItemService.updatePainting(id, lotteryId, pictureUrl, itemName, artistName, size, frameDescription, value, technique);
+    // JQ: Ska vi updatera objekt genom att skicka värden i HTTP body eller ska vi uppdatera dem genom HTTP parameters?
+    @PutMapping(path = "update")
+    public ResponseEntity<LotteryItem> update(@RequestBody LotteryItem item) {
+        if ( lotteryItemService.getItem(item.getId() ) == null )
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(lotteryItemService.update(item), HttpStatus.OK);
     }
+
+    // @PutMapping(path = "update-fields")
+    // public void update(
+    // @PathVariable("id") Long id,
+    // @RequestParam(required = false) Integer lotteryId,
+    // @RequestParam(required = false) String pictureUrl,
+    // @RequestParam(required = false) String itemName,
+    // @RequestParam(required = false) String artistName,
+    // @RequestParam(required = false) String size,
+    // @RequestParam(required = false) String frameDescription,
+    // @RequestParam(required = false) String value,
+    // @RequestParam(required = false) String technique
+    // ){
+    // }
+    // lotteryItemService.updatePainting(id, lotteryId, pictureUrl, itemName, artistName, size, frameDescription, value, technique);
 }
 
