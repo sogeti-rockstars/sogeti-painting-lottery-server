@@ -6,6 +6,7 @@ import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ import java.util.List;
 @Component
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping(path = "/api/v1/item")
+@RequestMapping(path = "/api/v1/item") // JQ: ska vi köra på versioning till Api? Är detta bra?
 public class LotteryItemController {
     private final LotteryItemService lotteryItemService;
     private final PhotoService photoService;
@@ -49,7 +50,8 @@ public class LotteryItemController {
         return resp;
     }
 
-    // Todo: Which one to use??
+    // JQ: Vilken av de följande tre ska vi använda?? Spelar det nåpgon roll? Alla funkar...
+    // bör det vara item/{id}/image eller item/image/{id} ?
     @GetMapping(value = "/image-raw/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getPaintingImageRaw(@PathVariable Long id) throws IOException {
         LotteryItem reqLotteryItem = lotteryItemService.getPainting(id);
@@ -77,7 +79,6 @@ public class LotteryItemController {
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(new InputStreamResource(imgFile.getInputStream()));
     }
-    // /Todo: Which one to use??
 
     @PutMapping("/update-image/{id}")
     public ResponseEntity<InputStreamResource> uploadPicture(@PathVariable Long id, @RequestPart("image") MultipartFile multipartFile) throws IOException {
@@ -91,11 +92,22 @@ public class LotteryItemController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping(value = "/add") // Todo: Fix/ensure it's working, I don't think it is!
+    @PostMapping(value = "/add-new") // Todo: Fix/ensure it's working, I don't think it is!
     public ResponseEntity<LotteryItem> addPainting(LotteryItem lotteryItem) {
         System.out.println("added painting " + lotteryItem.getItemName() + " id: " + lotteryItem.getId());
         lotteryItemService.save(lotteryItem);
         return ResponseEntity.ok().body(lotteryItem);
+    }
+
+    @DeleteMapping(value = "{id}")
+    public ResponseEntity<Boolean> deletePost(@PathVariable Long id) {
+        boolean isRemoved = lotteryItemService.delete(id);
+
+        if (!isRemoved) {
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     @PutMapping(path = "{id}")

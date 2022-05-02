@@ -35,6 +35,13 @@ public class LotteryItemService {
         return repository.save(lotteryItem);
     }
 
+    public boolean delete(Long id){
+        if ( repository.findById(id).isEmpty() )
+            return false;
+        repository.deleteById(id);
+        return true;
+    }
+
     @Transactional
     public void updatePainting(Long id, Integer lotteryId,
     String pictureUrl,
