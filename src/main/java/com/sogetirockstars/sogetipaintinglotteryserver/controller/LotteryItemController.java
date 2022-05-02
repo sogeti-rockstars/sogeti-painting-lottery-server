@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Date;
 import java.util.List;
 
 /**
@@ -41,7 +40,7 @@ public class LotteryItemController {
         return ResponseEntity.ok().body(lotteryItems);
     }
 
-    @GetMapping(value = "/get/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<LotteryItem> getPainting(@PathVariable("id") Long id) {
         LotteryItem lotteryItem = lotteryItemService.getPainting(id);
         System.out.println("Sending painting with id " + lotteryItem.getId());
@@ -51,22 +50,24 @@ public class LotteryItemController {
     }
 
     // Todo: Which one to use??
-    @GetMapping(value = "/get-image-raw/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/image-raw/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getPaintingImageRaw(@PathVariable Long id) throws IOException {
         LotteryItem reqLotteryItem = lotteryItemService.getPainting(id);
         ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
         return StreamUtils.copyToByteArray(imgFile.getInputStream());
     }
 
-    @GetMapping(value = "/get-image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public void getPaintingImageRaw(HttpServletResponse response, @PathVariable Long id) throws IOException {
         LotteryItem reqLotteryItem = lotteryItemService.getPainting(id);
         ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
+        System.out.println("Serving file at: " + imgFile.getPath() );
+
         StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
     }
 
-    @GetMapping(value = "/get-image2/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/image2/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<InputStreamResource> getPaintingImage2(@PathVariable Long id) throws IOException {
         LotteryItem reqLotteryItem = lotteryItemService.getPainting(id);
         ClassPathResource imgFile = new ClassPathResource(reqLotteryItem.getPictureUrl());
@@ -99,15 +100,15 @@ public class LotteryItemController {
 
     @PutMapping(path = "{id}")
     public void updateStudent(@PathVariable("id") Long id,
-                              @RequestParam(required = false) int lotteryId,
-                              @RequestParam(required = false) String pictureUrl,
-                              @RequestParam(required = false) String itemName,
-                              @RequestParam(required = false) String artistName,
-                              @RequestParam(required = false) String size,
-                              @RequestParam(required = false) String frameDescription,
-                              @RequestParam(required = false) String value,
-                              @RequestParam(required = false) String technique) {
-        lotteryItemService.updatePainting(id, lotteryId, pictureUrl, itemName, artistName, size, frameDescription, value, technique);
+            @RequestParam(required = false) int lotteryId,
+            @RequestParam(required = false) String pictureUrl,
+            @RequestParam(required = false) String itemName,
+            @RequestParam(required = false) String artistName,
+            @RequestParam(required = false) String size,
+            @RequestParam(required = false) String frameDescription,
+            @RequestParam(required = false) String value,
+            @RequestParam(required = false) String technique) {
+            lotteryItemService.updatePainting(id, lotteryId, pictureUrl, itemName, artistName, size, frameDescription, value, technique);
     }
 }
 
