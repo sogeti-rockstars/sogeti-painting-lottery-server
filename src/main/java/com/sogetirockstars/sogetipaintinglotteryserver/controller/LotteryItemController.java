@@ -6,6 +6,7 @@ import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -111,10 +112,13 @@ public class LotteryItemController {
     }
 
     @PutMapping(path = "update")
-    public ResponseEntity<LotteryItem> update(@RequestBody LotteryItem item) {
-        if ( ! lotteryItemService.existsById(item.getId() ) )
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);  // JQ: Är det här bra felhantering?
-        return new ResponseEntity<>(lotteryItemService.update(item), HttpStatus.OK);
+    public ResponseEntity<?> update(@RequestBody LotteryItem item) {
+        try {
+            return new ResponseEntity<>(lotteryItemService.update(item), HttpStatus.OK);
+        } catch (Exception e) {
+            String msg = "Item with value "+ item.getId()+" not found.";
+            return new ResponseEntity<>(msg, HttpStatus.NOT_FOUND);
+        }
     }
 }
 
