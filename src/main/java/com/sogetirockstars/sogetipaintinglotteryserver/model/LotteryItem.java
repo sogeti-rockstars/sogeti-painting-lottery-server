@@ -11,7 +11,7 @@ public class LotteryItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id; // Internal object id;
-    private int lotteryId; // Visible to users
+    private Integer lotteryId; // Visible to users
 
     private String pictureUrl;
     private String itemName;
@@ -49,6 +49,10 @@ public class LotteryItem {
         return lotteryId;
     }
 
+    public void setLotteryId(Integer lotteryId) {
+        this.lotteryId = lotteryId;
+    }
+
     public String getPictureUrl() {
         return pictureUrl;
     }
@@ -79,10 +83,6 @@ public class LotteryItem {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setLotteryId(int lotteryId) {
-        this.lotteryId = lotteryId;
     }
 
     public void setPictureUrl(String pictureUrl) {

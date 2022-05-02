@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 
 @RestController
-@RequestMapping(path = "api/v1/contestants")
+@RequestMapping(path = "/api/v1/contestants")
 public class ContestantController {
     private final ContestantService service;
 

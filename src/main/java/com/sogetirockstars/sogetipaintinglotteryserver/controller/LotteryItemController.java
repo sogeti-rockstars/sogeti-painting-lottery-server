@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping(path = "api/v1/painting")
+@RequestMapping(path = "/api/v1/item")
 public class LotteryItemController {
     private final LotteryItemService lotteryItemService;
     private final PhotoService photoService;
@@ -100,7 +100,7 @@ public class LotteryItemController {
 
     @PutMapping(path = "{id}")
     public void updateStudent(@PathVariable("id") Long id,
-            @RequestParam(required = false) int lotteryId,
+            @RequestParam(required = false) Integer lotteryId,
             @RequestParam(required = false) String pictureUrl,
             @RequestParam(required = false) String itemName,
             @RequestParam(required = false) String artistName,
