@@ -35,7 +35,7 @@ public class LotteryItemController {
         this.photoService = photoService;
     }
 
-    @GetMapping(value = "/get-all")
+    @GetMapping(value = "/")
     public ResponseEntity<List<LotteryItem>> getAllPaintings() {
         List<LotteryItem> lotteryItems = lotteryItemService.getAllPaintings();
         return ResponseEntity.ok().body(lotteryItems);
