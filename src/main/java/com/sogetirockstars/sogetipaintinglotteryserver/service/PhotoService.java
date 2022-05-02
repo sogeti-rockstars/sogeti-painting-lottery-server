@@ -12,10 +12,11 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 public class PhotoService {
-    private final static Path uploadPath = Paths.get("src/main/resources/cache/photos");
+    private Path uploadPath;
 
     public PhotoService() throws IOException {
         try {
+            uploadPath = Paths.get("src/main/resources/cache/photos");
             if (!Files.exists(uploadPath))
                 Files.createDirectories(uploadPath);
         } catch (IOException ioe) {
