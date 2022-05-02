@@ -1,6 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
 import java.util.List;
+import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
  * ContestantService
  */
 @Service
-public class LotteryItemService implements SqlService<LotteryItem> {
+public class LotteryItemService {
     private final LotteryItemRepository repository;
 
     @Autowired
@@ -42,9 +43,12 @@ public class LotteryItemService implements SqlService<LotteryItem> {
         return save(item);
     }
 
-    public LotteryItem update(LotteryItem newItem){
+    public LotteryItem update(LotteryItem newItem) throws IdException {
+        if ( !repository.existsById( newItem.getId() ))
+            throw new IdException("Item with id " + newItem.getId() + " doesn't exist.");
+
         LotteryItem origItem = repository.getById( newItem.getId() );
-        return save( mergeItems( origItem, newItem) );
+        return repository.save( mergeItems( origItem, newItem) );
     }
 
     public boolean existsById(Long id){

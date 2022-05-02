@@ -6,6 +6,7 @@ import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,13 +36,12 @@ public class LotteryItemController {
         this.photoService = photoService;
     }
 
-    @GetMapping(value = "/get-all")
+    @GetMapping(value = "/")
     public ResponseEntity<List<LotteryItem>> getAllPaintings() {
         List<LotteryItem> lotteryItems = lotteryItemService.getAllPaintings();
         return ResponseEntity.ok().body(lotteryItems);
     }
 
-    // JQ: är ResponseEntity<LotteryItem> bra??
     @GetMapping(value = "/{id}")
     public ResponseEntity<LotteryItem> getPainting(@PathVariable("id") Long id) {
         LotteryItem lotteryItem = lotteryItemService.getItem(id);
@@ -100,7 +100,6 @@ public class LotteryItemController {
         return ResponseEntity.ok().body(lotteryItemService.add(lotteryItem));
     }
 
-    // JQ: Ska vi explicera i url:en vad det görs eller ska det bestämmas av vilken HTTP method man använder?
     @DeleteMapping(value = "{id}")
     public ResponseEntity<Boolean> deletePost(@PathVariable Long id) {
         boolean isRemoved = lotteryItemService.delete(id);
@@ -112,27 +111,14 @@ public class LotteryItemController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    // JQ: Ska vi updatera objekt genom att skicka värden i HTTP body eller ska vi uppdatera dem genom HTTP parameters?
     @PutMapping(path = "update")
-    public ResponseEntity<LotteryItem> update(@RequestBody LotteryItem item) {
-        if ( ! lotteryItemService.existsById(item.getId() ) )
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);  // JQ: Är det här bra felhantering?
-        return new ResponseEntity<>(lotteryItemService.update(item), HttpStatus.OK);
+    public ResponseEntity<?> update(@RequestBody LotteryItem item) {
+        try {
+            return new ResponseEntity<>(lotteryItemService.update(item), HttpStatus.OK);
+        } catch (Exception e) {
+            String msg = "Item with value "+ item.getId()+" not found.";
+            return new ResponseEntity<>(msg, HttpStatus.NOT_FOUND);
+        }
     }
-
-    // @PutMapping(path = "update-fields")
-    // public void update(
-    // @PathVariable("id") Long id,
-    // @RequestParam(required = false) Integer lotteryId,
-    // @RequestParam(required = false) String pictureUrl,
-    // @RequestParam(required = false) String itemName,
-    // @RequestParam(required = false) String artistName,
-    // @RequestParam(required = false) String size,
-    // @RequestParam(required = false) String frameDescription,
-    // @RequestParam(required = false) String value,
-    // @RequestParam(required = false) String technique
-    // ){
-    // }
-    // lotteryItemService.updatePainting(id, lotteryId, pictureUrl, itemName, artistName, size, frameDescription, value, technique);
 }
 
