@@ -1,7 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.exception;
 
 /**
- * IdException
+ * PhotoMissingException
  */
 public class PhotoMissingException extends Exception {
     private static final long serialVersionUID = 1L;
