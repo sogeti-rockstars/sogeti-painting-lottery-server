@@ -46,9 +46,8 @@ public class LotteryItemController {
      * Returns all lottery items
      */
     @GetMapping
-    public ResponseEntity<List<LotteryItem>> getAllItems() {
-        List<LotteryItem> lotteryItems = lotteryItemService.getAll();
-        return ResponseEntity.ok().body(lotteryItems);
+    public List<LotteryItem> getAll() {
+        return lotteryItemService.getAll();
     }
 
     /**

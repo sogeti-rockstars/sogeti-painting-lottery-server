@@ -37,8 +37,8 @@ public class ContestantController {
      * Returns all lottery items
      */
     @GetMapping
-    public ResponseEntity<List<Contestant>> getAll() {
-        return ResponseEntity.ok().body(service.getAll());
+    public List<Contestant> getAll() {
+        return service.getAll();
     }
 
     /**
