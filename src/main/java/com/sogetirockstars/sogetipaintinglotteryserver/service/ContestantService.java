@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * ContestantService
  */
 @Service
-public class ContestantService { // JQ: Det blev mycket kod-duplicering här. Ska vi köra på abstract class + extends istället?
+public class ContestantService {
     private final ContestantRepository repository;
 
     @Autowired
@@ -51,7 +51,7 @@ public class ContestantService { // JQ: Det blev mycket kod-duplicering här. Sk
     }
 
     // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt att skapa JSON
-    //       objekt och bara skriva över värden som har ett värde och inte NULL; Alt. skulle vi kuna köra reflection :)
+    //       objekt och bara skriva över värden som har ett värde och inte NULL;
     private Contestant merge(Contestant origCont, Contestant newCont){
         if (newCont.getId() != null)
             origCont.setId(newCont.getId());
