@@ -31,7 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping(path = "/api/v1/item") // JQ: ska vi köra på versioning till Api? Är detta bra?
+@RequestMapping(path = "/api/v1/item")
 public class LotteryItemController {
     private final LotteryItemService lotteryItemService;
     private final PhotoService photoService;
@@ -59,7 +59,6 @@ public class LotteryItemController {
         try {
             System.out.println("Sending painting with id " + id);
             LotteryItem item = lotteryItemService.getItem(id);
-            // item.setPictureUrl( "http://localhost:8080/api/v1/item/image/" + id ); // Todo: Make proper implementation.
             return new ResponseEntity<>(item, HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
