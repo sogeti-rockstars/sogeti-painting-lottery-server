@@ -13,20 +13,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PhotoService {
-    private String cachePath = "cache/photos";
-    private Path cache;
+    private final static Path cache = Paths.get("target/classes/cache/photos");
 
     public PhotoService() {
-        String cacheFullPath = this.getClass().getClassLoader().getResource("").getPath()+cachePath;
         try {
-            cache = Paths.get(cacheFullPath);
-            System.err.println("Cache dir: "+cacheFullPath);
-
             if (!Files.exists(cache))
                 Files.createDirectories(cache);
         } catch (IOException e){
             e.printStackTrace(); // This should never happen on a normally functioning machine, so let's discover it quickly if it were.
-            System.err.println("Failed to create photo directory " + cacheFullPath + ".");
+            System.err.println("Failed to create photo directory " + cache.toString() + ".");
             System.exit(1);
         }
     }
