@@ -18,11 +18,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MockDataConfig {
     private String mockPhotosSrc = "src/main/resources/mock-photos";
-    private final PhotoService pService;
+    private final PhotoService photoService;
 
     @Autowired
-    public MockDataConfig(PhotoService pService){
-        this.pService=pService;
+    public MockDataConfig(PhotoService photoService){
+        this.photoService=photoService;
     }
 
     @Bean
@@ -60,7 +60,7 @@ public class MockDataConfig {
     private void updatePictureUrl(LotteryItem item, LotteryItemRepository repo) {
         try {
             Path src = Paths.get(mockPhotosSrc + "/" + item.getId() + ".jpg" );
-            pService.savePhoto(item.getId(), new FileInputStream( src.toFile() ) );
+            photoService.savePhoto(item.getId(), new FileInputStream( src.toFile() ) );
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Mock data failed to be created");
