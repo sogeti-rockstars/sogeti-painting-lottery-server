@@ -55,8 +55,8 @@ public class LotteryItemService {
     private LotteryItem mergeItems(LotteryItem origItem, LotteryItem newItem){
         if (newItem.getLotteryId() != null)
             origItem.setLotteryId(newItem.getLotteryId());
-        if (newItem.getPictureUrl()!=null)
-            origItem.setPictureUrl(newItem.getPictureUrl());
+        // if (newItem.getPictureUrl()!=null)
+        //     origItem.setPictureUrl(newItem.getPictureUrl());
         if (newItem.getItemName()!=null)
             origItem.setItemName(newItem.getItemName());
         if (newItem.getArtistName()!=null)

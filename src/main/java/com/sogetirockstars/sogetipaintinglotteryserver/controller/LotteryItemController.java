@@ -55,11 +55,11 @@ public class LotteryItemController {
      * Get item with id /{id}
      */
     @GetMapping(value = "{id}")
-    public ResponseEntity<?> getPainting(@PathVariable Long id) {
+    public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             System.out.println("Sending painting with id " + id);
             LotteryItem item = lotteryItemService.getItem(id);
-            item.setPictureUrl( "http://localhost:8080/api/v1/item/image/" + id ); // Todo: Make proper implementation.
+            // item.setPictureUrl( "http://localhost:8080/api/v1/item/image/" + id ); // Todo: Make proper implementation.
             return new ResponseEntity<>(item, HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -100,7 +100,6 @@ public class LotteryItemController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-
 
     @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<?> getImage(@PathVariable Long id) throws IOException {
