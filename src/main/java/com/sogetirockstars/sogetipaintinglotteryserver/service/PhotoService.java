@@ -21,8 +21,6 @@ public class PhotoService {
                 Files.createDirectories(cache);
         } catch (IOException e){
             e.printStackTrace(); // This should never happen on a normally functioning machine, so let's discover it quickly if it were.
-            System.err.println("Failed to create photo directory " + cache.toString() + ".");
-            System.exit(1);
         }
     }
 
@@ -34,7 +32,6 @@ public class PhotoService {
 		} catch (IOException e) {
 			e.printStackTrace();  // This should never happen on a normally functioning machine, so let's discover it quickly if it were.
                                   // Maybe if we run out of diskspace?  // JQ: Vad vore bra error handling??
-            System.err.println("Failed to save photo " + filePath + ".");
 		}
     }
 
