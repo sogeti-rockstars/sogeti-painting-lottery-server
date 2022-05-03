@@ -1,15 +1,16 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.config;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.ContestantRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MockDataConfig {
     private String mockPhotosSrc = "src/main/resources/mock-photos";
-    private String photosDst = "src/main/resources/cache/photos";
+    private final PhotoService pService;
+
+    @Autowired
+    public MockDataConfig(PhotoService pService){
+        this.pService=pService;
+    }
 
     @Bean
     CommandLineRunner cmdLineRunnerContestant(ContestantRepository repo) {
@@ -54,15 +60,11 @@ public class MockDataConfig {
     private void updatePictureUrl(LotteryItem item, LotteryItemRepository repo) {
         try {
             Path src = Paths.get(mockPhotosSrc + "/" + item.getId() + ".jpg" );
-            Path dst = Paths.get(photosDst + "/" + item.getId() + ".jpg" );
-            String nPath = "cache/photos/" + item.getId() + ".jpg" ;
-            System.out.println( "Setting photo path:" + dst.toString() );
-            Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
-            item.setPictureUrl(nPath);
-            repo.save(item);
+            pService.savePhoto(item.getId(), new FileInputStream( src.toFile() ) );
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Mock data failed to be created");
+            System.exit(1);
         }
     }
 

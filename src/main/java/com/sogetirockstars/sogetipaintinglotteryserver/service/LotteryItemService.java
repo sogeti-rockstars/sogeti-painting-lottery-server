@@ -19,40 +19,35 @@ public class LotteryItemService {
         this.repository = repository;
     }
 
-    public List<LotteryItem> getAllPaintings() {
+    public List<LotteryItem> getAll() {
         return repository.findAll();
     }
 
-    public LotteryItem getItem(Long id) {
+    public LotteryItem getItem(Long id) throws IdException {
+        assertExists(id);
         return repository.findById(id).get();
-    }
-
-    public LotteryItem save(LotteryItem lotteryItem) {
-        return repository.save(lotteryItem);
-    }
-
-    public boolean delete(Long id){
-        if ( repository.findById(id).isEmpty() )
-            return false;
-        repository.deleteById(id);
-        return true;
     }
 
     public LotteryItem add(LotteryItem item){
         item.setId(null);
-        return save(item);
+        return repository.save(item);
     }
 
     public LotteryItem update(LotteryItem newItem) throws IdException {
-        if ( !repository.existsById( newItem.getId() ))
-            throw new IdException("Item with id " + newItem.getId() + " doesn't exist.");
-
+        assertExists(newItem.getId());
         LotteryItem origItem = repository.getById( newItem.getId() );
         return repository.save( mergeItems( origItem, newItem) );
     }
 
-    public boolean existsById(Long id){
-        return repository.existsById(id);
+    public boolean delete(Long id) throws IdException{
+        assertExists(id);
+        repository.deleteById(id);
+        return true;
+    }
+
+    private void assertExists(Long id) throws IdException {
+        if ( !repository.existsById( id ) )
+            throw new IdException("Item with id " + id + " doesn't exist.");
     }
 
     // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt att skapa JSON

@@ -1,37 +1,53 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import com.sogetirockstars.sogetipaintinglotteryserver.exception.PhotoMissingException;
+import org.springframework.stereotype.Service;
 
 @Service
 public class PhotoService {
-    private Path uploadPath;
+    private String cachePath = "cache/photos";
+    private Path cache;
 
-    public PhotoService() throws IOException {
+    public PhotoService() {
+        String cacheFullPath = this.getClass().getClassLoader().getResource("").getPath()+cachePath;
         try {
-            uploadPath = Paths.get("src/main/resources/cache/photos");
-            if (!Files.exists(uploadPath))
-                Files.createDirectories(uploadPath);
-        } catch (IOException ioe) {
-            throw new IOException("Could not create upload directory: " + uploadPath, ioe);
+            cache = Paths.get(cacheFullPath);
+            System.err.println("Cache dir: "+cacheFullPath);
+
+            if (!Files.exists(cache))
+                Files.createDirectories(cache);
+        } catch (IOException e){
+            e.printStackTrace(); // This should never happen on a normally functioning machine, so let's discover it quickly if it were.
+            System.err.println("Failed to create photo directory " + cacheFullPath + ".");
+            System.exit(1);
         }
     }
 
-    public String saveFile(String filename, MultipartFile multipartFile) throws IOException {
+    public void savePhoto(Long id, InputStream photoInStream) {
+        Path filePath = cache.resolve(id.toString());
+        System.out.println("Saving photo to "+ filePath.toString() );
         try {
-            InputStream inputStream = multipartFile.getInputStream();
-            Path filePath = uploadPath.resolve(filename);
-            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-            return filePath.toString();
-        } catch (IOException ioe) {
-            throw new IOException("Could not save image file: " + filename, ioe);
-        }
+            Files.copy(photoInStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();  // This should never happen on a normally functioning machine, so let's discover it quickly if it were.
+                                  // Maybe if we run out of diskspace?  // JQ: Vad vore bra error handling??
+            System.err.println("Failed to save photo " + filePath + ".");
+		}
+    }
+
+    public InputStream getPhoto(Long id) throws PhotoMissingException{
+        try {
+			return new FileInputStream(cache.resolve(id.toString()).toFile());
+		} catch (FileNotFoundException e) {
+            throw new PhotoMissingException( "Photo for item with id " + id + " does not exist");
+		}
     }
 }
