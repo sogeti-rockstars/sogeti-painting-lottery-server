@@ -25,7 +25,7 @@ public class PhotoService {
     }
 
     public void savePhoto(Long id, InputStream photoInStream) {
-        Path filePath = cache.resolve(id.toString());
+        Path filePath = cache.resolve(id.toString().trim());
         System.out.println("Saving photo to "+ filePath.toString() );
         try {
             Files.copy(photoInStream, filePath, StandardCopyOption.REPLACE_EXISTING);

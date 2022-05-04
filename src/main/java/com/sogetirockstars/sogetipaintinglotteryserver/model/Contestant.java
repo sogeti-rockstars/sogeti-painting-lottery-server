@@ -15,11 +15,17 @@ public class Contestant {
     private String name;
     private String email;
     private String teleNumber;
-    // private String address;              // Todo: take out to it's own object
-    // String addressStreetName; // Todo: take out to it's own object
-    // String addressNumber;     // Todo: take out to it's own object
-    // String addressZipCode;    // Todo: take out to it's own object
-    // String addressCity;       // Todo: take out to it's own object
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
     public Contestant() {
     }
@@ -49,7 +55,7 @@ public class Contestant {
         this.teleNumber = teleNumber;
     }
 
-    // public void setAddress(String address) {
+    // public void setAddress(Address address) {
     //     this.address = address;
     // }
 
