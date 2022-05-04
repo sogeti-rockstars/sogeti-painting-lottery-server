@@ -59,8 +59,8 @@ public class ContestantService {
             origCont.setName(newCont.getName());
         if (newCont.getEmail()!=null)
             origCont.setEmail(newCont.getEmail());
-        if (newCont.getAddress()!=null)
-            origCont.setAddress(newCont.getAddress());
+        // if (newCont.getAddress()!=null)
+        //     origCont.setAddress(newCont.getAddress());
         if (newCont.getEmployeeId()!=null)
             origCont.setEmployeeId(newCont.getEmployeeId());
         if (newCont.getTeleNumber()!=null)

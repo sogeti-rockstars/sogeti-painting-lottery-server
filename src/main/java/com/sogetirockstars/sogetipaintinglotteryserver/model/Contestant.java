@@ -15,7 +15,7 @@ public class Contestant {
     private String name;
     private String email;
     private String teleNumber;
-    private String address;              // Todo: take out to it's own object
+    // private String address;              // Todo: take out to it's own object
     // String addressStreetName; // Todo: take out to it's own object
     // String addressNumber;     // Todo: take out to it's own object
     // String addressZipCode;    // Todo: take out to it's own object
@@ -26,7 +26,7 @@ public class Contestant {
 
     public Contestant(String name, String address) {
         this.name = name;
-        this.address = address;
+        // this.address = address;
     }
 
     public void setId(Long id) {
@@ -49,9 +49,9 @@ public class Contestant {
         this.teleNumber = teleNumber;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+    // public void setAddress(String address) {
+    //     this.address = address;
+    // }
 
     public Long getId() {
         return id;
@@ -73,7 +73,7 @@ public class Contestant {
         return teleNumber;
     }
 
-    public String getAddress() {
-        return address;
-    }
+    // public String getAddress() {
+    //     return address;
+    // }
 }
