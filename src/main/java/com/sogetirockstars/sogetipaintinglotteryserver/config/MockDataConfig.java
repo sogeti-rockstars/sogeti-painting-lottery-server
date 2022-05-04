@@ -42,18 +42,6 @@ public class MockDataConfig {
         };
     }
 
-    @Bean
-    CommandLineRunner cmdLineRunnerAddress(AddressRepository repo) {
-        return (String[] args) -> {
-            repo.saveAll(
-                    List.of(
-                            new Address("Sogetigatan", "55A", "123 45", "Haparanda"),
-                            new Address("Exempelvägen", "55A", "123 45", "Haparanda"),
-                            new Address("Testgatan", "55A", "123 45", "Haparanda")
-                    )
-            );
-        };
-    }
 
     @Bean
     CommandLineRunner cmdLineRunnerArtItem(LotteryItemRepository repo) throws IOException {
@@ -67,6 +55,19 @@ public class MockDataConfig {
 
         return (String[] args) -> {
             repo.saveAll(items).stream().forEach(i -> updatePictureUrl(i, repo));
+        };
+    }
+
+    @Bean
+    CommandLineRunner cmdLineRunnerAddress(AddressRepository repo) {
+        return (String[] args) -> {
+            repo.saveAll(
+                    List.of(
+                            new Address("Sogetigatan", "55A", "123 45", "Haparanda"),
+                            new Address("Exempelvägen", "55A", "123 45", "Haparanda"),
+                            new Address("Testgatan", "55A", "123 45", "Haparanda")
+                    )
+            );
         };
     }
 
