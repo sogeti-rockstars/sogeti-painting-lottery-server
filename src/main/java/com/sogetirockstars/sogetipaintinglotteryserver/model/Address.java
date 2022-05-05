@@ -8,19 +8,19 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
-    private String addressStreetName;
-    private String addressNumber;
-    private String addressZipCode;
-    private String addressCity;
+    private String streetName;
+    private String streetNumber;
+    private String zipCode;
+    private String city;
 
     public Address() {
     }
 
-    public Address(String addressStreetName, String addressNumber, String addressZipCode, String addressCity) {
-        this.addressStreetName = addressStreetName;
-        this.addressNumber = addressNumber;
-        this.addressZipCode = addressZipCode;
-        this.addressCity = addressCity;
+    public Address(String streetName, String streetNumber, String zipCode, String city) {
+        this.streetName = streetName;
+        this.streetNumber = streetNumber;
+        this.zipCode = zipCode;
+        this.city = city;
     }
 
     public long getId() {
@@ -30,37 +30,36 @@ public class Address {
     public void setId(long id) {
         this.id = id;
     }
-    
 
     public String getAddressStreetName() {
-        return addressStreetName;
+        return streetName;
     }
 
     public void setAddressStreetName(String addressStreetName) {
-        this.addressStreetName = addressStreetName;
+        this.streetName = addressStreetName;
     }
 
     public String getAddressNumber() {
-        return addressNumber;
+        return streetNumber;
     }
 
     public void setAddressNumber(String addressNumber) {
-        this.addressNumber = addressNumber;
+        this.streetNumber = addressNumber;
     }
 
     public String getAddressZipCode() {
-        return addressZipCode;
+        return zipCode;
     }
 
     public void setAddressZipCode(String addressZipCode) {
-        this.addressZipCode = addressZipCode;
+        this.zipCode = addressZipCode;
     }
 
     public String getAddressCity() {
-        return addressCity;
+        return city;
     }
 
     public void setAddressCity(String addressCity) {
-        this.addressCity = addressCity;
+        this.city = addressCity;
     }
 }
