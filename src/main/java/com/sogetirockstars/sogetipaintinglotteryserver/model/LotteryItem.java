@@ -13,7 +13,7 @@ public class LotteryItem {
     private Long id; // Internal object id;
     private Integer lotteryId; // Visible to users
 
-    private String pictureUrl;
+    // private String pictureUrl;
     private String itemName;
     private String artistName;
     private String size; // Example 12x12cm, string sounds reasonable for now.
@@ -32,7 +32,7 @@ public class LotteryItem {
     public LotteryItem(int lotteryId, String pictureUrl, String itemName, String artistName,
                        String size, String frameDescription, String value, String technique) {
         this.lotteryId = lotteryId;
-        this.pictureUrl = pictureUrl;
+        // this.pictureUrl = pictureUrl;
         this.itemName = itemName;
         this.artistName = artistName;
         this.size = size;
@@ -53,9 +53,9 @@ public class LotteryItem {
         this.lotteryId = lotteryId;
     }
 
-    public String getPictureUrl() {
-        return pictureUrl;
-    }
+    // public String getPictureUrl() {
+    //     return pictureUrl;
+    // }
 
     public String getItemName() {
         return itemName;
@@ -85,9 +85,9 @@ public class LotteryItem {
         this.id = id;
     }
 
-    public void setPictureUrl(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
-    }
+    // public void setPictureUrl(String pictureUrl) {
+    //     this.pictureUrl = pictureUrl;
+    // }
 
     public void setItemName(String itemName) {
         this.itemName = itemName;

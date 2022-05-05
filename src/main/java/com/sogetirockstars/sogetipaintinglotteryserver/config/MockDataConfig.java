@@ -1,23 +1,32 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.config;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.List;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.Address;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.AddressRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.ContestantRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
 @Configuration
 public class MockDataConfig {
     private String mockPhotosSrc = "src/main/resources/mock-photos";
-    private String photosDst = "src/main/resources/cache/photos";
+    private final PhotoService photoService;
+
+    @Autowired
+    public MockDataConfig(PhotoService photoService) {
+        this.photoService = photoService;
+    }
 
     @Bean
     CommandLineRunner cmdLineRunnerContestant(ContestantRepository repo) {
@@ -33,17 +42,33 @@ public class MockDataConfig {
         };
     }
 
+
     @Bean
     CommandLineRunner cmdLineRunnerArtItem(LotteryItemRepository repo) throws IOException {
         List<LotteryItem> items = List.of(
-            new LotteryItem(1, "", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil"),
-            new LotteryItem(2, "", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil"),
-            new LotteryItem(3, "", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil"),
-            new LotteryItem(4, "", "David", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
-            new LotteryItem(5, "", "Mona lisa", "Da vinci", "10x10m", "wood", "999.999.999kr", "oil")
+                new LotteryItem(1, "", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil"),
+                new LotteryItem(2, "", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil"),
+                new LotteryItem(3, "", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil"),
+                new LotteryItem(4, "", "David", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
+                new LotteryItem(5, "", "Mona lisa", "Da vinci", "10x10m", "wood", "999.999.999kr", "oil")
         );
 
-        return (String[] args) -> { repo.saveAll( items ).stream().forEach(i-> updatePictureUrl( i, repo ) ); };
+        return (String[] args) -> {
+            repo.saveAll(items).stream().forEach(i -> updatePictureUrl(i, repo));
+        };
+    }
+
+    @Bean
+    CommandLineRunner cmdLineRunnerAddress(AddressRepository repo) {
+        return (String[] args) -> {
+            repo.saveAll(
+                    List.of(
+                            new Address("Sogetigatan", "55A", "123 45", "Haparanda"),
+                            new Address("Exempelvägen", "55A", "123 45", "Haparanda"),
+                            new Address("Testgatan", "55A", "123 45", "Haparanda")
+                    )
+            );
+        };
     }
 
     /*
@@ -52,16 +77,13 @@ public class MockDataConfig {
      * gotten an id...
      */
     private void updatePictureUrl(LotteryItem item, LotteryItemRepository repo) {
-        Path src = Paths.get(mockPhotosSrc + "/" + item.getId() + ".jpg" );
-        Path dst = Paths.get(photosDst + "/" + item.getId() + ".jpg" );
-        String nPath = "cache/photos/" + item.getId() + ".jpg" ;
-        System.out.println( "Setting photo path:" + dst.toString() );
         try {
-            Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
-            item.setPictureUrl(nPath);
-            repo.save(item);
+            Path src = Paths.get(mockPhotosSrc + "/" + item.getId() + ".jpg");
+            photoService.savePhoto(item.getId(), new FileInputStream(src.toFile()));
         } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Mock data failed to be created");
+            System.exit(1);
         }
     }
 
