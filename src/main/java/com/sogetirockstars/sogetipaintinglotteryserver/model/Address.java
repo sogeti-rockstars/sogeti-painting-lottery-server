@@ -31,35 +31,36 @@ public class Address {
         this.id = id;
     }
 
-    public String getAddressStreetName() {
+    public String getStreetName() {
         return streetName;
     }
 
-    public void setAddressStreetName(String addressStreetName) {
-        this.streetName = addressStreetName;
+    public void setStreetName(String streetName) {
+        this.streetName = streetName;
     }
 
-    public String getAddressNumber() {
+    public String getStreetNumber() {
         return streetNumber;
     }
 
-    public void setAddressNumber(String addressNumber) {
-        this.streetNumber = addressNumber;
+    public void setStreetNumber(String streetNumber) {
+        this.streetNumber = streetNumber;
     }
 
-    public String getAddressZipCode() {
+    public String getZipCode() {
         return zipCode;
     }
 
-    public void setAddressZipCode(String addressZipCode) {
-        this.zipCode = addressZipCode;
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 
-    public String getAddressCity() {
+    public String getCity() {
         return city;
     }
 
-    public void setAddressCity(String addressCity) {
-        this.city = addressCity;
+    public void setCity(String city) {
+        this.city = city;
     }
+
 }
