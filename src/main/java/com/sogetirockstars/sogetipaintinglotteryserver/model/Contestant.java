@@ -8,31 +8,28 @@ import javax.persistence.*;
 @Entity
 @Table
 public class Contestant {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
     private String employeeId;
     private String name;
     private String email;
     private String teleNumber;
+
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
 
-    public Address getAddress() {
-        return address;
-    }
+    public Contestant() {}
 
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public Contestant() {
-    }
-
-    public Contestant(String name, String address) {
+    public Contestant(String name, Address address, String employeeId, String teleNumber, String email) {
         this.name = name;
-        // this.address = address;
+        this.address = address;
+        this.email = email;
+        this.employeeId = employeeId;
+        this.teleNumber = teleNumber;
     }
 
     public void setId(Long id) {
@@ -80,6 +77,14 @@ public class Contestant {
     }
 
     // public String getAddress() {
-    //     return address;
+    //     return address.toString();
     // }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 }
