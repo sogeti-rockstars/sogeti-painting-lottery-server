@@ -41,7 +41,7 @@ public class MockDataConfig {
         };
     }
 
-    List<Contestant> fakeContestants(List<Address> fakeAddresses) {
+    private List<Contestant> fakeContestants(List<Address> fakeAddresses) {
         List<Contestant> contestants = List.of(
             new Contestant("Alice Alisson", null, "00001", "070 - 0001 123", "email01@example.com"),
             new Contestant("Bob Bobsson", null, "00002", "070 - 0001 124", "email02@example.com"),
@@ -57,7 +57,7 @@ public class MockDataConfig {
         return contestants;
     }
 
-    List<LotteryItem> fakeLotteryItems() {
+    private List<LotteryItem> fakeLotteryItems() {
         return List.of(
             new LotteryItem(1, "", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil"),
             new LotteryItem(2, "", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil"),
@@ -67,7 +67,7 @@ public class MockDataConfig {
         );
     }
 
-    List<Address> fakeAddresses() {
+    private List<Address> fakeAddresses() {
         return List.of(
             new Address("Streetenus", "1b", "00001", "Göteborg"),
             new Address("Gatilius", "2a", "00002", "Sundsvall"),
