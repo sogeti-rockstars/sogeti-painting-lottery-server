@@ -22,7 +22,20 @@ public class Contestant {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    public Contestant() {}
+    @ManyToOne
+    @JoinColumn(name = "lottery_contestants_id")
+    private Lottery lotteryContestants;
+
+    public Lottery getLotteryContestants() {
+        return lotteryContestants;
+    }
+
+    public void setLotteryContestants(Lottery lotteryContestants) {
+        this.lotteryContestants = lotteryContestants;
+    }
+
+    public Contestant() {
+    }
 
     public Contestant(String name, Address address, String employeeId, String teleNumber, String email) {
         this.name = name;
@@ -30,6 +43,15 @@ public class Contestant {
         this.email = email;
         this.employeeId = employeeId;
         this.teleNumber = teleNumber;
+    }
+
+    public Contestant(String name, Address address, String employeeId, String teleNumber, String email, Lottery lotteryContestants) {
+        this.employeeId = employeeId;
+        this.name = name;
+        this.email = email;
+        this.teleNumber = teleNumber;
+        this.address = address;
+        this.lotteryContestants = lotteryContestants;
     }
 
     public void setId(Long id) {
