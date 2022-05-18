@@ -34,16 +34,19 @@ public class MockDataConfig {
     @Bean
     CommandLineRunner mockData(AddressRepository addrRepo, ContestantRepository contRepo, LotteryItemRepository lottRepo, LotteryRepository lotteryRepo, WinnerRepository winnerRepo) {
         return (String[] args) -> {
-            lotteries = fakeLotteries();
-            lotteryItems = fakeLotteryItems(lotteries);
+
             addresses = fakeAddresses();
             contestants = fakeContestants(addresses);
+            lotteries = fakeLotteries();
+            lotteryItems = fakeLotteryItems(lotteries);
             winners = fakeWinners(contestants, lotteryItems, lotteries);
 
             lotteryRepo.saveAllAndFlush(lotteries);
             lottRepo.saveAllAndFlush(lotteryItems).stream().forEach(i -> updatePictureUrl(i, lottRepo));
             addrRepo.saveAllAndFlush(addresses);
             contRepo.saveAllAndFlush(contestants);
+            lotteries = fakeLotteries2(lotteries, contestants);
+            lotteryRepo.saveAllAndFlush(lotteries);
             winnerRepo.saveAllAndFlush(winners);
         };
     }
@@ -61,6 +64,16 @@ public class MockDataConfig {
             winners.get(i).setPlacement(i);
         }
         return winners;
+    }
+
+    private List<Lottery> fakeLotteries2(List<Lottery> lotteries, List<Contestant> contestants) {
+        for (int i = 0; i < lotteries.size(); i++) {
+//            for (int j = i; j < 3; j++) {
+//                lotteries.get(i).addContestants(contestants.get(j));
+//            }
+            
+        }
+        return lotteries;
     }
 
     private List<Lottery> fakeLotteries() {

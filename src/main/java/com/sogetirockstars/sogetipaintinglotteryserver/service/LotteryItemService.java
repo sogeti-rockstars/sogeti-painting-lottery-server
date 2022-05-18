@@ -29,6 +29,14 @@ public class LotteryItemService {
         return repository.findById(id).get();
     }
 
+    public LotteryItem getRandomItem() throws IdException {
+        int size = this.getAll().size();
+        long id = (long) (Math.random() * (size - 1 + 1));
+        List<LotteryItem> lotteryItems = this.getAll();
+        assertExists(lotteryItems.get((int) id).getId());
+        return lotteryItems.get((int) id);
+    }
+
     public LotteryItem add(LotteryItem item) {
         item.setId(null);
         return repository.save(item);

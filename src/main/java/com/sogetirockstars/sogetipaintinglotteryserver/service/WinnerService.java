@@ -6,6 +6,7 @@ import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerReposito
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,6 +20,16 @@ public class WinnerService {
 
     public List<Winner> getAll() {
         return repository.findAll();
+    }
+
+    public List<Winner> getAllByLotteryId(Long id) {
+        List<Winner> winners = this.getAll();
+        List<Winner> lotteryWinners = new ArrayList<>();
+        for (Winner w : winners) {
+            if (w.getLottery().getId() == id)
+                lotteryWinners.add(w);
+        }
+        return lotteryWinners;
     }
 
     public Winner get(Long id) throws IdException {

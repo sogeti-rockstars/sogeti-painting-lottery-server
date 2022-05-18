@@ -66,4 +66,14 @@ public class WinnerController {
         winner.setId(null);
         return ResponseEntity.ok().body(winnerService.add(winner));
     }
+
+    @PutMapping(value = "{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Winner winner) {
+        try {
+            winner.setId(id);
+            return new ResponseEntity<>(winnerService.update(winner), HttpStatus.OK);
+        } catch (IdException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

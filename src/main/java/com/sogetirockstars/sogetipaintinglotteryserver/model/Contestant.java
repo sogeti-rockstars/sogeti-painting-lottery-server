@@ -32,6 +32,7 @@ public class Contestant {
     @JoinColumn(name = "winner_id")
     private Winner winner;
 
+    
     public Winner getWinner() {
         return winner;
     }

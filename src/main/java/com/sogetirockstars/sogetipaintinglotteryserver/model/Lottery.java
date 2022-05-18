@@ -3,9 +3,9 @@ package com.sogetirockstars.sogetipaintinglotteryserver.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity(name = "Lottery")
 @Table(name = "lottery")
@@ -14,26 +14,45 @@ public class Lottery {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<LotteryItem> lotteryItems = new HashSet<>();
+    @OneToMany(mappedBy = "lottery")
+    private List<LotteryItem> lotteryItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Contestant> contestants = new HashSet<>();
+    @OneToMany(mappedBy = "lottery")
+    private List<Contestant> contestants = new ArrayList<>();
+
+    @OneToMany(mappedBy = "lottery")
+    private List<Winner> winners = new ArrayList<>();
 
     private Date date;
     private String title;
 
     @JsonManagedReference
-    public Set<Contestant> getContestants() {
+    public List<Contestant> getContestants() {
         return contestants;
     }
 
     @JsonManagedReference
-    public Set<LotteryItem> getLotteryItems() {
+    public List<LotteryItem> getLotteryItems() {
         return lotteryItems;
     }
 
     public Lottery() {
+    }
+
+    public List<Winner> getWinners() {
+        return winners;
+    }
+
+    public void setWinners(List<Winner> winners) {
+        this.winners = winners;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Lottery(String title) {
@@ -56,11 +75,11 @@ public class Lottery {
         this.title = title;
     }
 
-    public void setContestants(Set<Contestant> contestants) {
+    public void setContestants(List<Contestant> contestants) {
         this.contestants = contestants;
     }
 
-    public void setLotteryItems(Set<LotteryItem> lotteryItems) {
+    public void setLotteryItems(List<LotteryItem> lotteryItems) {
         this.lotteryItems = lotteryItems;
     }
 

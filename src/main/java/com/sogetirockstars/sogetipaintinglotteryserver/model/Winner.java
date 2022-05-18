@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 
 @Entity
-@Table
+@Table(name = "winner")
 public class Winner {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -24,11 +24,18 @@ public class Winner {
     public Winner() {
     }
 
+
     public Winner(Lottery lottery, Contestant contestant, int placement, LotteryItem lotteryItem) {
         this.lottery = lottery;
         this.contestant = contestant;
         this.placement = placement;
         this.lotteryItem = lotteryItem;
+    }
+
+    public Winner(Lottery lottery, Contestant contestant, Integer placement) {
+        this.lottery = lottery;
+        this.contestant = contestant;
+        this.placement = placement;
     }
 
     public Long getId() {

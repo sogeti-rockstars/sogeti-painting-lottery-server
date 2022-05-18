@@ -2,8 +2,8 @@ package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.LotteryService;
-import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class LotteryController {
     private final LotteryService lotteryService;
 
     @Autowired
-    public LotteryController(LotteryService service, PhotoService photoService) throws IOException {
+    public LotteryController(LotteryService service) throws IOException {
         this.lotteryService = service;
     }
 
@@ -46,6 +46,30 @@ public class LotteryController {
         }
     }
 
+    @GetMapping(value = "spin-with-item/{id}")
+    public ResponseEntity<?> spinTheWheelRandomItem(@PathVariable Long id) {
+        try {
+            System.out.println("Sending painting with id " + id);
+            Lottery lottery = lotteryService.get(id);
+            Winner winner = lotteryService.spinTheWheelRandomItem(lottery);
+            return new ResponseEntity<>(winner, HttpStatus.OK);
+        } catch (IdException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(value = "spin/{id}")
+    public ResponseEntity<?> spinTheWheelNoItem(@PathVariable Long id) {
+        try {
+            System.out.println("Sending painting with id " + id);
+            Lottery lottery = lotteryService.get(id);
+            Winner winner = lotteryService.spinTheWheelNoItem(lottery);
+            return new ResponseEntity<>(winner, HttpStatus.OK);
+        } catch (IdException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     /**
      * Delete item with id /{id}
      */
@@ -66,5 +90,15 @@ public class LotteryController {
         System.out.println("Adding painting " + lottery.getTitle() + " id: " + lottery.getId());
         lottery.setId(null);
         return ResponseEntity.ok().body(lotteryService.add(lottery));
+    }
+
+    @PutMapping(value = "{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Lottery lottery) {
+        try {
+            lottery.setId(id);
+            return new ResponseEntity<>(lotteryService.update(lottery), HttpStatus.OK);
+        } catch (IdException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 }
