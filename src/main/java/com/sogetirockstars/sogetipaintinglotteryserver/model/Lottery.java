@@ -3,42 +3,41 @@ package com.sogetirockstars.sogetipaintinglotteryserver.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-@Entity
-@Table
+@Entity(name = "Lottery")
+@Table(name = "lottery")
 public class Lottery {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @OneToMany(mappedBy = "lotteryItems")
-    private Collection<LotteryItem> lotteryItems = new ArrayList<>();
+    @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<LotteryItem> lotteryItems = new HashSet<>();
 
-    @OneToMany(mappedBy = "lotteryContestants")
-    @JsonManagedReference
-    private Collection<Contestant> contestants = new ArrayList<>();
+    @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Contestant> contestants = new HashSet<>();
 
-
+    private Date date;
     private String title;
 
-
-    public Collection<Contestant> getContestants() {
+    @JsonManagedReference
+    public Set<Contestant> getContestants() {
         return contestants;
     }
 
-    public Collection<LotteryItem> getLotteryItems() {
+    @JsonManagedReference
+    public Set<LotteryItem> getLotteryItems() {
         return lotteryItems;
     }
 
     public Lottery() {
     }
 
-    public Lottery(String title, Collection<Contestant> contestants, Collection<LotteryItem> lotteryItems) {
+    public Lottery(String title) {
         this.title = title;
-        this.contestants = contestants;
-        this.lotteryItems = lotteryItems;
     }
 
     public Long getId() {
@@ -57,11 +56,11 @@ public class Lottery {
         this.title = title;
     }
 
-    public void setContestants(Collection<Contestant> contestants) {
+    public void setContestants(Set<Contestant> contestants) {
         this.contestants = contestants;
     }
 
-    public void setLotteryItems(Collection<LotteryItem> lotteryItems) {
+    public void setLotteryItems(Set<LotteryItem> lotteryItems) {
         this.lotteryItems = lotteryItems;
     }
 

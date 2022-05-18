@@ -1,13 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.config;
 
-import com.sogetirockstars.sogetipaintinglotteryserver.model.Address;
-import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
-import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
-import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
-import com.sogetirockstars.sogetipaintinglotteryserver.repository.AddressRepository;
-import com.sogetirockstars.sogetipaintinglotteryserver.repository.ContestantRepository;
-import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
-import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.*;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.*;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -29,6 +23,7 @@ public class MockDataConfig {
     private List<Address> addresses;
     private List<Contestant> contestants;
     private List<Lottery> lotteries;
+    private List<Winner> winners;
 
     @Autowired
     public MockDataConfig(PhotoService photoService) {
@@ -37,18 +32,35 @@ public class MockDataConfig {
 
 
     @Bean
-    CommandLineRunner mockData(AddressRepository addrRepo, ContestantRepository contRepo, LotteryItemRepository lottRepo, LotteryRepository lotteryRepo) {
+    CommandLineRunner mockData(AddressRepository addrRepo, ContestantRepository contRepo, LotteryItemRepository lottRepo, LotteryRepository lotteryRepo, WinnerRepository winnerRepo) {
         return (String[] args) -> {
             lotteries = fakeLotteries();
             lotteryItems = fakeLotteryItems(lotteries);
             addresses = fakeAddresses();
             contestants = fakeContestants(addresses);
+            winners = fakeWinners(contestants, lotteryItems, lotteries);
 
             lotteryRepo.saveAllAndFlush(lotteries);
             lottRepo.saveAllAndFlush(lotteryItems).stream().forEach(i -> updatePictureUrl(i, lottRepo));
             addrRepo.saveAllAndFlush(addresses);
             contRepo.saveAllAndFlush(contestants);
+            winnerRepo.saveAllAndFlush(winners);
         };
+    }
+
+    private List<Winner> fakeWinners(List<Contestant> contestants, List<LotteryItem> lotteryItems, List<Lottery> lotterys) {
+        List<Winner> winners = List.of(
+                new Winner(),
+                new Winner(),
+                new Winner()
+        );
+        for (int i = 0; i < winners.size(); i++) {
+            winners.get(i).setLottery(lotterys.get(i));
+            winners.get(i).setLotteryItem(lotteryItems.get(i));
+            winners.get(i).setContestant(contestants.get(i));
+            winners.get(i).setPlacement(i);
+        }
+        return winners;
     }
 
     private List<Lottery> fakeLotteries() {
@@ -82,11 +94,11 @@ public class MockDataConfig {
 
     private List<LotteryItem> fakeLotteryItems(List<Lottery> lotteries) {
         return List.of(
-                new LotteryItem(1, "", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(1)),
-                new LotteryItem(2, "", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(0)),
-                new LotteryItem(3, "", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(2)),
-                new LotteryItem(4, "", "David", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
-                new LotteryItem(5, "", "Mona lisa", "Da vinci", "10x10m", "wood", "999.999.999kr", "oil")
+                new LotteryItem("", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(1)),
+                new LotteryItem("", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(0)),
+                new LotteryItem("", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(2)),
+                new LotteryItem("", "David", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
+                new LotteryItem("", "Mona lisa", "Da vinci", "10x10m", "wood", "999.999.999kr", "oil")
         );
     }
 

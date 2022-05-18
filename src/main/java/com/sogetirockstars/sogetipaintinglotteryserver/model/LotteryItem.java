@@ -14,12 +14,6 @@ public class LotteryItem {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id; // Internal object id;
 
-    @ManyToOne
-    @JoinColumn(name = "lottery_items_id")
-    @JsonBackReference
-    private Lottery lotteryItems;
-
-    private Integer lotteryId; // Visible to users
 
     // private String pictureUrl;
     private String itemName;
@@ -29,14 +23,19 @@ public class LotteryItem {
     private String value; // String so we can store currency and formatting for now.
     private String technique;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lottery_id")
+    private Lottery lottery;
 
-    public Lottery getLotteryItems() {
-        return lotteryItems;
+    @JsonBackReference
+    public Lottery getLottery() {
+        return lottery;
     }
 
-    public void setLotteryItems(Lottery lotteryItems) {
-        this.lotteryItems = lotteryItems;
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
     }
+
 
     public LotteryItem() {
     }
@@ -46,9 +45,8 @@ public class LotteryItem {
         this.itemName = itemName;
     }
 
-    public LotteryItem(int lotteryId, String pictureUrl, String itemName, String artistName,
+    public LotteryItem(String pictureUrl, String itemName, String artistName,
                        String size, String frameDescription, String value, String technique) {
-        this.lotteryId = lotteryId;
         // this.pictureUrl = pictureUrl;
         this.itemName = itemName;
         this.artistName = artistName;
@@ -58,28 +56,19 @@ public class LotteryItem {
         this.technique = technique;
     }
 
-    public LotteryItem(int lotteryId, String pictureUrl, String itemName, String artistName,
-                       String size, String frameDescription, String value, String technique, Lottery lotteryItems) {
-        this.lotteryId = lotteryId;
+    public LotteryItem(String pictureUrl, String itemName, String artistName,
+                       String size, String frameDescription, String value, String technique, Lottery lottery) {
         this.itemName = itemName;
         this.artistName = artistName;
         this.size = size;
         this.frameDescription = frameDescription;
         this.value = value;
         this.technique = technique;
-        this.lotteryItems = lotteryItems;
+        this.lottery = lottery;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public Integer getLotteryId() {
-        return lotteryId;
-    }
-
-    public void setLotteryId(Integer lotteryId) {
-        this.lotteryId = lotteryId;
     }
 
     // public String getPictureUrl() {

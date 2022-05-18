@@ -31,6 +31,22 @@ public class LotteryService {
         return repository.save(lottery);
     }
 
+    public Lottery update(Lottery newLottery) throws IdException {
+        assertExists(newLottery.getId());
+        Lottery originalLottery = repository.getById(newLottery.getId());
+        return repository.save(mergeLotterys(originalLottery, newLottery));
+    }
+
+    private Lottery mergeLotterys(Lottery origItem, Lottery newItem) {
+        if (newItem.getTitle() != null)
+            origItem.setTitle(newItem.getTitle());
+        if (newItem.getLotteryItems() != null)
+            origItem.setLotteryItems(newItem.getLotteryItems());
+        if (newItem.getContestants() != null)
+            origItem.setContestants(newItem.getContestants());
+        return origItem;
+    }
+
     public boolean delete(Long id) throws IdException {
         assertExists(id);
         repository.deleteById(id);
