@@ -1,5 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 /**
@@ -22,7 +24,34 @@ public class Contestant {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    public Contestant() {}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lottery_id")
+    private Lottery lottery;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "winner_id")
+    private Winner winner;
+
+    
+    public Winner getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Winner winner) {
+        this.winner = winner;
+    }
+
+    @JsonBackReference
+    public Lottery getLottery() {
+        return lottery;
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
+    }
+
+    public Contestant() {
+    }
 
     public Contestant(String name, Address address, String employeeId, String teleNumber, String email) {
         this.name = name;
@@ -30,6 +59,15 @@ public class Contestant {
         this.email = email;
         this.employeeId = employeeId;
         this.teleNumber = teleNumber;
+    }
+
+    public Contestant(String name, Address address, String employeeId, String teleNumber, String email, Lottery lottery) {
+        this.employeeId = employeeId;
+        this.name = name;
+        this.email = email;
+        this.teleNumber = teleNumber;
+        this.address = address;
+        this.lottery = lottery;
     }
 
     public void setId(Long id) {
@@ -80,6 +118,7 @@ public class Contestant {
     //     return address.toString();
     // }
 
+    @JsonBackReference
     public Address getAddress() {
         return address;
     }

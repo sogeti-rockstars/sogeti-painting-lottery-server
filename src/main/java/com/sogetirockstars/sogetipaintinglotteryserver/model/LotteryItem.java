@@ -1,5 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 /**
@@ -11,7 +13,7 @@ public class LotteryItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id; // Internal object id;
-    private Integer lotteryId; // Visible to users
+
 
     // private String pictureUrl;
     private String itemName;
@@ -21,6 +23,20 @@ public class LotteryItem {
     private String value; // String so we can store currency and formatting for now.
     private String technique;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lottery_id")
+    private Lottery lottery;
+
+    @JsonBackReference
+    public Lottery getLottery() {
+        return lottery;
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
+    }
+
+
     public LotteryItem() {
     }
 
@@ -29,9 +45,8 @@ public class LotteryItem {
         this.itemName = itemName;
     }
 
-    public LotteryItem(int lotteryId, String pictureUrl, String itemName, String artistName,
+    public LotteryItem(String pictureUrl, String itemName, String artistName,
                        String size, String frameDescription, String value, String technique) {
-        this.lotteryId = lotteryId;
         // this.pictureUrl = pictureUrl;
         this.itemName = itemName;
         this.artistName = artistName;
@@ -41,16 +56,19 @@ public class LotteryItem {
         this.technique = technique;
     }
 
+    public LotteryItem(String pictureUrl, String itemName, String artistName,
+                       String size, String frameDescription, String value, String technique, Lottery lottery) {
+        this.itemName = itemName;
+        this.artistName = artistName;
+        this.size = size;
+        this.frameDescription = frameDescription;
+        this.value = value;
+        this.technique = technique;
+        this.lottery = lottery;
+    }
+
     public Long getId() {
         return id;
-    }
-
-    public Integer getLotteryId() {
-        return lotteryId;
-    }
-
-    public void setLotteryId(Integer lotteryId) {
-        this.lotteryId = lotteryId;
     }
 
     // public String getPictureUrl() {
