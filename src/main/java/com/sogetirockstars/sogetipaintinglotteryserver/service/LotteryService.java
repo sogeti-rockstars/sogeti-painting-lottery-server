@@ -47,7 +47,7 @@ public class LotteryService {
             lottery = this.addAllContestantsToLottery(lottery);
 
         List<Contestant> contestants = lottery.getContestants();
-        Contestant winner = contestants.get((int) (Math.random() * (contestants.size() - 1 + 1)));
+        Contestant winner = contestants.get((int) (Math.random() * (contestants.size())));
         Winner newWinner = new Winner(lottery, winner,
                 winnerService.getAllByLotteryId(lottery.getId()).size(),
                 lotteryItemService.getRandomItem());
@@ -59,7 +59,7 @@ public class LotteryService {
             lottery = this.addAllContestantsToLottery(lottery);
 
         List<Contestant> contestants = lottery.getContestants();
-        Contestant winner = contestants.get((int) (Math.random() * (contestants.size() - 1 + 1)));
+        Contestant winner = contestants.get((int) (Math.random() * (contestants.size())));
         Winner newWinner = new Winner(lottery, winner,
                 winnerService.getAllByLotteryId(lottery.getId()).size());
         return winnerService.add(newWinner);
