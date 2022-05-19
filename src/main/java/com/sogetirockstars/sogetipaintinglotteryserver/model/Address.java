@@ -8,19 +8,19 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
-    private String addressStreetName;
-    private String addressNumber;
-    private String addressZipCode;
-    private String addressCity;
+    private String streetName;
+    private String streetNumber;
+    private String zipCode;
+    private String city;
 
     public Address() {
     }
 
-    public Address(String addressStreetName, String addressNumber, String addressZipCode, String addressCity) {
-        this.addressStreetName = addressStreetName;
-        this.addressNumber = addressNumber;
-        this.addressZipCode = addressZipCode;
-        this.addressCity = addressCity;
+    public Address(String streetName, String streetNumber, String zipCode, String city) {
+        this.streetName = streetName;
+        this.streetNumber = streetNumber;
+        this.zipCode = zipCode;
+        this.city = city;
     }
 
     public long getId() {
@@ -30,37 +30,37 @@ public class Address {
     public void setId(long id) {
         this.id = id;
     }
-    
 
-    public String getAddressStreetName() {
-        return addressStreetName;
+    public String getStreetName() {
+        return streetName;
     }
 
-    public void setAddressStreetName(String addressStreetName) {
-        this.addressStreetName = addressStreetName;
+    public void setStreetName(String streetName) {
+        this.streetName = streetName;
     }
 
-    public String getAddressNumber() {
-        return addressNumber;
+    public String getStreetNumber() {
+        return streetNumber;
     }
 
-    public void setAddressNumber(String addressNumber) {
-        this.addressNumber = addressNumber;
+    public void setStreetNumber(String streetNumber) {
+        this.streetNumber = streetNumber;
     }
 
-    public String getAddressZipCode() {
-        return addressZipCode;
+    public String getZipCode() {
+        return zipCode;
     }
 
-    public void setAddressZipCode(String addressZipCode) {
-        this.addressZipCode = addressZipCode;
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 
-    public String getAddressCity() {
-        return addressCity;
+    public String getCity() {
+        return city;
     }
 
-    public void setAddressCity(String addressCity) {
-        this.addressCity = addressCity;
+    public void setCity(String city) {
+        this.city = city;
     }
+
 }

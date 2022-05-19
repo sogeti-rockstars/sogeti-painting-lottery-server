@@ -1,5 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 /**
@@ -8,31 +10,64 @@ import javax.persistence.*;
 @Entity
 @Table
 public class Contestant {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
     private String employeeId;
     private String name;
     private String email;
     private String teleNumber;
+
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
 
-    public Address getAddress() {
-        return address;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lottery_id")
+    private Lottery lottery;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "winner_id")
+    private Winner winner;
+
+    
+    public Winner getWinner() {
+        return winner;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setWinner(Winner winner) {
+        this.winner = winner;
+    }
+
+    @JsonBackReference
+    public Lottery getLottery() {
+        return lottery;
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
     }
 
     public Contestant() {
     }
 
-    public Contestant(String name, String address) {
+    public Contestant(String name, Address address, String employeeId, String teleNumber, String email) {
         this.name = name;
-        // this.address = address;
+        this.address = address;
+        this.email = email;
+        this.employeeId = employeeId;
+        this.teleNumber = teleNumber;
+    }
+
+    public Contestant(String name, Address address, String employeeId, String teleNumber, String email, Lottery lottery) {
+        this.employeeId = employeeId;
+        this.name = name;
+        this.email = email;
+        this.teleNumber = teleNumber;
+        this.address = address;
+        this.lottery = lottery;
     }
 
     public void setId(Long id) {
@@ -80,6 +115,15 @@ public class Contestant {
     }
 
     // public String getAddress() {
-    //     return address;
+    //     return address.toString();
     // }
+
+    @JsonBackReference
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 }
