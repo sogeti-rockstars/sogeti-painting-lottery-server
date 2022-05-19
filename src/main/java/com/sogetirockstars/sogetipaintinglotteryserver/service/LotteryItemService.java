@@ -31,7 +31,8 @@ public class LotteryItemService {
 
     public LotteryItem getRandomItem() throws IdException {
         int size = this.getAll().size();
-        long id = (long) (Math.random() * (size - 1 + 1));
+        long id = (long) (Math.random() * (size));
+        System.out.println("x\n \n x \n \n \n xx \n \n \n \n x \n" + id);
         List<LotteryItem> lotteryItems = this.getAll();
         assertExists(lotteryItems.get((int) id).getId());
         return lotteryItems.get((int) id);

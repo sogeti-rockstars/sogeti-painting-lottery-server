@@ -25,7 +25,7 @@ public class Winner {
     }
 
 
-    public Winner(Lottery lottery, Contestant contestant, int placement, LotteryItem lotteryItem) {
+    public Winner(Lottery lottery, Contestant contestant, Integer placement, LotteryItem lotteryItem) {
         this.lottery = lottery;
         this.contestant = contestant;
         this.placement = placement;

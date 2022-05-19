@@ -45,8 +45,6 @@ public class MockDataConfig {
             lottRepo.saveAllAndFlush(lotteryItems).stream().forEach(i -> updatePictureUrl(i, lottRepo));
             addrRepo.saveAllAndFlush(addresses);
             contRepo.saveAllAndFlush(contestants);
-            lotteries = fakeLotteries2(lotteries, contestants);
-            lotteryRepo.saveAllAndFlush(lotteries);
             winnerRepo.saveAllAndFlush(winners);
         };
     }
@@ -64,16 +62,6 @@ public class MockDataConfig {
             winners.get(i).setPlacement(i);
         }
         return winners;
-    }
-
-    private List<Lottery> fakeLotteries2(List<Lottery> lotteries, List<Contestant> contestants) {
-        for (int i = 0; i < lotteries.size(); i++) {
-//            for (int j = i; j < 3; j++) {
-//                lotteries.get(i).addContestants(contestants.get(j));
-//            }
-            
-        }
-        return lotteries;
     }
 
     private List<Lottery> fakeLotteries() {
