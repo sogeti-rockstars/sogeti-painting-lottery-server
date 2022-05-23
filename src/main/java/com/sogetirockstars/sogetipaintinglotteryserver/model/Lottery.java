@@ -17,7 +17,11 @@ public class Lottery {
     @OneToMany(mappedBy = "lottery")
     private List<LotteryItem> lotteryItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "lottery")
+    @ManyToMany
+    @JoinTable(
+            name = "lottery_contestants",
+            joinColumns = @JoinColumn(name = "lottery_id"),
+            inverseJoinColumns = @JoinColumn(name = "contestant_id"))
     private List<Contestant> contestants = new ArrayList<>();
 
     @OneToMany(mappedBy = "lottery")

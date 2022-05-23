@@ -26,12 +26,23 @@ public class LotteryService {
         this.lotteryItemService = lotteryItemService;
     }
 
-    public Lottery addAllContestantsToLottery(Lottery lottery) {
-        lottery.setContestants(contestantService.getAll());
-        return lottery;
+    public Lottery addAllContestantsToLottery(Lottery newLottery) throws IdException {
+        newLottery.setContestants(contestantService.getAll());
+        assertExists(newLottery.getId());
+        Lottery originalLottery = repository.getById(newLottery.getId());
+        return repository.save(mergeLotterys(originalLottery, newLottery));
     }
 
-    public Winner spinTheWheelSpecificItem(Lottery lottery, LotteryItem lotteryItem) {
+    public Lottery addContestantToLottery(Lottery newLottery, Contestant contestant) throws IdException {
+        List<Contestant> newContestants = newLottery.getContestants();
+        newContestants.add(contestant);
+        newLottery.setContestants(newContestants);
+        assertExists(newLottery.getId());
+        Lottery originalLottery = repository.getById(newLottery.getId());
+        return repository.save(mergeLotterys(originalLottery, newLottery));
+    }
+
+    public Winner spinTheWheelSpecificItem(Lottery lottery, LotteryItem lotteryItem) throws IdException {
         if (lottery.getContestants().size() == 0)
             lottery = this.addAllContestantsToLottery(lottery);
         List<Contestant> contestants = lottery.getContestants();
