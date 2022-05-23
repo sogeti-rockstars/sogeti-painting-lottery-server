@@ -52,18 +52,15 @@ public class LotteryController {
     public ResponseEntity<?> getLotteryList() {
         List<Map<String, ?>> resp = new LinkedList<>();
 
-        lotteryService
-            .getAll()
-            .stream()
-            .forEach(lottery -> {
-                Map<String, String> respItem = new HashMap<>();
-                respItem.put("id", lottery.getId().toString());
-                respItem.put("title", lottery.getTitle());
-                Date date = lottery.getDate();
-                String dateUnix = (date != null) ? String.valueOf(date.getTime()) : "0";
-                respItem.put("date", dateUnix);
-                resp.add(respItem);
-            });
+        for (Lottery lottery : lotteryService.getAll()) {
+            Map<String, String> respItem = new HashMap<>();
+            respItem.put("id", lottery.getId().toString());
+            respItem.put("title", lottery.getTitle());
+            Date date = lottery.getDate();
+            String dateUnix = (date != null) ? String.valueOf(date.getTime()) : "0";
+            respItem.put("date", dateUnix);
+            resp.add(respItem);
+        }
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
