@@ -27,9 +27,15 @@ public class LotteryController {
     /**
      * Returns all lottery
      */
+
     @GetMapping
     public List<Lottery> getAll() {
         return lotteryService.getAll();
+    }
+
+    @GetMapping(value = "allSmall")
+    public List<LotteryService.LotterySmall> getAllSmall() {
+        return lotteryService.getAllSmall();
     }
 
     /**
@@ -45,6 +51,8 @@ public class LotteryController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+
 
     @GetMapping(value = "spin-with-item/{id}")
     public ResponseEntity<?> spinTheWheelRandomItem(@PathVariable Long id) {
