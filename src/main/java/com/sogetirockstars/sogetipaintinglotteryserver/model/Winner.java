@@ -18,6 +18,7 @@ public class Winner {
     private Contestant contestant;
 
     private Integer placement;
+
     @OneToOne
     private LotteryItem lotteryItem;
 

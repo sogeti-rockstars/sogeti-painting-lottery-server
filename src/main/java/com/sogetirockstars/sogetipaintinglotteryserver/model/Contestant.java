@@ -3,6 +3,7 @@ package com.sogetirockstars.sogetipaintinglotteryserver.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Contestant
@@ -24,15 +25,14 @@ public class Contestant {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lottery_id")
-    private Lottery lottery;
+    @ManyToMany(mappedBy = "contestants")
+    private List<Lottery> lotteries;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "winner_id")
     private Winner winner;
 
-    
+
     public Winner getWinner() {
         return winner;
     }
@@ -42,13 +42,14 @@ public class Contestant {
     }
 
     @JsonBackReference
-    public Lottery getLottery() {
-        return lottery;
+    public List<Lottery> getLotteries() {
+        return lotteries;
     }
 
-    public void setLottery(Lottery lottery) {
-        this.lottery = lottery;
+    public void setLotteries(List<Lottery> lotteries) {
+        this.lotteries = lotteries;
     }
+
 
     public Contestant() {
     }
@@ -67,7 +68,6 @@ public class Contestant {
         this.email = email;
         this.teleNumber = teleNumber;
         this.address = address;
-        this.lottery = lottery;
     }
 
     public void setId(Long id) {
