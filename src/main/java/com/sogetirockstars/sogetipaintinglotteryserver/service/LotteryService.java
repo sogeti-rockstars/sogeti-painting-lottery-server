@@ -107,7 +107,21 @@ public class LotteryService {
         assertExists(id);
         return repository.findById(id).get();
     }
+  
+    public List<LotteryItem> getLotteryItems(Long id) throws IdException {
+        assertExists(id);
+        return repository.findById(id).get().getLotteryItems();
+    }
 
+    public List<Contestant> getContestants(Long id) throws IdException {
+        assertExists(id);
+        return repository.findById(id).get().getContestants();
+    }
+
+    public List<Winner> getWinners(Long id) throws IdException {
+        assertExists(id);
+        return repository.findById(id).get().getWinners();
+    }
 
     public Lottery add(Lottery lottery) {
         lottery.setId(null);
