@@ -1,7 +1,15 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.config;
 
-import com.sogetirockstars.sogetipaintinglotteryserver.model.*;
-import com.sogetirockstars.sogetipaintinglotteryserver.repository.*;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.Address;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.AddressRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.ContestantRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,7 +18,6 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
