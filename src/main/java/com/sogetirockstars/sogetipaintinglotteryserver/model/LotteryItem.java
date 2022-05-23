@@ -27,7 +27,7 @@ public class LotteryItem {
     @JoinColumn(name = "lottery_id")
     private Lottery lottery;
 
-    @JsonBackReference
+    @JsonBackReference(value = "lottery-item")
     public Lottery getLottery() {
         return lottery;
     }

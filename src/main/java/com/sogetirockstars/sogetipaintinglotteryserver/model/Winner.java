@@ -47,7 +47,7 @@ public class Winner {
         this.id = id;
     }
 
-    @JsonBackReference
+    @JsonBackReference(value = "lottery-winner")
     public Lottery getLottery() {
         return lottery;
     }
@@ -60,7 +60,7 @@ public class Winner {
         this.lottery = lottery;
     }
 
-    @JsonBackReference
+    @JsonBackReference(value = "winner-contestant")
     public Contestant getContestant() {
         return contestant;
     }

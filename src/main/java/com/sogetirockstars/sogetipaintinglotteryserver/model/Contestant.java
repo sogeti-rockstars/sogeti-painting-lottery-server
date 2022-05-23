@@ -41,7 +41,6 @@ public class Contestant {
         this.winner = winner;
     }
 
-    @JsonBackReference
     public List<Lottery> getLotteries() {
         return lotteries;
     }
