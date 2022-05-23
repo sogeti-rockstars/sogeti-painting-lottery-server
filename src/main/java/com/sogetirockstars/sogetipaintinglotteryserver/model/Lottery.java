@@ -17,6 +17,11 @@ public class Lottery {
     @OneToMany(mappedBy = "lottery")
     private List<LotteryItem> lotteryItems = new ArrayList<>();
 
+    //Det blir oändliga loopar av två klasser som refererar till varandra
+    //och man kan inte lägga @JsonBackReference på Collections.
+    //Rätt sätt att göra detta är att göra "JSON view profiles"
+    //men det orkar jag inte just nu... Kolla på länken för mer info
+    //https://stackoverflow.com/questions/67886252/spring-boot-jpa-infinite-loop-many-to-many
     @ManyToMany
     @JoinTable(
             name = "lottery_contestants",
@@ -29,7 +34,7 @@ public class Lottery {
 
     private Date date;
     private String title;
-    
+
     public List<Contestant> getContestants() {
         return contestants;
     }

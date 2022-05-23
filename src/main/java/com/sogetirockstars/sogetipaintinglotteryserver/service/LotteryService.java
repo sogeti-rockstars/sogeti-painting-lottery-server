@@ -33,7 +33,8 @@ public class LotteryService {
         return repository.save(mergeLotterys(originalLottery, newLottery));
     }
 
-    public Lottery addContestantToLottery(Lottery newLottery, Contestant contestant) throws IdException {
+    public Lottery addContestantToLottery(Long id, Contestant contestant) throws IdException {
+        Lottery newLottery = repository.getById(id);
         List<Contestant> newContestants = newLottery.getContestants();
         newContestants.add(contestant);
         newLottery.setContestants(newContestants);

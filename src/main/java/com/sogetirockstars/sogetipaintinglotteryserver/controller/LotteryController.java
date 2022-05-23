@@ -148,10 +148,10 @@ public class LotteryController {
     }
 
     @PutMapping(value = "addContestant/{id}")
-    public ResponseEntity<?> addContestantToLottery(@PathVariable Long id, @RequestBody Lottery lottery, @RequestBody Contestant contestant) {
+    public ResponseEntity<?> addContestantToLottery(@PathVariable Long id, @RequestBody Contestant contestant) {
         try {
-            lottery.setId(id);
-            return new ResponseEntity<>(lotteryService.addContestantToLottery(lottery, contestant), HttpStatus.OK);
+
+            return new ResponseEntity<>(lotteryService.addContestantToLottery(id, contestant), HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

@@ -1,6 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
@@ -25,7 +26,14 @@ public class Contestant {
     @JoinColumn(name = "address_id")
     private Address address;
 
+
+    //Det blir oändliga loopar av två klasser som refererar till varandra
+    //och man kan inte lägga @JsonBackReference på Collections.
+    //Rätt sätt att göra detta är att göra "JSON view profiles"
+    //men det orkar jag inte just nu... Kolla på länken för mer info
+    //https://stackoverflow.com/questions/67886252/spring-boot-jpa-infinite-loop-many-to-many
     @ManyToMany(mappedBy = "contestants")
+    @JsonIgnore
     private List<Lottery> lotteries;
 
     @ManyToOne(fetch = FetchType.LAZY)
