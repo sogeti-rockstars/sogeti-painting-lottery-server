@@ -1,5 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
@@ -9,7 +10,10 @@ import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryReposit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LotteryService {
@@ -69,11 +73,41 @@ public class LotteryService {
         return repository.findAll();
     }
 
+    public class LotterySmall {
+        @JsonManagedReference
+        private Long id;
+        @JsonManagedReference
+        private String title;
+        @JsonManagedReference
+        private Date date;
+        public LotterySmall() {
+        }
+        public void setId(Long id) {
+            this.id = id;
+        }
+        public void setTitle(String title) {
+            this.title = title;
+        }
+        public void setDate(Date date) {
+            this.date = date;
+        }
+    }
+    public List<LotterySmall> getAllSmall() {
+        return repository.findAll().stream().
+                map(lottery -> {
+                    LotterySmall smallLottery = new LotterySmall();
+                    smallLottery.setId(lottery.getId());
+                    smallLottery.setTitle(lottery.getTitle());
+                    smallLottery.setDate(lottery.getDate());
+                    return smallLottery;
+                }).collect(Collectors.toList());
+    }
+
     public Lottery get(Long id) throws IdException {
         assertExists(id);
         return repository.findById(id).get();
     }
-
+  
     public List<LotteryItem> getLotteryItems(Long id) throws IdException {
         assertExists(id);
         return repository.findById(id).get().getLotteryItems();
