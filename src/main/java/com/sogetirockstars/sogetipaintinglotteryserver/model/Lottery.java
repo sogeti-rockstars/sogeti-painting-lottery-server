@@ -29,13 +29,12 @@ public class Lottery {
 
     private Date date;
     private String title;
-
-    @JsonManagedReference
+    
     public List<Contestant> getContestants() {
         return contestants;
     }
 
-    @JsonManagedReference
+    @JsonManagedReference(value = "lottery-item")
     public List<LotteryItem> getLotteryItems() {
         return lotteryItems;
     }
