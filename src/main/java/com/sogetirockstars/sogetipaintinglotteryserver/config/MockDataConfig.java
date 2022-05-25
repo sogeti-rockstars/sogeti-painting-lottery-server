@@ -10,6 +10,7 @@ import com.sogetirockstars.sogetipaintinglotteryserver.repository.ContestantRepo
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.service.LotteryService;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+// import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +37,7 @@ public class MockDataConfig {
     private List<Winner> winners;
 
     @Autowired
-    public MockDataConfig(PhotoService photoService) {
+    public MockDataConfig(PhotoService photoService, LotteryService lotteryService) {
         this.photoService = photoService;
     }
 
@@ -43,22 +45,31 @@ public class MockDataConfig {
     CommandLineRunner mockData(
         AddressRepository addrRepo,
         ContestantRepository contRepo,
-        LotteryItemRepository lottRepo,
+        LotteryItemRepository lottItemsRepo,
         LotteryRepository lotteryRepo,
         WinnerRepository winnerRepo
     ) {
         return (String[] args) -> {
             addresses = fakeAddresses();
-            contestants = fakeContestants(addresses);
             lotteries = fakeLotteries();
+            contestants = fakeContestants(addresses);
             lotteryItems = fakeLotteryItems(lotteries);
             winners = fakeWinners(contestants, lotteryItems, lotteries);
 
             lotteryRepo.saveAllAndFlush(lotteries);
-            lottRepo.saveAllAndFlush(lotteryItems).stream().forEach(i -> updatePictureUrl(i, lottRepo));
+            lottItemsRepo.saveAllAndFlush(lotteryItems).stream().forEach(i -> updatePictureUrl(i, lottItemsRepo));
             addrRepo.saveAllAndFlush(addresses);
             contRepo.saveAllAndFlush(contestants);
             winnerRepo.saveAllAndFlush(winners);
+
+            lotteries.get(0).setContestants(contestants.stream().limit(10).toList());
+            lotteries.get(1).setContestants(contestants.stream().limit(10).toList());
+            lotteries.get(2).setContestants(contestants.stream().limit(10).toList());
+            lotteries.get(3).setContestants(contestants.stream().limit(10).toList());
+            lotteries.get(4).setContestants(contestants.stream().limit(5).toList());
+            lotteries.get(5).setContestants(contestants);
+
+            lotteryRepo.saveAllAndFlush(lotteries);
         };
     }
 
@@ -74,19 +85,16 @@ public class MockDataConfig {
     }
 
     private List<Lottery> fakeLotteries() {
-        List<Lottery> lotteries = List.of(new Lottery(), new Lottery(), new Lottery());
-        for (int i = 0; i < lotteries.size(); i++) {
-            lotteries.get(i).setTitle("norrkonst 202" + i);
-        }
-        return lotteries;
+        return List.of(22, 21, 20, 19, 18, 17, 16, 15).stream().map(ye -> new Lottery("Norrkonst 20" + ye)).toList();
     }
 
     private List<Contestant> fakeContestants(List<Address> fakeAddresses) {
+        List<Lottery> lotteries = new LinkedList<>();
         List<Contestant> contestants = new LinkedList<>();
 
         // IntStream
-        //         .range(0, 100)
-        //         .forEach(i -> {
+        // .range(0, 100)
+        // .forEach(i -> {
         contestants.addAll(
             List.of(
                 new Contestant("Alice Alisson", null, "00001", "070 - 0001 123", "email01@example.com"),
@@ -108,6 +116,7 @@ public class MockDataConfig {
             )
         );
         // });
+
         for (int i = 0; i < contestants.size(); i++) contestants.get(i).setAddress(fakeAddresses.get(i % fakeAddresses.size()));
         return contestants;
     }
