@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,20 +33,28 @@ public class Contestant {
     //Rätt sätt att göra detta är att göra "JSON view profiles"
     //men det orkar jag inte just nu... Kolla på länken för mer info
     //https://stackoverflow.com/questions/67886252/spring-boot-jpa-infinite-loop-many-to-many
-    @ManyToMany(mappedBy = "contestants")
+    @ManyToMany(mappedBy = "contestants", cascade = CascadeType.DETACH)
     @JsonIgnore
     private List<Lottery> lotteries;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "winner_id")
-    private Winner winner;
+    @OneToMany(mappedBy = "contestant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Winner> winner;
 
 
-    public Winner getWinner() {
+    private List<Winner> getWinner() {
         return winner;
     }
 
-    public void setWinner(Winner winner) {
+
+    private List<Long> getWinnerId() {
+        List<Long> ids = new ArrayList<Long>();
+        for (int i = 0; i < winner.size(); i++) {
+            ids.add(winner.get(i).getId());
+        }
+        return ids;
+    }
+
+    public void setWinner(List<Winner> winner) {
         this.winner = winner;
     }
 

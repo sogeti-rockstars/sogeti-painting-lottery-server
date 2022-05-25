@@ -19,8 +19,9 @@ public class Winner {
 
     private Integer placement;
 
-    @OneToOne
+    @OneToOne(mappedBy = "winner")
     private LotteryItem lotteryItem;
+
 
     public Winner() {
     }
@@ -81,6 +82,7 @@ public class Winner {
         this.placement = placement;
     }
 
+    @JsonBackReference(value = "winner-item")
     public LotteryItem getLotteryItem() {
         return lotteryItem;
     }

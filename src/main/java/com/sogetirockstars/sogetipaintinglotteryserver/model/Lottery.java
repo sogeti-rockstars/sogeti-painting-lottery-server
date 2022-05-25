@@ -14,7 +14,7 @@ public class Lottery {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @OneToMany(mappedBy = "lottery")
+    @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL)
     private List<LotteryItem> lotteryItems = new ArrayList<>();
 
     //Det blir oändliga loopar av två klasser som refererar till varandra
@@ -29,7 +29,7 @@ public class Lottery {
             inverseJoinColumns = @JoinColumn(name = "contestant_id"))
     private List<Contestant> contestants = new ArrayList<>();
 
-    @OneToMany(mappedBy = "lottery")
+    @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Winner> winners = new ArrayList<>();
 
     private Date date;
