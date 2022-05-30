@@ -1,5 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
+import com.sogetirockstars.sogetipaintinglotteryserver.exception.AllContestantsTakenException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
@@ -9,6 +10,7 @@ import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryReposit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -66,12 +68,30 @@ public class LotteryService {
         return winnerService.add(newWinner);
     }
 
-    public Winner spinTheWheelNoItem(Lottery lottery) throws IdException {
+    public Winner spinTheWheelNoItem(Lottery lottery) throws IdException, AllContestantsTakenException {
         if (lottery.getContestants().size() == 0)
             lottery = this.addAllContestantsToLottery(lottery);
 
         List<Contestant> contestants = lottery.getContestants();
-        Contestant winner = contestants.get((int) (Math.random() * (contestants.size())));
+
+        boolean checkWinners = false;
+        int randomNumber = 0;
+        while (checkWinners == false) {
+            randomNumber = (int) (Math.random() * (contestants.size()));
+            List<Winner> currentWinners = winnerService.getAllByLotteryId(lottery.getId());
+            List<Long> winnerContestantIds = new ArrayList<>();
+            for (Winner winner :
+                    currentWinners) {
+                winnerContestantIds.add(winner.getContestantId());
+            }
+            if (!winnerContestantIds.contains(contestants.get(randomNumber).getId())) {
+                checkWinners = true;
+            }
+            if (currentWinners.size() >= contestants.size()) {
+                throw new AllContestantsTakenException("There are no contestants in lottery " + lottery.getId() + " which do not have a winner");
+            }
+        }
+        Contestant winner = contestants.get(randomNumber);
         Winner newWinner = new Winner(lottery, winner,
                 winnerService.getAllByLotteryId(lottery.getId()).size());
         return winnerService.add(newWinner);
