@@ -1,5 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
+import com.sogetirockstars.sogetipaintinglotteryserver.exception.AllContestantsTakenException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
@@ -87,7 +88,7 @@ public class LotteryController {
             Lottery lottery = lotteryService.get(id);
             Winner winner = lotteryService.spinTheWheelNoItem(lottery);
             return new ResponseEntity<>(winner, HttpStatus.OK);
-        } catch (IdException e) {
+        } catch (IdException | AllContestantsTakenException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
