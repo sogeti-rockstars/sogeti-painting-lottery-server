@@ -14,13 +14,11 @@ import java.util.List;
 public class WinnerService {
     private final WinnerRepository repository;
     private final ContestantService contestantService;
-    private final LotteryService lotteryService;
 
     @Autowired
-    public WinnerService(WinnerRepository repository, ContestantService contestantService, LotteryService lotteryService) {
+    public WinnerService(WinnerRepository repository, ContestantService contestantService) {
         this.repository = repository;
         this.contestantService = contestantService;
-        this.lotteryService = lotteryService;
     }
 
     public List<Winner> getAll() {
