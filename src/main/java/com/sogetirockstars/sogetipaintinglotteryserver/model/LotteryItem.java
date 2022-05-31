@@ -1,6 +1,5 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -32,7 +31,7 @@ public class LotteryItem {
     private Winner winner;
 
 
-    @JsonBackReference(value = "lottery-item")
+    @JsonManagedReference(value = "lottery-item")
     public Lottery getLottery() {
         return lottery;
     }
