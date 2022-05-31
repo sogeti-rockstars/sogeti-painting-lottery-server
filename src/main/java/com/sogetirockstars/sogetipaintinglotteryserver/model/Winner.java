@@ -1,6 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 
@@ -13,8 +14,8 @@ public class Winner {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lottery_id")
     private Lottery lottery;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "contestant_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "contestant_id", nullable = false)
     private Contestant contestant;
 
     private Integer placement;
@@ -82,7 +83,7 @@ public class Winner {
         this.placement = placement;
     }
 
-    @JsonBackReference(value = "winner-item")
+    @JsonManagedReference(value = "winner-item")
     public LotteryItem getLotteryItem() {
         return lotteryItem;
     }

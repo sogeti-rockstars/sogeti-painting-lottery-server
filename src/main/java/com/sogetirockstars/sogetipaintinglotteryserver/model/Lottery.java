@@ -1,6 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 public class Lottery {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @JsonView({JsonViewProfiles.Contestant.class, JsonViewProfiles.Lottery.class})
     private Long id;
 
     @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL)
@@ -27,6 +29,7 @@ public class Lottery {
             name = "lottery_contestants",
             joinColumns = @JoinColumn(name = "lottery_id"),
             inverseJoinColumns = @JoinColumn(name = "contestant_id"))
+    @JsonView(JsonViewProfiles.Lottery.class)
     private List<Contestant> contestants = new ArrayList<>();
 
     @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -39,7 +42,7 @@ public class Lottery {
         return contestants;
     }
 
-    @JsonBackReference(value = "lottery-item")
+    @JsonManagedReference(value = "lottery-item")
     public List<LotteryItem> getLotteryItems() {
         return lotteryItems;
     }

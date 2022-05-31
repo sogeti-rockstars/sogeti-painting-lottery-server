@@ -2,6 +2,7 @@ package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class Contestant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @JsonView({JsonViewProfiles.Contestant.class, JsonViewProfiles.Lottery.class})
     private Long id;
 
     private String employeeId;
@@ -33,6 +35,8 @@ public class Contestant {
     //Rätt sätt att göra detta är att göra "JSON view profiles"
     //men det orkar jag inte just nu... Kolla på länken för mer info
     //https://stackoverflow.com/questions/67886252/spring-boot-jpa-infinite-loop-many-to-many
+//    @JsonView(JsonViewProfiles.Contestant.class)
+//    @ManyToMany(mappedBy = "contestants")
     @ManyToMany(mappedBy = "contestants", cascade = CascadeType.DETACH)
     @JsonIgnore
     private List<Lottery> lotteries;

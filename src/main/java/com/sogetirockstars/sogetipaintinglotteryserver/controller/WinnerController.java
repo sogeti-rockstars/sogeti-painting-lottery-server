@@ -74,7 +74,7 @@ public class WinnerController {
      */
     @PostMapping
     public ResponseEntity<Winner> addNew(@RequestBody Winner winner) {
-        System.out.println("Adding winner " + winner.getContestant().getName() + " id: " + winner.getId());
+        System.out.println("Adding winner " + winner + " id: " + winner.getId());
         winner.setId(null);
         return ResponseEntity.ok().body(winnerService.add(winner));
     }
