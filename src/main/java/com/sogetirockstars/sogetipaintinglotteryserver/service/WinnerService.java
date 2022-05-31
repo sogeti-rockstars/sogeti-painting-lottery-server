@@ -1,6 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,12 @@ import java.util.List;
 @Service
 public class WinnerService {
     private final WinnerRepository repository;
+    private final ContestantService contestantService;
 
     @Autowired
-    public WinnerService(WinnerRepository repository) {
+    public WinnerService(WinnerRepository repository, ContestantService contestantService) {
         this.repository = repository;
+        this.contestantService = contestantService;
     }
 
     public List<Winner> getAll() {
@@ -30,6 +33,17 @@ public class WinnerService {
                 lotteryWinners.add(w);
         }
         return lotteryWinners;
+    }
+
+    public List<Contestant> getWinningContestantsByLotteryId(Long id) throws IdException {
+        List<Winner> winners = getAllByLotteryId(id);
+        List<Contestant> contestants = new ArrayList<>();
+        for (Winner w :
+                winners) {
+            Contestant newContestant = this.contestantService.get(w.getContestantId());
+            contestants.add(newContestant);
+        }
+        return contestants;
     }
 
     public Winner get(Long id) throws IdException {

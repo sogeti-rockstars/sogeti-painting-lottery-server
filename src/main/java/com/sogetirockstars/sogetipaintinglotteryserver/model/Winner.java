@@ -13,7 +13,7 @@ public class Winner {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lottery_id")
     private Lottery lottery;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "contestant_id")
     private Contestant contestant;
 
