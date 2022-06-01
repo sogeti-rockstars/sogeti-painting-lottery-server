@@ -1,18 +1,19 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "winner")
 public class Winner {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lottery_id")
-    private Lottery lottery;
+
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "lottery_id")
+    // private Lottery lottery;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "contestant_id")
     private Contestant contestant;
@@ -22,20 +23,14 @@ public class Winner {
     @OneToOne(mappedBy = "winner")
     private LotteryItem lotteryItem;
 
-
-    public Winner() {
-    }
-
+    public Winner() {}
 
     public Winner(Lottery lottery, Contestant contestant, Integer placement, LotteryItem lotteryItem) {
-        this.lottery = lottery;
         this.contestant = contestant;
         this.placement = placement;
-        this.lotteryItem = lotteryItem;
     }
 
     public Winner(Lottery lottery, Contestant contestant, Integer placement) {
-        this.lottery = lottery;
         this.contestant = contestant;
         this.placement = placement;
     }
@@ -46,19 +41,6 @@ public class Winner {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @JsonBackReference(value = "lottery-winner")
-    public Lottery getLottery() {
-        return lottery;
-    }
-
-    public Long getLotteryId() {
-        return lottery.getId();
-    }
-
-    public void setLottery(Lottery lottery) {
-        this.lottery = lottery;
     }
 
     @JsonBackReference(value = "winner-contestant")
@@ -82,7 +64,7 @@ public class Winner {
         this.placement = placement;
     }
 
-    @JsonBackReference(value = "winner-item")
+    // @JsonBackReference(value = "winner-item")
     public LotteryItem getLotteryItem() {
         return lotteryItem;
     }

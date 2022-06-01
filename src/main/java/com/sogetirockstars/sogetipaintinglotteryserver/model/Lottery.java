@@ -1,15 +1,15 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.*;
 
 @Entity(name = "Lottery")
 @Table(name = "lottery")
 public class Lottery {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -23,13 +23,12 @@ public class Lottery {
     //men det orkar jag inte just nu... Kolla på länken för mer info
     //https://stackoverflow.com/questions/67886252/spring-boot-jpa-infinite-loop-many-to-many
     @ManyToMany
-    @JoinTable(
-            name = "lottery_contestants",
-            joinColumns = @JoinColumn(name = "lottery_id"),
-            inverseJoinColumns = @JoinColumn(name = "contestant_id"))
+    @JoinTable(name = "lottery_contestants", joinColumns = @JoinColumn(name = "lottery_id"), inverseJoinColumns = @JoinColumn(name = "contestant_id"))
     private List<Contestant> contestants = new ArrayList<>();
 
-    @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL, orphanRemoval = true)
+    // @OneToMany(mappedBy = "", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany
     private List<Winner> winners = new ArrayList<>();
 
     private Date date;
@@ -44,8 +43,7 @@ public class Lottery {
         return lotteryItems;
     }
 
-    public Lottery() {
-    }
+    public Lottery() {}
 
     public List<Winner> getWinners() {
         return winners;

@@ -4,14 +4,14 @@ import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class WinnerService {
+
     private final WinnerRepository repository;
     private final ContestantService contestantService;
 
@@ -28,18 +28,17 @@ public class WinnerService {
     public List<Winner> getAllByLotteryId(Long id) {
         List<Winner> winners = this.getAll();
         List<Winner> lotteryWinners = new ArrayList<>();
-        for (Winner w : winners) {
-            if (w.getLottery().getId() == id)
-                lotteryWinners.add(w);
-        }
+        // for (Winner w : winners) {
+        //     if (w.getLottery().getId() == id)
+        //         lotteryWinners.add(w);
+        // }
         return lotteryWinners;
     }
 
     public List<Contestant> getWinningContestantsByLotteryId(Long id) throws IdException {
         List<Winner> winners = getAllByLotteryId(id);
         List<Contestant> contestants = new ArrayList<>();
-        for (Winner w :
-                winners) {
+        for (Winner w : winners) {
             Contestant newContestant = this.contestantService.get(w.getContestantId());
             contestants.add(newContestant);
         }
@@ -62,7 +61,6 @@ public class WinnerService {
         return repository.save(mergeWinners(origWinner, newWinner));
     }
 
-
     public boolean delete(Long id) throws IdException {
         assertExists(id);
         repository.deleteById(id);
@@ -70,19 +68,15 @@ public class WinnerService {
     }
 
     private void assertExists(Long id) throws IdException {
-        if (!repository.existsById(id))
-            throw new IdException("Winner with id " + id + " doesn't exist.");
+        if (!repository.existsById(id)) throw new IdException("Winner with id " + id + " doesn't exist.");
     }
 
     private Winner mergeWinners(Winner origWinner, Winner newWinner) {
-        if (newWinner.getContestant() != null)
-            origWinner.setContestant(newWinner.getContestant());
-        if (newWinner.getLottery() != null)
-            origWinner.setLottery(newWinner.getLottery());
-        if (newWinner.getLotteryItem() != null)
-            origWinner.setLotteryItem(newWinner.getLotteryItem());
-        if (newWinner.getPlacement() != null)
-            origWinner.setPlacement(newWinner.getPlacement());
+        if (newWinner.getContestant() != null) origWinner.setContestant(newWinner.getContestant());
+        // if (newWinner.getLottery() != null)
+        // origWinner.setLottery(newWinner.getLottery());
+        if (newWinner.getLotteryItem() != null) origWinner.setLotteryItem(newWinner.getLotteryItem());
+        if (newWinner.getPlacement() != null) origWinner.setPlacement(newWinner.getPlacement());
         return origWinner;
     }
 }

@@ -69,6 +69,8 @@ public class MockDataConfig {
             lotteries.get(4).setContestants(contestants.stream().limit(5).toList());
             lotteries.get(5).setContestants(contestants);
 
+            lotteries.get(0).setWinners(winners);
+
             lotteryRepo.saveAllAndFlush(lotteries);
         };
     }
@@ -76,7 +78,7 @@ public class MockDataConfig {
     private List<Winner> fakeWinners(List<Contestant> contestants, List<LotteryItem> lotteryItems, List<Lottery> lotterys) {
         List<Winner> winners = List.of(new Winner(), new Winner(), new Winner());
         for (int i = 0; i < winners.size(); i++) {
-            winners.get(i).setLottery(lotterys.get(i));
+            // winners.get(i).setLottery(lotterys.get(i));
             winners.get(i).setLotteryItem(lotteryItems.get(i));
             winners.get(i).setContestant(contestants.get(i));
             winners.get(i).setPlacement(i);
