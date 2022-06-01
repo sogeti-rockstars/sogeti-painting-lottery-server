@@ -43,6 +43,16 @@ public class LotteryService {
         return repository.save(mergeLotterys(originalLottery, newLottery));
     }
 
+    public Lottery addItemToLottery(Long id, LotteryItem lotteryItem) throws IdException {
+        Lottery newLottery = repository.getById(id);
+        List<LotteryItem> newItem = newLottery.getLotteryItems();
+        newItem.add(lotteryItem);
+        newLottery.setLotteryItems(newItem);
+        assertExists(newLottery.getId());
+        Lottery originalLottery = repository.getById(newLottery.getId());
+        return repository.save(mergeLotterys(originalLottery, newLottery));
+    }
+
 //    public Winner spinTheWheelSpecificItem(Lottery lottery, LotteryItem lotteryItem) throws IdException {
 //        if (lottery.getContestants().size() == 0)
 //            lottery = this.addAllContestantsToLottery(lottery);

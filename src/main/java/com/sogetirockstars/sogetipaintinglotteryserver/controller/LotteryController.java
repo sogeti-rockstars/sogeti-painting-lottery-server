@@ -7,13 +7,14 @@ import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.LotteryService;
-import java.io.IOException;
-import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.*;
 
 @Component
 @RestController
@@ -152,6 +153,15 @@ public class LotteryController {
     public ResponseEntity<?> addContestantToLottery(@PathVariable Long id, @RequestBody Contestant contestant) {
         try {
             return new ResponseEntity<>(lotteryService.addContestantToLottery(id, contestant), HttpStatus.OK);
+        } catch (IdException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping(value = "addItem/{id}")
+    public ResponseEntity<?> addItemToLottery(@PathVariable Long id, @RequestBody LotteryItem lotteryItem) {
+        try {
+            return new ResponseEntity<>(lotteryService.addItemToLottery(id, lotteryItem), HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
