@@ -1,6 +1,5 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
@@ -17,7 +16,7 @@ public class Lottery {
     @Column(name = "lottery")
     private Long id;
 
-    @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<LotteryItem> lotteryItems = new ArrayList<>();
 
     //Det blir oändliga loopar av två klasser som refererar till varandra
@@ -43,7 +42,6 @@ public class Lottery {
         return contestants;
     }
 
-    @JsonBackReference(value = "lottery-item")
     public List<LotteryItem> getLotteryItems() {
         return lotteryItems;
     }
