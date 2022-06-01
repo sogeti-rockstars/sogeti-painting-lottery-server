@@ -18,14 +18,12 @@ public class LotteryService {
     private final LotteryRepository repository;
     private final ContestantService contestantService;
     private final WinnerService winnerService;
-    private final LotteryItemService lotteryItemService;
 
     @Autowired
-    public LotteryService(LotteryRepository repository, ContestantService contestantService, WinnerService winnerService, LotteryItemService lotteryItemService) {
+    public LotteryService(LotteryRepository repository, ContestantService contestantService, WinnerService winnerService) {
         this.repository = repository;
         this.contestantService = contestantService;
         this.winnerService = winnerService;
-        this.lotteryItemService = lotteryItemService;
     }
 
     public Lottery addAllContestantsToLottery(Lottery newLottery) throws IdException {
@@ -45,16 +43,16 @@ public class LotteryService {
         return repository.save(mergeLotterys(originalLottery, newLottery));
     }
 
-    public Winner spinTheWheelSpecificItem(Lottery lottery, LotteryItem lotteryItem) throws IdException {
-        if (lottery.getContestants().size() == 0)
-            lottery = this.addAllContestantsToLottery(lottery);
-        List<Contestant> contestants = lottery.getContestants();
-        Contestant winner = contestants.get((int) (Math.random() * (contestants.size() - 1 + 1) + 1));
-        Winner newWinner = new Winner(lottery, winner,
-                winnerService.getAllByLotteryId(lottery.getId()).size(),
-                lotteryItem);
-        return newWinner;
-    }
+//    public Winner spinTheWheelSpecificItem(Lottery lottery, LotteryItem lotteryItem) throws IdException {
+//        if (lottery.getContestants().size() == 0)
+//            lottery = this.addAllContestantsToLottery(lottery);
+//        List<Contestant> contestants = lottery.getContestants();
+//        Contestant winner = contestants.get((int) (Math.random() * (contestants.size() - 1 + 1) + 1));
+//        Winner newWinner = new Winner(lottery, winner,
+//                winnerService.getAllByLotteryId(lottery.getId()).size(),
+//                lotteryItem);
+//        return newWinner;
+//    }
 
     public Winner spinTheWheelRandomItem(Lottery lottery) throws IdException {
         if (lottery.getContestants().size() == 0)
@@ -62,9 +60,10 @@ public class LotteryService {
 
         List<Contestant> contestants = lottery.getContestants();
         Contestant winner = contestants.get((int) (Math.random() * (contestants.size())));
-        Winner newWinner = new Winner(lottery, winner,
-                winnerService.getAllByLotteryId(lottery.getId()).size(),
-                lotteryItemService.getRandomItem());
+//        Winner newWinner = new Winner(lottery, winner,
+//                winnerService.getAllByLotteryId(lottery.getId()).size(),
+//                lotteryItemService.getRandomItem());
+        Winner newWinner = new Winner(winner, getAllWinnersByLotteryId(lottery.getId()).size());
         return winnerService.add(newWinner);
     }
 
@@ -78,7 +77,7 @@ public class LotteryService {
         int randomNumber = 0;
         while (checkWinners == false) {
             randomNumber = (int) (Math.random() * (contestants.size()));
-            List<Winner> currentWinners = winnerService.getAllByLotteryId(lottery.getId());
+            List<Winner> currentWinners = getAllWinnersByLotteryId(lottery.getId());
             List<Long> winnerContestantIds = new ArrayList<>();
             for (Winner winner :
                     currentWinners) {
@@ -92,13 +91,19 @@ public class LotteryService {
             }
         }
         Contestant winner = contestants.get(randomNumber);
-        Winner newWinner = new Winner(lottery, winner,
-                winnerService.getAllByLotteryId(lottery.getId()).size());
+//        Winner newWinner = new Winner(lottery, winner,
+//                winnerService.getAllByLotteryId(lottery.getId()).size());
+        Winner newWinner = new Winner(winner, getAllWinnersByLotteryId(lottery.getId()).size());
         return winnerService.add(newWinner);
     }
 
     public List<Lottery> getAll() {
         return repository.findAll();
+    }
+
+    public List<Winner> getAllWinnersByLotteryId(Long id) {
+        Lottery lottery = repository.getById(id);
+        return lottery.getWinners();
     }
 
     public Lottery get(Long id) throws IdException {

@@ -1,7 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
-import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.WinnerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,16 +45,16 @@ public class WinnerController {
         }
     }
 
-    @GetMapping(value = "winning-contestants-in-lottery/{id}")
-    public ResponseEntity<?> getWinningContestantsInLottery(@PathVariable Long id) {
-        try {
-            System.out.println("Sending painting with id " + id);
-            List<Contestant> contestants = winnerService.getWinningContestantsByLotteryId(id);
-            return new ResponseEntity<>(contestants, HttpStatus.OK);
-        } catch (IdException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
+//    @GetMapping(value = "winning-contestants-in-lottery/{id}")
+//    public ResponseEntity<?> getWinningContestantsInLottery(@PathVariable Long id) {
+//        try {
+//            System.out.println("Sending painting with id " + id);
+//            List<Contestant> contestants = winnerService.getWinningContestantsByLotteryId(id);
+//            return new ResponseEntity<>(contestants, HttpStatus.OK);
+//        } catch (IdException e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+//        }
+//    }
 
     /**
      * Delete item with id /{id}
