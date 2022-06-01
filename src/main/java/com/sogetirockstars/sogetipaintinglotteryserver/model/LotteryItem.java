@@ -1,7 +1,5 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
 
 /**
@@ -23,17 +21,15 @@ public class LotteryItem {
     private String value; // String so we can store currency and formatting for now.
     private String technique;
 
-    @ManyToOne
-    @JoinColumn(name = "lottery_id")
-    private Lottery lottery;
+//    @ManyToOne
+//    @JoinColumn(name = "lottery_id")
+//    private Lottery lottery;
 
-    @OneToOne
-    private Winner winner;
 
-    @JsonBackReference(value = "lottery-item")
-    private Lottery getLottery() {
-        return lottery;
-    }
+//    @JsonManagedReference(value = "lottery-item")
+//    private Lottery getLottery() {
+//        return lottery;
+//    }
 
 //    public Long getLotteryId() {
 //        if (this.lottery != null)
@@ -42,18 +38,10 @@ public class LotteryItem {
 //            return null;
 //    }
 
-    @JsonBackReference(value = "winner-item")
-    public Winner getWinner() {
-        return winner;
-    }
 
-    public void setWinner(Winner winner) {
-        this.winner = winner;
-    }
-
-    public void setLottery(Lottery lottery) {
-        this.lottery = lottery;
-    }
+//    public void setLottery(Lottery lottery) {
+//        this.lottery = lottery;
+//    }
 
 
     public LotteryItem() {
@@ -83,7 +71,6 @@ public class LotteryItem {
         this.frameDescription = frameDescription;
         this.value = value;
         this.technique = technique;
-        this.lottery = lottery;
     }
 
     public Long getId() {

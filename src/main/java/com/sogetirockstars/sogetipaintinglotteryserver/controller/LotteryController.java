@@ -7,14 +7,13 @@ import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.LotteryService;
+import java.io.IOException;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.*;
 
 @Component
 @RestController
@@ -87,6 +86,7 @@ public class LotteryController {
             System.out.println("Sending painting with id " + id);
             Lottery lottery = lotteryService.get(id);
             Winner winner = lotteryService.spinTheWheelNoItem(lottery);
+            lotteryService.addWinner(id, winner);
             return new ResponseEntity<>(winner, HttpStatus.OK);
         } catch (IdException | AllContestantsTakenException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -151,7 +151,6 @@ public class LotteryController {
     @PutMapping(value = "addContestant/{id}")
     public ResponseEntity<?> addContestantToLottery(@PathVariable Long id, @RequestBody Contestant contestant) {
         try {
-
             return new ResponseEntity<>(lotteryService.addContestantToLottery(id, contestant), HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

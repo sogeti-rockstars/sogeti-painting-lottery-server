@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,26 +40,15 @@ public class Contestant {
     @JsonIgnore
     private List<Lottery> lotteries;
 
-    @OneToMany(mappedBy = "contestant", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Winner> winner;
 
+//    private List<Long> getWinnerId() {
+//        List<Long> ids = new ArrayList<Long>();
+//        for (int i = 0; i < winner.size(); i++) {
+//            ids.add(winner.get(i).getId());
+//        }
+//        return ids;
+//    }
 
-    private List<Winner> getWinner() {
-        return winner;
-    }
-
-
-    private List<Long> getWinnerId() {
-        List<Long> ids = new ArrayList<Long>();
-        for (int i = 0; i < winner.size(); i++) {
-            ids.add(winner.get(i).getId());
-        }
-        return ids;
-    }
-
-    public void setWinner(List<Winner> winner) {
-        this.winner = winner;
-    }
 
     public List<Lottery> getLotteries() {
         return lotteries;

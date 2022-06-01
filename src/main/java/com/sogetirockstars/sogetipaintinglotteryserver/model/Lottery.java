@@ -1,6 +1,5 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
@@ -14,9 +13,10 @@ public class Lottery {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @JsonView({JsonViewProfiles.Contestant.class, JsonViewProfiles.Lottery.class})
+    @Column(name = "lottery")
     private Long id;
 
-    @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<LotteryItem> lotteryItems = new ArrayList<>();
 
     //Det blir oändliga loopar av två klasser som refererar till varandra
@@ -32,7 +32,7 @@ public class Lottery {
     @JsonView(JsonViewProfiles.Lottery.class)
     private List<Contestant> contestants = new ArrayList<>();
 
-    @OneToMany(mappedBy = "lottery", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Winner> winners = new ArrayList<>();
 
     private Date date;
@@ -42,7 +42,6 @@ public class Lottery {
         return contestants;
     }
 
-    @JsonManagedReference(value = "lottery-item")
     public List<LotteryItem> getLotteryItems() {
         return lotteryItems;
     }
@@ -50,12 +49,17 @@ public class Lottery {
     public Lottery() {
     }
 
+
     public List<Winner> getWinners() {
         return winners;
     }
 
     public void setWinners(List<Winner> winners) {
         this.winners = winners;
+    }
+
+    public void addWinners(Winner winner) {
+        this.winners.add(winner);
     }
 
     public Date getDate() {
@@ -68,6 +72,11 @@ public class Lottery {
 
     public Lottery(String title) {
         this.title = title;
+    }
+
+    public Lottery(String title, List<Winner> winners) {
+        this.title = title;
+        this.winners = winners;
     }
 
     public Long getId() {
