@@ -60,10 +60,13 @@ public class MockDataConfig {
             lotteries.get(3).setContestants(contestants.stream().limit(10).toList());
             lotteries.get(4).setContestants(contestants.stream().limit(5).toList());
             lotteries.get(5).setContestants(contestants);
-            lotteries.get(0).setLotteryItems(lotteryItems);
+            lotteries.get(1).setLotteryItems(lotteryItems);
             lotteries.get(0).setWinners(winners);
 
             lotteryRepo.saveAllAndFlush(lotteries);
+
+            lotteryItems.get(0).setLottery(lotteries.get(0));
+            lottItemsRepo.saveAllAndFlush(lotteryItems);
         };
     }
 

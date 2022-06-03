@@ -18,12 +18,14 @@ public class LotteryService {
     private final LotteryRepository repository;
     private final ContestantService contestantService;
     private final WinnerService winnerService;
+    private final LotteryItemService lotteryItemService;
 
     @Autowired
-    public LotteryService(LotteryRepository repository, ContestantService contestantService, WinnerService winnerService) {
+    public LotteryService(LotteryRepository repository, ContestantService contestantService, WinnerService winnerService, LotteryItemService lotteryItemService) {
         this.repository = repository;
         this.contestantService = contestantService;
         this.winnerService = winnerService;
+        this.lotteryItemService = lotteryItemService;
     }
 
     public Lottery addAllContestantsToLottery(Lottery newLottery) throws IdException {
@@ -50,7 +52,16 @@ public class LotteryService {
         newLottery.setLotteryItems(newItem);
         assertExists(newLottery.getId());
         Lottery originalLottery = repository.getById(newLottery.getId());
+        lotteryItem.setLottery(originalLottery);
+        lotteryItemService.add(lotteryItem);
         return repository.save(mergeLotterys(originalLottery, newLottery));
+    }
+
+    public Lottery editItemToLottery(Long id, LotteryItem lotteryItem) throws IdException {
+        Lottery newLottery = get(id);
+        lotteryItem.setLottery(newLottery);
+        lotteryItemService.save(lotteryItem);
+        return newLottery;
     }
 
 //    public Winner spinTheWheelSpecificItem(Lottery lottery, LotteryItem lotteryItem) throws IdException {
