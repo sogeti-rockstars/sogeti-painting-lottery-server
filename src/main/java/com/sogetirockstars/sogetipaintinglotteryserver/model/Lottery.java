@@ -21,14 +21,10 @@ public class Lottery {
     //Rätt sätt att göra detta är att göra "JSON view profiles"
     //men det orkar jag inte just nu... Kolla på länken för mer info
     //https://stackoverflow.com/questions/67886252/spring-boot-jpa-infinite-loop-many-to-many
-    @ManyToMany
-    @JoinTable(
-            name = "lottery_contestants",
-            joinColumns = @JoinColumn(name = "lottery_id"),
-            inverseJoinColumns = @JoinColumn(name = "contestant_id"))
+    @ManyToMany(mappedBy = "lotteries")
     private List<Contestant> contestants = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lottery")
     private List<Winner> winners = new ArrayList<>();
 
     private Date date;

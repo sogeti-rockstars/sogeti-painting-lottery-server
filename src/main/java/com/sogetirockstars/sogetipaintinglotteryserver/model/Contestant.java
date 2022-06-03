@@ -1,10 +1,11 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +29,16 @@ public class Contestant {
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @OneToMany(mappedBy = "contestant", cascade = CascadeType.REMOVE)
+    private List<Winner> winner = new ArrayList<>();
+
+    public List<Winner> getWinner() {
+        return winner;
+    }
+
+    public void setWinner(List<Winner> winner) {
+        this.winner = winner;
+    }
 
     // Det blir oändliga loopar av två klasser som refererar till varandra
     // och man kan inte lägga @JsonBackReference på Collections.
@@ -36,9 +47,9 @@ public class Contestant {
     // https://stackoverflow.com/questions/67886252/spring-boot-jpa-infinite-loop-many-to-many
     // @JsonView(JsonViewProfiles.Contestant.class)
     // @ManyToMany(mappedBy = "contestants")
-    @ManyToMany(mappedBy = "contestants", cascade = CascadeType.DETACH)
-    @JsonIgnore
-    private List<Lottery> lotteries;
+    @ManyToMany
+    @JoinTable
+    private List<Lottery> lotteries = new ArrayList<>();
 
 
     // private List<Long> getWinnerId() {
@@ -49,10 +60,19 @@ public class Contestant {
     // return ids;
     // }
 
-
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public List<Lottery> getLotteries() {
-        return null;
-        // return lotteries;
+        return lotteries;
+    }
+
+    public List<Long> getLotteries_id() {
+        List<Long> lotteryIdList = new ArrayList<>();
+        if (!lotteries.isEmpty()) {
+            for (Lottery lottery : lotteries) {
+                lotteryIdList.add(lottery.getId());
+            }
+        }
+        return lotteryIdList;
     }
 
     public void setLotteries(List<Lottery> lotteries) {
@@ -60,7 +80,8 @@ public class Contestant {
     }
 
 
-    public Contestant() {}
+    public Contestant() {
+    }
 
     public Contestant(String name, Address address, String employeeId, String teleNumber, String email) {
         this.name = name;

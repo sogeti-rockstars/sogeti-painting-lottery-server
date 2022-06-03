@@ -35,7 +35,7 @@ public class MockDataConfig {
 
     @Bean
     CommandLineRunner mockData(AddressRepository addrRepo, ContestantRepository contRepo, LotteryItemRepository lottItemsRepo, LotteryRepository lotteryRepo,
-            WinnerRepository winnerRepo) {
+                               WinnerRepository winnerRepo) {
         return (String[] args) -> {
             addresses = fakeAddresses();
             lotteries = fakeLotteries();
@@ -59,10 +59,18 @@ public class MockDataConfig {
             lotteries.get(3).setContestants(contestants.stream().limit(10).toList());
             lotteries.get(4).setContestants(contestants.stream().limit(5).toList());
             lotteries.get(5).setContestants(contestants);
+            contestants.get(0).setLotteries(lotteries);
+            contestants.get(1).setLotteries(lotteries);
+            contestants.get(2).setLotteries(lotteries.stream().limit(2).toList());
+            contRepo.saveAllAndFlush(contestants);
             lotteries.get(0).setLotteryItems(lotteryItems0);
             lotteries.get(1).setLotteryItems(lotteryItems1);
             lotteries.get(2).setLotteryItems(lotteryItems2);
             lotteries.get(0).setWinners(winners);
+            lotteryItems0.get(0).setLottery(lotteries.get(0));
+            lotteryItems1.get(1).setLottery(lotteries.get(1));
+            lottItemsRepo.saveAllAndFlush(lotteryItems0);
+            lottItemsRepo.saveAllAndFlush(lotteryItems1);
 
             lotteryRepo.saveAllAndFlush(lotteries);
         };
@@ -71,7 +79,7 @@ public class MockDataConfig {
     private List<Winner> fakeWinners(List<Contestant> contestants, List<LotteryItem> lotteryItems, List<Lottery> lotterys) {
         List<Winner> winners = List.of(new Winner(), new Winner(), new Winner());
         for (int i = 0; i < winners.size(); i++) {
-            // winners.get(i).setLottery(lotterys.get(i));
+            winners.get(i).setLottery(lotterys.get(i));
             // winners.get(i).setLotteryItem(lotteryItems.get(i));
             winners.get(i).setContestant(contestants.get(i));
             winners.get(i).setPlacement(i);
