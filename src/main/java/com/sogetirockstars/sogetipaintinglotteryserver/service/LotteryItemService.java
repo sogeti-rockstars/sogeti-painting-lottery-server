@@ -42,6 +42,18 @@ public class LotteryItemService {
         return repository.save(item);
     }
 
+    public List<LotteryItem> saveAllAndFlush(LotteryItem item) throws IdException {
+        assertExists(item.getId());
+        List<LotteryItem> items = repository.findAll();
+        items.set(Math.toIntExact(item.getId()), item);
+        return repository.saveAllAndFlush(items);
+    }
+
+    public LotteryItem save(LotteryItem item) throws IdException {
+        assertExists(item.getId());
+        return repository.save(item);
+    }
+
     public LotteryItem update(LotteryItem newItem) throws IdException {
         assertExists(newItem.getId());
         LotteryItem origItem = repository.getById(newItem.getId());
@@ -50,6 +62,18 @@ public class LotteryItemService {
 
     public boolean delete(Long id) throws IdException {
         assertExists(id);
+//        List<Lottery> lotteries = lotteryService.getAll();
+//        for (Lottery lottery : lotteries) {
+//            if (!lottery.getLotteryItems().isEmpty()) {
+//                for (Iterator<LotteryItem> itemIterator = lottery.getLotteryItems().iterator(); itemIterator.hasNext(); ) {
+//                    LotteryItem lotteryItem = itemIterator.next();
+//                    if (lotteryItem == repository.getById(id)) {
+//                        itemIterator.remove();
+////                        lotteryService.update(lottery);
+//                    }
+//                }
+//            }
+//        }
         repository.deleteById(id);
         return true;
     }

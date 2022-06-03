@@ -1,7 +1,5 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,11 +10,10 @@ import java.util.List;
 public class Lottery {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @JsonView({JsonViewProfiles.Contestant.class, JsonViewProfiles.Lottery.class})
     @Column(name = "lottery")
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "lottery")
     private List<LotteryItem> lotteryItems = new ArrayList<>();
 
     //Det blir oändliga loopar av två klasser som refererar till varandra
@@ -29,7 +26,6 @@ public class Lottery {
             name = "lottery_contestants",
             joinColumns = @JoinColumn(name = "lottery_id"),
             inverseJoinColumns = @JoinColumn(name = "contestant_id"))
-    @JsonView(JsonViewProfiles.Lottery.class)
     private List<Contestant> contestants = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
