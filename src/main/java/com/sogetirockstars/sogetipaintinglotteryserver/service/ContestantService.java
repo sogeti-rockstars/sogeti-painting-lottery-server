@@ -1,24 +1,27 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
+import java.util.List;
+
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.ContestantRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-/**
- * ContestantService
- */
 @Service
 public class ContestantService {
     private final ContestantRepository repository;
+    private final LotteryRepository lotteryRepo;
+    private final WinnerRepository winnerRepo;
 
     @Autowired
-    public ContestantService(ContestantRepository repository) {
+    public ContestantService(ContestantRepository repository, LotteryRepository lotteryRepo, WinnerRepository winnerRepo) {
         this.repository = repository;
-
+        this.lotteryRepo = lotteryRepo;
+        this.winnerRepo = winnerRepo;
     }
 
     public List<Contestant> getAll() {
@@ -32,6 +35,12 @@ public class ContestantService {
 
     public boolean delete(Long id) throws IdException {
         assertExists(id);
+
+        Contestant cont = repository.findById(id).get();
+        lotteryRepo.findAll().stream().filter(lott -> lott.getContestants().remove(cont)).forEach(lott -> lotteryRepo.save(lott));
+        lotteryRepo.findAll().stream().filter(lott -> lott.getWinners().removeIf(win -> win.getContestant() == cont)).forEach(lott -> lotteryRepo.save(lott));
+        winnerRepo.findAll().stream().filter(winner -> winner.getContestant().equals(cont)).forEach(winner -> winnerRepo.delete(winner));
+
         repository.deleteById(id);
         return true;
     }
@@ -62,8 +71,8 @@ public class ContestantService {
             origCont.setName(newCont.getName());
         if (newCont.getEmail() != null)
             origCont.setEmail(newCont.getEmail());
-        // if (newCont.getAddress()!=null)
-        // origCont.setAddress(newCont.getAddress());
+        if (newCont.getAddress() != null)
+            origCont.setAddress(newCont.getAddress());
         if (newCont.getEmployeeId() != null)
             origCont.setEmployeeId(newCont.getEmployeeId());
         if (newCont.getTeleNumber() != null)

@@ -1,22 +1,20 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-
-import javax.persistence.*;
 import java.util.List;
 
-/**
- * Contestant
- */
-@Entity
-@Table
-public class Contestant {
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @JsonView({JsonViewProfiles.Contestant.class, JsonViewProfiles.Lottery.class})
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+public class Contestant {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String employeeId;
@@ -24,43 +22,14 @@ public class Contestant {
     private String email;
     private String teleNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id")
+    @OneToOne
     private Address address;
 
-
-    // Det blir oändliga loopar av två klasser som refererar till varandra
-    // och man kan inte lägga @JsonBackReference på Collections.
-    // Rätt sätt att göra detta är att göra "JSON view profiles"
-    // men det orkar jag inte just nu... Kolla på länken för mer info
-    // https://stackoverflow.com/questions/67886252/spring-boot-jpa-infinite-loop-many-to-many
-    // @JsonView(JsonViewProfiles.Contestant.class)
-    // @ManyToMany(mappedBy = "contestants")
-    @ManyToMany(mappedBy = "contestants", cascade = CascadeType.DETACH)
-    @JsonIgnore
+    @ManyToMany(mappedBy = "contestants", cascade = CascadeType.DETACH) @JsonIgnore
     private List<Lottery> lotteries;
 
-
-    // private List<Long> getWinnerId() {
-    // List<Long> ids = new ArrayList<Long>();
-    // for (int i = 0; i < winner.size(); i++) {
-    // ids.add(winner.get(i).getId());
-    // }
-    // return ids;
-    // }
-
-
-    public List<Lottery> getLotteries() {
-        return null;
-        // return lotteries;
+    public Contestant() {
     }
-
-    public void setLotteries(List<Lottery> lotteries) {
-        this.lotteries = lotteries;
-    }
-
-
-    public Contestant() {}
 
     public Contestant(String name, Address address, String employeeId, String teleNumber, String email) {
         this.name = name;
@@ -98,10 +67,6 @@ public class Contestant {
         this.teleNumber = teleNumber;
     }
 
-    // public void setAddress(Address address) {
-    // this.address = address;
-    // }
-
     public Long getId() {
         return id;
     }
@@ -122,16 +87,23 @@ public class Contestant {
         return teleNumber;
     }
 
-    // public String getAddress() {
-    // return address.toString();
-    // }
-
-    @JsonBackReference
     public Address getAddress() {
         return address;
     }
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    // The lotteries field is here to satisfy the @ManyToMany annotation.
+    // We return null so we don't get infinite recursion in our JSON generation as @JsonIgnore by itself doesn't solve
+    // the problem
+    @JsonIgnore
+    public List<Lottery> getLotteries() {
+        return null;
+    }
+
+    public void setLotteries(List<Lottery> lotteries) {
+        this.lotteries = lotteries;
     }
 }

@@ -3,10 +3,8 @@ package com.sogetirockstars.sogetipaintinglotteryserver.model;
 import javax.persistence.*;
 
 @Entity
-@Table
 public class Address {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String streetName;
     private String streetNumber;

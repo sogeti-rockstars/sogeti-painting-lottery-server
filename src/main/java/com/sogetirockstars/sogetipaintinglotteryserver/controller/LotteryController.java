@@ -1,26 +1,33 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.AllContestantsTakenException;
+import com.sogetirockstars.sogetipaintinglotteryserver.exception.EmptyLotteryWinnerAssignmentException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.LotteryService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.*;
-
-@Component
-@RestController
-@RequestMapping("api/v1/lottery")
+@RestController @RequestMapping("api/v1/lottery")
 public class LotteryController {
-
     private final LotteryService lotteryService;
 
     @Autowired
@@ -28,40 +35,28 @@ public class LotteryController {
         this.lotteryService = service;
     }
 
-    /**
-     * Returns all lottery
-     */
     @GetMapping
     public List<Lottery> getAll() {
         return lotteryService.getAll();
     }
 
     /**
-     * Get all lotteries without lists. To be used by the sidebar.
+     * Get all lotteries without lists. Used by the sidebar in the frontend
      */
     @GetMapping(value = "summary")
     public ResponseEntity<?> getLotteryList() {
-        List<Map<String, ?>> resp = new LinkedList<>();
+        List<Lottery> resp = new LinkedList<>();
 
         for (Lottery lottery : lotteryService.getAll()) {
-            Map<String, String> respItem = new HashMap<>();
-            respItem.put("id", lottery.getId().toString());
-            respItem.put("title", lottery.getTitle());
-            Date date = lottery.getDate();
-            String dateUnix = (date != null) ? String.valueOf(date.getTime()) : "0";
-            respItem.put("date", dateUnix);
-            resp.add(respItem);
+            Lottery newLott = new Lottery(lottery.getId(), lottery.getTitle(), lottery.getDate());
+            resp.add(newLott);
         }
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
-    /**
-     * Get item with id /{id}
-     */
     @GetMapping(value = "{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
-            System.out.println("Sending painting with id " + id);
             Lottery item = lotteryService.get(id);
             return new ResponseEntity<>(item, HttpStatus.OK);
         } catch (IdException e) {
@@ -69,35 +64,22 @@ public class LotteryController {
         }
     }
 
-    @GetMapping(value = "spin-with-item/{id}")
-    public ResponseEntity<?> spinTheWheelRandomItem(@PathVariable Long id) {
+    @PutMapping(value = "{id}/spin")
+    public ResponseEntity<?> spinTheWheelNoItem(@PathVariable Long id) {
         try {
-            System.out.println("Sending painting with id " + id);
             Lottery lottery = lotteryService.get(id);
-            Winner winner = lotteryService.spinTheWheelRandomItem(lottery);
+            Winner winner = lotteryService.spinTheWheelNoItem(lottery);
             return new ResponseEntity<>(winner, HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @GetMapping(value = "spin/{id}")
-    public ResponseEntity<?> spinTheWheelNoItem(@PathVariable Long id) {
-        try {
-            System.out.println("Sending painting with id " + id);
-            Lottery lottery = lotteryService.get(id);
-            Winner winner = lotteryService.spinTheWheelNoItem(lottery);
-            lotteryService.addWinner(id, winner);
-            return new ResponseEntity<>(winner, HttpStatus.OK);
-        } catch (IdException | AllContestantsTakenException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (AllContestantsTakenException | EmptyLotteryWinnerAssignmentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping(value = "{id}/winners")
     public ResponseEntity<?> getWinners(@PathVariable Long id) {
         try {
-            System.out.println("Sending painting with id " + id);
             List<Winner> items = lotteryService.getWinners(id);
             return new ResponseEntity<>(items, HttpStatus.OK);
         } catch (IdException e) {
@@ -108,7 +90,6 @@ public class LotteryController {
     @GetMapping(value = "{id}/items")
     public ResponseEntity<?> getLotteryItems(@PathVariable Long id) {
         try {
-            System.out.println("Sending painting with id " + id);
             List<LotteryItem> items = lotteryService.getLotteryItems(id);
             return new ResponseEntity<>(items, HttpStatus.OK);
         } catch (IdException e) {
@@ -119,7 +100,6 @@ public class LotteryController {
     @GetMapping(value = "{id}/contestants")
     public ResponseEntity<?> getContestants(@PathVariable Long id) {
         try {
-            System.out.println("Sending painting with id " + id);
             List<Contestant> items = lotteryService.getContestants(id);
             return new ResponseEntity<>(items, HttpStatus.OK);
         } catch (IdException e) {
@@ -127,9 +107,6 @@ public class LotteryController {
         }
     }
 
-    /**
-     * Delete item with id /{id}
-     */
     @DeleteMapping(value = "{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
         try {
@@ -139,12 +116,8 @@ public class LotteryController {
         }
     }
 
-    /**
-     * Add new item
-     */
     @PostMapping
     public ResponseEntity<Lottery> addNew(@RequestBody Lottery lottery) {
-        System.out.println("Adding painting " + lottery.getTitle() + " id: " + lottery.getId());
         lottery.setId(null);
         return ResponseEntity.ok().body(lotteryService.add(lottery));
     }
@@ -167,7 +140,7 @@ public class LotteryController {
         }
     }
 
-    @PutMapping(value = "addItem/{id}")
+    @PutMapping(value = "{id}/addItem")
     public ResponseEntity<?> addItemToLottery(@PathVariable Long id, @RequestBody LotteryItem lotteryItem) {
         try {
             return new ResponseEntity<>(lotteryService.addItemToLottery(id, lotteryItem), HttpStatus.OK);
