@@ -67,7 +67,11 @@ public class LotteryItemService {
     public boolean delete(Long id) throws IdException {
         assertExists(id);
         LotteryItem item = repository.findById(id).get();
-        lotteryRepo.findAll().stream().forEach(lott -> lott.getLotteryItems().remove(item));
+        lotteryRepo.findAll().stream().forEach(lott -> {
+            if (lott.getLotteryItems().remove(item))
+                lotteryRepo.save(lott);
+        });
+        lotteryRepo.flush();
         repository.deleteById(id);
         return true;
     }
