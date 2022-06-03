@@ -149,16 +149,6 @@ public class LotteryController {
         }
     }
 
-    @PutMapping(value = "editItem/{id}")
-    public ResponseEntity<?> editItemToLottery(@PathVariable Long id, @RequestBody LotteryItem lotteryItem) {
-        System.out.println(id + "++-" + lotteryItem.toString());
-        try {
-            return new ResponseEntity<>(lotteryService.editItemToLottery(id, lotteryItem), HttpStatus.OK);
-        } catch (IdException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
     @PutMapping(value = "{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Lottery lottery) {
         try {
