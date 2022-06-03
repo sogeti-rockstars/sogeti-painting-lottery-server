@@ -1,5 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
+import java.io.InputStream;
 import java.util.List;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.AllContestantsTakenException;
@@ -10,6 +11,7 @@ import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.ContestantRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
 
@@ -21,12 +23,17 @@ public class LotteryService {
     private final LotteryRepository repository;
     private final ContestantRepository contestantRepo;
     private final WinnerRepository winnerRepo;
+    private final LotteryItemRepository lotteryItemRepo;
+    private final PhotoService photoService;
 
     @Autowired
-    public LotteryService(LotteryRepository repository, ContestantRepository contestantRepo, WinnerRepository winnerRepo) {
+    public LotteryService(PhotoService photoService, LotteryRepository repository, ContestantRepository contestantRepo, WinnerRepository winnerRepo,
+            LotteryItemRepository lotteryItemRepo) {
         this.winnerRepo = winnerRepo;
         this.repository = repository;
         this.contestantRepo = contestantRepo;
+        this.lotteryItemRepo = lotteryItemRepo;
+        this.photoService = photoService;
     }
 
     public Lottery addNewContestantToLottery(Long id, Contestant contestant) throws IdException {
@@ -49,10 +56,12 @@ public class LotteryService {
         return repository.saveAndFlush(lottery);
     }
 
-    public Lottery addItemToLottery(Long id, LotteryItem lotteryItem) throws IdException {
+    public Lottery addNewItemToLottery(Long id, LotteryItem lotteryItem) throws IdException {
         assertExists(id);
         Lottery lottery = repository.findById(id).get();
+        lotteryItemRepo.save(lotteryItem);
         lottery.getLotteryItems().add(lotteryItem);
+        photoService.savePhoto(lotteryItem.getId(), InputStream.nullInputStream());
         return repository.saveAndFlush(lottery);
     }
 
