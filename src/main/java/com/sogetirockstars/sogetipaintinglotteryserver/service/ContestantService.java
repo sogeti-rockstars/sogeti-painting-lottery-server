@@ -29,7 +29,6 @@ public class ContestantService {
         assertExists(id);
         return repository.findById(id).get();
     }
-    
 
     public boolean delete(Long id) throws IdException {
         assertExists(id);
@@ -48,13 +47,14 @@ public class ContestantService {
         return repository.save(merge(origCont, cont));
     }
 
-    private void assertExists(Long id) throws IdException {
+    public void assertExists(Long id) throws IdException {
         if (!repository.existsById(id))
             throw new IdException("Item with id " + id + " doesn't exist.");
     }
 
-    // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt att skapa JSON
-    //       objekt och bara skriva över värden som har ett värde och inte NULL;
+    // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt
+    // att skapa JSON
+    // objekt och bara skriva över värden som har ett värde och inte NULL;
     private Contestant merge(Contestant origCont, Contestant newCont) {
         if (newCont.getId() != null)
             origCont.setId(newCont.getId());
@@ -63,7 +63,7 @@ public class ContestantService {
         if (newCont.getEmail() != null)
             origCont.setEmail(newCont.getEmail());
         // if (newCont.getAddress()!=null)
-        //     origCont.setAddress(newCont.getAddress());
+        // origCont.setAddress(newCont.getAddress());
         if (newCont.getEmployeeId() != null)
             origCont.setEmployeeId(newCont.getEmployeeId());
         if (newCont.getTeleNumber() != null)

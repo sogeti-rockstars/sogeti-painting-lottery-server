@@ -29,29 +29,30 @@ public class Contestant {
     private Address address;
 
 
-    //Det blir oändliga loopar av två klasser som refererar till varandra
-    //och man kan inte lägga @JsonBackReference på Collections.
-    //Rätt sätt att göra detta är att göra "JSON view profiles"
-    //men det orkar jag inte just nu... Kolla på länken för mer info
-    //https://stackoverflow.com/questions/67886252/spring-boot-jpa-infinite-loop-many-to-many
-//    @JsonView(JsonViewProfiles.Contestant.class)
-//    @ManyToMany(mappedBy = "contestants")
+    // Det blir oändliga loopar av två klasser som refererar till varandra
+    // och man kan inte lägga @JsonBackReference på Collections.
+    // Rätt sätt att göra detta är att göra "JSON view profiles"
+    // men det orkar jag inte just nu... Kolla på länken för mer info
+    // https://stackoverflow.com/questions/67886252/spring-boot-jpa-infinite-loop-many-to-many
+    // @JsonView(JsonViewProfiles.Contestant.class)
+    // @ManyToMany(mappedBy = "contestants")
     @ManyToMany(mappedBy = "contestants", cascade = CascadeType.DETACH)
     @JsonIgnore
     private List<Lottery> lotteries;
 
 
-//    private List<Long> getWinnerId() {
-//        List<Long> ids = new ArrayList<Long>();
-//        for (int i = 0; i < winner.size(); i++) {
-//            ids.add(winner.get(i).getId());
-//        }
-//        return ids;
-//    }
+    // private List<Long> getWinnerId() {
+    // List<Long> ids = new ArrayList<Long>();
+    // for (int i = 0; i < winner.size(); i++) {
+    // ids.add(winner.get(i).getId());
+    // }
+    // return ids;
+    // }
 
 
     public List<Lottery> getLotteries() {
-        return lotteries;
+        return null;
+        // return lotteries;
     }
 
     public void setLotteries(List<Lottery> lotteries) {
@@ -59,8 +60,7 @@ public class Contestant {
     }
 
 
-    public Contestant() {
-    }
+    public Contestant() {}
 
     public Contestant(String name, Address address, String employeeId, String teleNumber, String email) {
         this.name = name;
@@ -99,7 +99,7 @@ public class Contestant {
     }
 
     // public void setAddress(Address address) {
-    //     this.address = address;
+    // this.address = address;
     // }
 
     public Long getId() {
@@ -123,7 +123,7 @@ public class Contestant {
     }
 
     // public String getAddress() {
-    //     return address.toString();
+    // return address.toString();
     // }
 
     @JsonBackReference
