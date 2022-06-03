@@ -46,6 +46,18 @@ public class LotteryItemService {
         return repository.save(item);
     }
 
+    public List<LotteryItem> saveAllAndFlush(LotteryItem item) throws IdException {
+        assertExists(item.getId());
+        List<LotteryItem> items = repository.findAll();
+        items.set(Math.toIntExact(item.getId()), item);
+        return repository.saveAllAndFlush(items);
+    }
+
+    public LotteryItem save(LotteryItem item) throws IdException {
+        assertExists(item.getId());
+        return repository.save(item);
+    }
+
     public LotteryItem update(LotteryItem newItem) throws IdException {
         assertExists(newItem.getId());
         LotteryItem origItem = repository.getById(newItem.getId());
