@@ -2,19 +2,12 @@ package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.*;
 
 @Entity
 public class Winner {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
@@ -22,8 +15,25 @@ public class Winner {
 
     private Integer placement;
 
-    @ManyToMany(mappedBy = "contestants", cascade = CascadeType.DETACH)
-    private List<Lottery> lotteries = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Lottery lottery;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Lottery getLottery() {
+        return lottery;
+    }
+
+    public Long getLottery_id() {
+        if (this.lottery != null)
+            return lottery.getId();
+        else
+            return null;
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
+    }
 
     public Winner() {
     }

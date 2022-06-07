@@ -7,7 +7,8 @@ import java.util.List;
 
 @Entity
 public class Lottery {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(mappedBy = "lottery")
@@ -38,6 +39,15 @@ public class Lottery {
     public Lottery() {
     }
 
+    public Lottery(Long id, String title, Date date) {
+        this.id = id;
+        this.date = date;
+        this.title = title;
+    }
+
+    public Lottery(String title) {
+        this.title = title;
+    }
 
     public List<Winner> getWinners() {
         return winners;

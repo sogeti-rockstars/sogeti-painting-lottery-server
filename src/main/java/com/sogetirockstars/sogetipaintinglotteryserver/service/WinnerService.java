@@ -60,4 +60,8 @@ public class WinnerService {
             origWinner.setPlacement(newWinner.getPlacement());
         return origWinner;
     }
+
+    public Winner save(Winner nWinner) {
+        return repository.save(nWinner);
+    }
 }

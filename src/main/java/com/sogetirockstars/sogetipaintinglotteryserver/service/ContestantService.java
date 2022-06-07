@@ -1,15 +1,14 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
-import java.util.List;
-
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.ContestantRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ContestantService {
@@ -71,8 +70,6 @@ public class ContestantService {
             origCont.setName(newCont.getName());
         if (newCont.getEmail() != null)
             origCont.setEmail(newCont.getEmail());
-        if (newCont.getAddress() != null)
-            origCont.setAddress(newCont.getAddress());
         if (newCont.getEmployeeId() != null)
             origCont.setEmployeeId(newCont.getEmployeeId());
         if (newCont.getTeleNumber() != null)

@@ -5,12 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @Entity
 public class Contestant {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -60,14 +58,14 @@ public class Contestant {
     public Contestant() {
     }
 
-    public Contestant(String name, String address, String employeeId, String teleNumber, String email) {
+    public Contestant(String name, String employeeId, String teleNumber, String email) {
         this.name = name;
         this.email = email;
         this.employeeId = employeeId;
         this.teleNumber = teleNumber;
     }
 
-    public Contestant(String name, String address, String employeeId, String teleNumber, String email, Lottery lottery) {
+    public Contestant(String name, String employeeId, String teleNumber, String email, Lottery lottery) {
         this.employeeId = employeeId;
         this.name = name;
         this.email = email;
