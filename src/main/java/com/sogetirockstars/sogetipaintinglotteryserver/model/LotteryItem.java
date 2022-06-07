@@ -37,10 +37,6 @@ public class LotteryItem {
         this.lottery = lottery;
     }
 
-//    @ManyToOne
-//    @JoinColumn(name = "lottery_id")
-//    private Lottery lottery;
-
 
     public Long getLottery_id() {
         if (this.lottery != null)
