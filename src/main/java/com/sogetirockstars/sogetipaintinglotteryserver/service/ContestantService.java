@@ -36,7 +36,6 @@ public class ContestantService {
         assertExists(id);
 
         Contestant cont = repository.findById(id).get();
-        lotteryRepo.findAll().stream().filter(lott -> lott.getContestants().remove(cont)).forEach(lott -> lotteryRepo.save(lott));
         lotteryRepo.findAll().stream().filter(lott -> lott.getWinners().removeIf(win -> win.getContestant() == cont)).forEach(lott -> lotteryRepo.save(lott));
         winnerRepo.findAll().stream().filter(winner -> winner.getContestant().equals(cont)).forEach(winner -> winnerRepo.delete(winner));
 
@@ -58,6 +57,10 @@ public class ContestantService {
     public void assertExists(Long id) throws IdException {
         if (!repository.existsById(id))
             throw new IdException("Item with id " + id + " doesn't exist.");
+    }
+
+    public Contestant save(Contestant contestant) {
+        return repository.save(contestant);
     }
 
     // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt

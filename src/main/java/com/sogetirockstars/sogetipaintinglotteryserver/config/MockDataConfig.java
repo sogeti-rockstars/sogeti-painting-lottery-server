@@ -54,16 +54,7 @@ public class MockDataConfig {
             lottItemsRepo.saveAllAndFlush(lotteryItems2).stream().forEach(i -> updatePictureUrl(i, lottItemsRepo));
             contRepo.saveAllAndFlush(contestants);
             winnerRepo.saveAllAndFlush(winners);
-
-            lotteries.get(0).setContestants(contestants.stream().limit(10).toList());
-            lotteries.get(1).setContestants(contestants.stream().limit(10).toList());
-            lotteries.get(2).setContestants(contestants.stream().limit(10).toList());
-            lotteries.get(3).setContestants(contestants.stream().limit(10).toList());
-            lotteries.get(4).setContestants(contestants.stream().limit(5).toList());
-            lotteries.get(5).setContestants(contestants);
-            contestants.get(0).setLotteries(lotteries);
-            contestants.get(1).setLotteries(lotteries);
-            contestants.get(2).setLotteries(lotteries.stream().limit(2).toList());
+            
             contRepo.saveAllAndFlush(contestants);
             lotteries.get(0).setLotteryItems(lotteryItems0);
             lotteries.get(1).setLotteryItems(lotteryItems1);

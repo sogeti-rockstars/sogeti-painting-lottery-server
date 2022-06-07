@@ -1,7 +1,5 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,31 +27,7 @@ public class Contestant {
     public void setWinner(List<Winner> winner) {
         this.winner = winner;
     }
-
-    @ManyToMany
-    @JoinTable
-    private List<Lottery> lotteries = new ArrayList<>();
-
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    public List<Lottery> getLotteries() {
-        return lotteries;
-    }
-
-    public List<Long> getLotteries_id() {
-        List<Long> lotteryIdList = new ArrayList<>();
-        if (!lotteries.isEmpty()) {
-            for (Lottery lottery : lotteries) {
-                lotteryIdList.add(lottery.getId());
-            }
-        }
-        return lotteryIdList;
-    }
-
-    public void setLotteries(List<Lottery> lotteries) {
-        this.lotteries = lotteries;
-    }
-
+    
 
     public Contestant() {
     }
