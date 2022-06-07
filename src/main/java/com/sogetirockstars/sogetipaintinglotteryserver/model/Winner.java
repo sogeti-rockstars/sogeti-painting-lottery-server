@@ -1,7 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -17,8 +16,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Winner {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
     private Contestant contestant;
 
     private Integer placement;
@@ -42,12 +41,16 @@ public class Winner {
         this.id = id;
     }
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public Contestant getContestant() {
         return contestant;
     }
 
     public Long getContestantId() {
-        return contestant.getId();
+        if (this.contestant != null)
+            return contestant.getId();
+        else
+            return null;
     }
 
     public void setContestant(Contestant contestant) {
@@ -62,15 +65,4 @@ public class Winner {
         this.placement = placement;
     }
 
-    // The lotteries field is here to satisfy the @ManyToMany annotation.
-    // We return null so we don't get infinite recursion in our JSON generation as @JsonIgnore by itself doesn't solve
-    // the problem
-    @JsonIgnore
-    public List<Lottery> getLotteries() {
-        return null;
-    }
-
-    public void setLotteries(List<Lottery> lotteries) {
-        this.lotteries = lotteries;
-    }
 }

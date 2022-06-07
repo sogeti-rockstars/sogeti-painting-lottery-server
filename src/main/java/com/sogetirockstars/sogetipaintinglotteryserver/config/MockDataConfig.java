@@ -20,7 +20,7 @@ import java.util.Random;
 @Configuration
 public class MockDataConfig {
 
-    private final String mockPhotosSrc = "src/main/resources/mock-photos";
+    private String mockPhotosSrc = "src/main/resources/mock-photos";
     private final PhotoService photoService;
     private List<Address> addresses;
     private List<Contestant> contestants;
@@ -58,10 +58,18 @@ public class MockDataConfig {
             lotteries.get(3).setContestants(contestants.stream().limit(10).toList());
             lotteries.get(4).setContestants(contestants.stream().limit(5).toList());
             lotteries.get(5).setContestants(contestants);
+            contestants.get(0).setLotteries(lotteries);
+            contestants.get(1).setLotteries(lotteries);
+            contestants.get(2).setLotteries(lotteries.stream().limit(2).toList());
+            contRepo.saveAllAndFlush(contestants);
             lotteries.get(0).setLotteryItems(lotteryItems0);
             lotteries.get(1).setLotteryItems(lotteryItems1);
             lotteries.get(2).setLotteryItems(lotteryItems2);
             lotteries.get(0).setWinners(winners);
+            lotteryItems0.get(0).setLottery(lotteries.get(0));
+            lotteryItems1.get(1).setLottery(lotteries.get(1));
+            lottItemsRepo.saveAllAndFlush(lotteryItems0);
+            lottItemsRepo.saveAllAndFlush(lotteryItems1);
 
             lotteryRepo.saveAllAndFlush(lotteries);
         };
@@ -70,6 +78,8 @@ public class MockDataConfig {
     private List<Winner> fakeWinners(List<Contestant> contestants, List<LotteryItem> lotteryItems, List<Lottery> lotterys) {
         List<Winner> winners = List.of(new Winner(), new Winner(), new Winner());
         for (int i = 0; i < winners.size(); i++) {
+            winners.get(i).setLottery(lotterys.get(i));
+            // winners.get(i).setLotteryItem(lotteryItems.get(i));
             winners.get(i).setContestant(contestants.get(i));
             winners.get(i).setPlacement(i);
         }
@@ -103,9 +113,6 @@ public class MockDataConfig {
                 new Contestant(getRandomName(), null, "00007", "070 - 0001 129", "email07@example.com"),
                 new Contestant(getRandomName(), null, "00007", "070 - 0001 129", "email07@example.com")));
         // });
-
-        for (int i = 0; i < contestants.size(); i++)
-            contestants.get(i).setAddress(fakeAddresses.get(i % fakeAddresses.size()));
         return contestants;
     }
 

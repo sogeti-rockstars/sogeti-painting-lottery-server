@@ -132,7 +132,7 @@ public class LotteryController {
     }
 
     @PutMapping(value = "{lottId}/addExistingContestant")
-    public ResponseEntity<?> addExistingContestantToLottery(@PathVariable Long lottId, @RequestParam Long contId, @RequestBody Contestant contestant) {
+    public ResponseEntity<?> addExistingContestantToLottery(@PathVariable Long lottId, @RequestParam Long contId) {
         try {
             return new ResponseEntity<>(lotteryService.addExistingContestantToLottery(lottId, contId), HttpStatus.OK);
         } catch (IdException e) {

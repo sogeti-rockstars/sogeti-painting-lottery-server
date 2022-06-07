@@ -56,34 +56,54 @@ public class LotteryService {
         return repository.saveAndFlush(lottery);
     }
 
-    public Lottery addNewItemToLottery(Long id, LotteryItem lotteryItem) throws IdException {
-        assertExists(id);
-        Lottery lottery = repository.findById(id).get();
-        lotteryItemRepo.save(lotteryItem);
-        lottery.getLotteryItems().add(lotteryItem);
-        photoService.savePhoto(lotteryItem.getId(), InputStream.nullInputStream());
-        return repository.saveAndFlush(lottery);
+    public Lottery addItemToLottery(Long id, LotteryItem lotteryItem) throws IdException {
+        Lottery newLottery = repository.getById(id);
+        List<LotteryItem> newItem = newLottery.getLotteryItems();
+        newItem.add(lotteryItem);
+        newLottery.setLotteryItems(newItem);
+        assertExists(newLottery.getId());
+        Lottery originalLottery = repository.getById(newLottery.getId());
+        lotteryItem.setLottery(originalLottery);
+        lotteryItemService.add(lotteryItem);
+        return repository.save(mergeLotterys(originalLottery, newLottery));
     }
 
-    public Winner spinTheWheelNoItem(Lottery lottery) throws IdException, AllContestantsTakenException, EmptyLotteryWinnerAssignmentException {
+    public Lottery editItemToLottery(Long id, LotteryItem lotteryItem) throws IdException {
+        Lottery newLottery = get(id);
+        lotteryItem.setLottery(newLottery);
+        lotteryItemService.save(lotteryItem);
+        return newLottery;
+    }
+
+
+    public Winner spinTheWheelNoItem(Lottery lottery) throws IdException, AllContestantsTakenException {
         if (lottery.getContestants().size() == 0)
-            throw new EmptyLotteryWinnerAssignmentException("No contestants in lottery " + lottery.getId());
+            lottery = this.addAllContestantsToLottery(lottery);
 
-        List<Long> winnerIds = lottery.getWinners().stream().map(c -> c.getContestantId()).toList();
-        List<Long> nonWinnerIds = lottery.getContestants().stream().map(c -> c.getId()).filter(id -> !winnerIds.contains(id)).toList();
+        List<Contestant> contestants = lottery.getContestants();
 
-        if (nonWinnerIds.size() == 0)
-            throw new AllContestantsTakenException("No non-winning contestants in lottery with id " + lottery.getId() + ".");
-
-        int randomContestantIdx = (int) (Math.random() * (nonWinnerIds.size()));
-        Long winnerContestantId = nonWinnerIds.get(randomContestantIdx);
-
-        Winner nWinner = new Winner(contestantRepo.findById(winnerContestantId).get(), winnerIds.size());
-        winnerRepo.save(nWinner);
-
-        lottery.addWinners(nWinner);
-        repository.saveAndFlush(lottery);
-        return nWinner;
+        boolean checkWinners = false;
+        int randomNumber = 0;
+        while (checkWinners == false) {
+            randomNumber = (int) (Math.random() * (contestants.size()));
+            List<Winner> currentWinners = getAllWinnersByLotteryId(lottery.getId());
+            List<Long> winnerContestantIds = new ArrayList<>();
+            for (Winner winner :
+                    currentWinners) {
+                winnerContestantIds.add(winner.getContestantId());
+            }
+            if (!winnerContestantIds.contains(contestants.get(randomNumber).getId())) {
+                checkWinners = true;
+            }
+            if (currentWinners.size() >= contestants.size()) {
+                throw new AllContestantsTakenException("There are no contestants in lottery " + lottery.getId() + " which do not have a winner");
+            }
+        }
+        Contestant winner = contestants.get(randomNumber);
+//        Winner newWinner = new Winner(lottery, winner,
+//                winnerService.getAllByLotteryId(lottery.getId()).size());
+        Winner newWinner = new Winner(winner, getAllWinnersByLotteryId(lottery.getId()).size());
+        return winnerService.add(newWinner);
     }
 
     public List<Lottery> getAll() {
