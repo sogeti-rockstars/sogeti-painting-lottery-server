@@ -59,7 +59,10 @@ public class Winner {
     }
 
     public Long getContestantId() {
-        return contestant.getId();
+        if (this.contestant != null)
+            return contestant.getId();
+        else
+            return null;
     }
 
     public void setContestant(Contestant contestant) {
