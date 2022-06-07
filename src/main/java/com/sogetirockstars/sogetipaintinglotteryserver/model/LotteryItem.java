@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table
 public class LotteryItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Internal object id;
 
 
@@ -36,10 +36,6 @@ public class LotteryItem {
     public void setLottery(Lottery lottery) {
         this.lottery = lottery;
     }
-
-//    @ManyToOne
-//    @JoinColumn(name = "lottery_id")
-//    private Lottery lottery;
 
 
     public Long getLottery_id() {

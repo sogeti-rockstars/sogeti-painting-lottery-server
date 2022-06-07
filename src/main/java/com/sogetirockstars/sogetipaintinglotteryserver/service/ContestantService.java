@@ -3,22 +3,24 @@ package com.sogetirockstars.sogetipaintinglotteryserver.service;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.ContestantRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * ContestantService
- */
 @Service
 public class ContestantService {
     private final ContestantRepository repository;
+    private final LotteryRepository lotteryRepo;
+    private final WinnerRepository winnerRepo;
 
     @Autowired
-    public ContestantService(ContestantRepository repository) {
+    public ContestantService(ContestantRepository repository, LotteryRepository lotteryRepo, WinnerRepository winnerRepo) {
         this.repository = repository;
-
+        this.lotteryRepo = lotteryRepo;
+        this.winnerRepo = winnerRepo;
     }
 
     public List<Contestant> getAll() {
@@ -29,10 +31,14 @@ public class ContestantService {
         assertExists(id);
         return repository.findById(id).get();
     }
-    
 
     public boolean delete(Long id) throws IdException {
         assertExists(id);
+
+        Contestant cont = repository.findById(id).get();
+        lotteryRepo.findAll().stream().filter(lott -> lott.getWinners().removeIf(win -> win.getContestant() == cont)).forEach(lott -> lotteryRepo.save(lott));
+        winnerRepo.findAll().stream().filter(winner -> winner.getContestant().equals(cont)).forEach(winner -> winnerRepo.delete(winner));
+
         repository.deleteById(id);
         return true;
     }
@@ -48,13 +54,18 @@ public class ContestantService {
         return repository.save(merge(origCont, cont));
     }
 
-    private void assertExists(Long id) throws IdException {
+    public void assertExists(Long id) throws IdException {
         if (!repository.existsById(id))
             throw new IdException("Item with id " + id + " doesn't exist.");
     }
 
-    // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt att skapa JSON
-    //       objekt och bara skriva över värden som har ett värde och inte NULL;
+    public Contestant save(Contestant contestant) {
+        return repository.save(contestant);
+    }
+
+    // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt
+    // att skapa JSON
+    // objekt och bara skriva över värden som har ett värde och inte NULL;
     private Contestant merge(Contestant origCont, Contestant newCont) {
         if (newCont.getId() != null)
             origCont.setId(newCont.getId());
@@ -62,8 +73,6 @@ public class ContestantService {
             origCont.setName(newCont.getName());
         if (newCont.getEmail() != null)
             origCont.setEmail(newCont.getEmail());
-        // if (newCont.getAddress()!=null)
-        //     origCont.setAddress(newCont.getAddress());
         if (newCont.getEmployeeId() != null)
             origCont.setEmployeeId(newCont.getEmployeeId());
         if (newCont.getTeleNumber() != null)
