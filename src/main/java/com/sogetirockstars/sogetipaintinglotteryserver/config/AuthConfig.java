@@ -23,7 +23,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             .httpBasic().and()
             .authorizeRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-            .antMatchers("/index.html", "/", "/logout", "/login", "/resource", "/user").permitAll()
+            .antMatchers("/user/*").permitAll()
             .antMatchers(HttpMethod.GET, "/api/*/item/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/*/winner/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/*/lottery/**").permitAll()
