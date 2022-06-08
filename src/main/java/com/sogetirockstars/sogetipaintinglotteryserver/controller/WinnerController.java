@@ -1,20 +1,25 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
-import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
-import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
-import com.sogetirockstars.sogetipaintinglotteryserver.service.WinnerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.util.List;
 
-@Component
-@RestController
-@RequestMapping("api/v1/winner")
+import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
+import com.sogetirockstars.sogetipaintinglotteryserver.service.WinnerService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController @RequestMapping("api/v1/winner")
 public class WinnerController {
     private final WinnerService winnerService;
 
@@ -23,17 +28,11 @@ public class WinnerController {
         this.winnerService = service;
     }
 
-    /**
-     * Returns all winner
-     */
     @GetMapping
     public List<Winner> getAll() {
         return winnerService.getAll();
     }
 
-    /**
-     * Get item with id /{id}
-     */
     @GetMapping(value = "{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
@@ -45,9 +44,6 @@ public class WinnerController {
         }
     }
 
-    /**
-     * Delete item with id /{id}
-     */
     @DeleteMapping(value = "{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
         try {
@@ -57,12 +53,9 @@ public class WinnerController {
         }
     }
 
-    /**
-     * Add new item
-     */
     @PostMapping
     public ResponseEntity<Winner> addNew(@RequestBody Winner winner) {
-        System.out.println("Adding winner " + winner.getContestant().getName() + " id: " + winner.getId());
+        System.out.println("Adding winner " + winner + " id: " + winner.getId());
         winner.setId(null);
         return ResponseEntity.ok().body(winnerService.add(winner));
     }

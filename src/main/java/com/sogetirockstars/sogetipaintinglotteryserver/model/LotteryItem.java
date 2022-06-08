@@ -1,6 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 
@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table
 public class LotteryItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Internal object id;
 
 
@@ -24,21 +24,31 @@ public class LotteryItem {
     private String technique;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lottery_id")
+    @JoinColumn
     private Lottery lottery;
 
-    @JsonBackReference
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public Lottery getLottery() {
         return lottery;
     }
+
 
     public void setLottery(Lottery lottery) {
         this.lottery = lottery;
     }
 
 
+    public Long getLottery_id() {
+        if (this.lottery != null)
+            return lottery.getId();
+        else
+            return null;
+    }
+
+
     public LotteryItem() {
     }
+
 
     public LotteryItem(String itemName, String artistName) {
         this.artistName = artistName;
@@ -64,7 +74,6 @@ public class LotteryItem {
         this.frameDescription = frameDescription;
         this.value = value;
         this.technique = technique;
-        this.lottery = lottery;
     }
 
     public Long getId() {

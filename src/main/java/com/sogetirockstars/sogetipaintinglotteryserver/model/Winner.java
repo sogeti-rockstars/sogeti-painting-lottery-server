@@ -1,39 +1,44 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "winner")
 public class Winner {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lottery_id")
-    private Lottery lottery;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contestant_id")
+    @JoinColumn
     private Contestant contestant;
 
     private Integer placement;
-    @OneToOne
-    private LotteryItem lotteryItem;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Lottery lottery;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Lottery getLottery() {
+        return lottery;
+    }
+
+    public Long getLottery_id() {
+        if (this.lottery != null)
+            return lottery.getId();
+        else
+            return null;
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
+    }
 
     public Winner() {
     }
 
-
-    public Winner(Lottery lottery, Contestant contestant, Integer placement, LotteryItem lotteryItem) {
-        this.lottery = lottery;
-        this.contestant = contestant;
-        this.placement = placement;
-        this.lotteryItem = lotteryItem;
-    }
-
-    public Winner(Lottery lottery, Contestant contestant, Integer placement) {
-        this.lottery = lottery;
+    public Winner(Contestant contestant, Integer placement) {
         this.contestant = contestant;
         this.placement = placement;
     }
@@ -46,26 +51,16 @@ public class Winner {
         this.id = id;
     }
 
-    @JsonBackReference
-    public Lottery getLottery() {
-        return lottery;
-    }
-
-    public Long getLotteryId() {
-        return lottery.getId();
-    }
-
-    public void setLottery(Lottery lottery) {
-        this.lottery = lottery;
-    }
-
-    @JsonBackReference
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public Contestant getContestant() {
         return contestant;
     }
 
     public Long getContestantId() {
-        return contestant.getId();
+        if (this.contestant != null)
+            return contestant.getId();
+        else
+            return null;
     }
 
     public void setContestant(Contestant contestant) {
@@ -80,11 +75,4 @@ public class Winner {
         this.placement = placement;
     }
 
-    public LotteryItem getLotteryItem() {
-        return lotteryItem;
-    }
-
-    public void setLotteryItem(LotteryItem lotteryItem) {
-        this.lotteryItem = lotteryItem;
-    }
 }

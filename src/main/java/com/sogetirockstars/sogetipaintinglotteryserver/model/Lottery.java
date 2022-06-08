@@ -1,24 +1,18 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Entity(name = "Lottery")
-@Table(name = "lottery")
+@Entity
 public class Lottery {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(mappedBy = "lottery")
     private List<LotteryItem> lotteryItems = new ArrayList<>();
-
-    @OneToMany(mappedBy = "lottery")
-    private List<Contestant> contestants = new ArrayList<>();
 
     @OneToMany(mappedBy = "lottery")
     private List<Winner> winners = new ArrayList<>();
@@ -26,17 +20,21 @@ public class Lottery {
     private Date date;
     private String title;
 
-    @JsonManagedReference
-    public List<Contestant> getContestants() {
-        return contestants;
-    }
-
-    @JsonManagedReference
     public List<LotteryItem> getLotteryItems() {
         return lotteryItems;
     }
 
     public Lottery() {
+    }
+
+    public Lottery(Long id, String title, Date date) {
+        this.id = id;
+        this.date = date;
+        this.title = title;
+    }
+
+    public Lottery(String title) {
+        this.title = title;
     }
 
     public List<Winner> getWinners() {
@@ -47,16 +45,16 @@ public class Lottery {
         this.winners = winners;
     }
 
+    public void addWinners(Winner winner) {
+        this.winners.add(winner);
+    }
+
     public Date getDate() {
         return date;
     }
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public Lottery(String title) {
-        this.title = title;
     }
 
     public Long getId() {
@@ -75,18 +73,10 @@ public class Lottery {
         this.title = title;
     }
 
-    public void setContestants(List<Contestant> contestants) {
-        this.contestants = contestants;
-    }
-
     public void setLotteryItems(List<LotteryItem> lotteryItems) {
         this.lotteryItems = lotteryItems;
     }
-
-    public void addContestants(Contestant contestant) {
-        this.contestants.add(contestant);
-    }
-
+    
     public void addLotteryItems(LotteryItem lotteryItem) {
         this.lotteryItems.add(lotteryItem);
     }

@@ -1,18 +1,14 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Contestant
- */
+
 @Entity
-@Table
 public class Contestant {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String employeeId;
@@ -20,54 +16,34 @@ public class Contestant {
     private String email;
     private String teleNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lottery_id")
-    private Lottery lottery;
+    @OneToMany(mappedBy = "contestant", cascade = CascadeType.REMOVE)
+    private List<Winner> winner = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "winner_id")
-    private Winner winner;
-
-    
-    public Winner getWinner() {
+    public List<Winner> getWinner() {
         return winner;
     }
 
-    public void setWinner(Winner winner) {
+    public void setWinner(List<Winner> winner) {
         this.winner = winner;
     }
-
-    @JsonBackReference
-    public Lottery getLottery() {
-        return lottery;
-    }
-
-    public void setLottery(Lottery lottery) {
-        this.lottery = lottery;
-    }
+    
 
     public Contestant() {
     }
 
-    public Contestant(String name, Address address, String employeeId, String teleNumber, String email) {
+    public Contestant(String name, String employeeId, String teleNumber, String email) {
         this.name = name;
-        this.address = address;
         this.email = email;
         this.employeeId = employeeId;
         this.teleNumber = teleNumber;
     }
 
-    public Contestant(String name, Address address, String employeeId, String teleNumber, String email, Lottery lottery) {
+    public Contestant(String name, String employeeId, String teleNumber, String email, Lottery lottery) {
         this.employeeId = employeeId;
         this.name = name;
         this.email = email;
         this.teleNumber = teleNumber;
-        this.address = address;
-        this.lottery = lottery;
     }
 
     public void setId(Long id) {
@@ -90,9 +66,6 @@ public class Contestant {
         this.teleNumber = teleNumber;
     }
 
-    // public void setAddress(Address address) {
-    //     this.address = address;
-    // }
 
     public Long getId() {
         return id;
@@ -112,18 +85,5 @@ public class Contestant {
 
     public String getTeleNumber() {
         return teleNumber;
-    }
-
-    // public String getAddress() {
-    //     return address.toString();
-    // }
-
-    @JsonBackReference
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
     }
 }
