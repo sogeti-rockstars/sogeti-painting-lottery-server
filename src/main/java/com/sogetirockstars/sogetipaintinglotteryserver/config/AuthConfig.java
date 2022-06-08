@@ -10,16 +10,24 @@ import org.springframework.web.cors.CorsUtils;
 
 @Configuration
 public class AuthConfig extends WebSecurityConfigurerAdapter {
+    private final HttpConfig httpConfig;
+    public AuthConfig(HttpConfig httpConfig){
+        this.httpConfig=httpConfig;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http .httpBasic().and()
-             .authorizeRequests()
-             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-             .antMatchers("/index.html", "/", "/logout", "/login", "/resource", "/user").permitAll()
-             .antMatchers(HttpMethod.GET, "/api/*/item/**").permitAll()
-             .antMatchers(HttpMethod.GET, "/api/*/winner/**").permitAll()
-             .antMatchers(HttpMethod.GET, "/api/*/lottery/**").permitAll()
-             .antMatchers("/**").hasRole("ADMIN").anyRequest().authenticated()
+        http
+            .cors().configurationSource(httpConfig.corsConfig()).and()
+            .csrf().disable() 
+            .httpBasic().and()
+            .authorizeRequests()
+            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+            .antMatchers("/index.html", "/", "/logout", "/login", "/resource", "/user").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/*/item/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/*/winner/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/*/lottery/**").permitAll()
+            .antMatchers("/**").hasRole("ADMIN").anyRequest().authenticated()
         ;
     }
 
@@ -27,4 +35,5 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().withUser("admin").password("{noop}admin").roles("USER", "ADMIN", "READER", "WRITER");
     }
+
 }
