@@ -1,9 +1,11 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.config;
 
+import com.sogetirockstars.sogetipaintinglotteryserver.model.AssociationInfo;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
+import com.sogetirockstars.sogetipaintinglotteryserver.repository.AssociationInfoRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.ContestantRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
@@ -39,8 +41,14 @@ public class MockDataConfig {
 
     @Bean
     CommandLineRunner mockData(ContestantRepository contRepo, LotteryItemRepository lottItemsRepo, LotteryRepository lotteryRepo,
-                               WinnerRepository winnerRepo) {
+                               WinnerRepository winnerRepo, AssociationInfoRepository infoRepo) {
         return (String[] args) -> {
+            infoRepo.save(new AssociationInfo("title", "Om föreningen"));
+            infoRepo.saveAndFlush(new AssociationInfo("info",
+                    "För att vara med hör av dig till Ylva på ylva@sogeti.se, Medlemskap kostar 50kr i månaden som kommer dras av din lön."
+                            + "Vi är den bästa föreningen för konst och inom konstbaserade saker, utmärkt CSR och non-profit förening för "
+                            + "alla människors lika värde och nytta."));
+
             contestants = fakeContestants();
             lotteries = fakeLotteries();
             List<LotteryItem> lotteryItems0 = fakeLotteryItems(lotteries);
@@ -54,7 +62,7 @@ public class MockDataConfig {
             lottItemsRepo.saveAllAndFlush(lotteryItems2).stream().forEach(i -> updatePictureUrl(i, lottItemsRepo));
             contRepo.saveAllAndFlush(contestants);
             winnerRepo.saveAllAndFlush(winners);
-            
+
             contRepo.saveAllAndFlush(contestants);
             lotteries.get(0).setLotteryItems(lotteryItems0);
             lotteries.get(1).setLotteryItems(lotteryItems1);

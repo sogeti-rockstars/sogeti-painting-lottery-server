@@ -19,7 +19,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .cors().configurationSource(httpConfig.corsConfig()).and()
-            .csrf().disable() 
+            .csrf().disable()
             .httpBasic().and()
             .authorizeRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
@@ -28,6 +28,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.GET, "/api/*/winner/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/*/lottery/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/*/contestant/").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/*/info/**").permitAll()
             .antMatchers("/**").hasRole("ADMIN").anyRequest().authenticated()
         ;
     }
