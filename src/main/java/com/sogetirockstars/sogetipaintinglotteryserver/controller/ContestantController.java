@@ -1,6 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
@@ -9,6 +10,7 @@ import com.sogetirockstars.sogetipaintinglotteryserver.service.ContestantService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController @RequestMapping(path = "/api/v1/contestant")
+@RestController
+@RequestMapping(path = "/api/v1/contestant")
 public class ContestantController {
     private final ContestantService service;
 
@@ -28,8 +31,8 @@ public class ContestantController {
     }
 
     @GetMapping
-    public List<Contestant> getAll() {
-        return service.getAll();
+    public List<?> getAll() {
+        return isAdmin() ? service.getAll() : sanitize(service.getAll());
     }
 
     @GetMapping(value = "{id}")
@@ -66,5 +69,17 @@ public class ContestantController {
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
+    }
+
+    private List<Map<String, Object>> sanitize(List<Contestant> contestants) {
+        return contestants.stream().map(cont -> {
+            return Map.of("id", (Object) cont.getId(), "name", (Object) cont.getName(), "sanitized", (Object) true);
+        }).toList();
+    }
+
+    private boolean isAdmin() {
+        var authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        var authStrings = authorities.stream().map(auth -> auth.getAuthority()).toList();
+        return authStrings.contains("ROLE_ADMIN");
     }
 }
