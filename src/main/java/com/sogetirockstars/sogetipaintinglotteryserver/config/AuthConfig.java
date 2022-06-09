@@ -27,6 +27,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.GET, "/api/*/item/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/*/winner/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/*/lottery/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/*/contestant/").permitAll()
             .antMatchers("/**").hasRole("ADMIN").anyRequest().authenticated()
         ;
     }
