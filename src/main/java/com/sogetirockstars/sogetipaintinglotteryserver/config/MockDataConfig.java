@@ -40,8 +40,8 @@ public class MockDataConfig {
     }
 
     @Bean
-    CommandLineRunner mockData(ContestantRepository contRepo, LotteryItemRepository lottItemsRepo,
-            LotteryRepository lotteryRepo, WinnerRepository winnerRepo, AssociationInfoRepository infoRepo) {
+    CommandLineRunner mockData(ContestantRepository contRepo, LotteryItemRepository lottItemsRepo, LotteryRepository lotteryRepo,
+                               WinnerRepository winnerRepo, AssociationInfoRepository infoRepo) {
         return (String[] args) -> {
             infoRepo.save(new AssociationInfo("title", "Om föreningen"));
             infoRepo.saveAndFlush(new AssociationInfo("info",
@@ -77,8 +77,7 @@ public class MockDataConfig {
         };
     }
 
-    private List<Winner> fakeWinners(List<Contestant> contestants, List<LotteryItem> lotteryItems,
-            List<Lottery> lotterys) {
+    private List<Winner> fakeWinners(List<Contestant> contestants, List<LotteryItem> lotteryItems, List<Lottery> lotterys) {
         List<Winner> winners = List.of(new Winner(), new Winner(), new Winner());
         for (int i = 0; i < winners.size(); i++) {
             winners.get(i).setLottery(lotterys.get(i));
@@ -120,12 +119,9 @@ public class MockDataConfig {
     }
 
     private List<LotteryItem> fakeLotteryItems(List<Lottery> lotteries) {
-        return List.of(
-                new LotteryItem("", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(1)),
-                new LotteryItem("", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil",
-                        lotteries.get(0)),
-                new LotteryItem("", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil",
-                        lotteries.get(2)),
+        return List.of(new LotteryItem("", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(1)),
+                new LotteryItem("", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(0)),
+                new LotteryItem("", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(2)),
                 new LotteryItem("", "David", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
                 new LotteryItem("", "Mikael Blomqkvist", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
                 new LotteryItem("", "Mona lisa", "Da vinci", "10x10m", "wood", "999.999.999kr", "oil"),
@@ -147,8 +143,8 @@ public class MockDataConfig {
     }
 
     /*
-     * Called by Spring when running the CommandLineRunner above. We need to save the items to the database to get a
-     * valid id from SQL so we copy the mockdata-photos after we've gotten an id...
+     * Called by Spring when running the CommandLineRunner above. We need to save the items to the database to get a valid id from SQL so we copy the
+     * mockdata-photos after we've gotten an id...
      */
     private int lastMockId = 0;
     private final int numFakePhotos = 16;
@@ -174,28 +170,21 @@ public class MockDataConfig {
         return fname + " " + lname;
     }
 
-    private final String[] randLastNames = { "Seivertsen", "Conquer", "Stoop", "Gatch", "Eck", "Iddon", "Forst",
-            "Bernette", "Ambrus", "Winfield", "Coughtrey", "Beadel", "Bonney", "Longcake", "MacEveley", "Sey",
-            "Headford", "Le Surf", "Tree", "Vicent", "Lampens", "Devall", "Need", "Norquay", "Mioni", "Moreside",
-            "Lehemann", "Bilborough", "Claxson", "Conti", "McAlpine", "Ferschke", "Tretwell", "Davioud", "Hallwell",
-            "McGonagle", "Freda", "Palphramand", "Shreve", "Mardell", "Scholard", "De Banke", "Feifer", "Dinan",
-            "O'Conor", "Minshull", "Faulconer", "Burnand", "Bellenger", "Hamfleet", "Stathor", "Pykett", "Makiver",
-            "Loffill", "Schankelborg", "Fryd", "Helling", "Laflin", "Walasik", "Voase", "Quilleash", "Cleever",
-            "Fillgate", "Dibdale", "O'Cooney", "Ogers", "Flecknell", "Shermar", "Gonnin", "Connell", "Patient",
-            "Fassum", "Skeats", "Jolliff", "Govett", "Chavrin", "Trevascus", "Norcutt", "Zimmermeister", "Cluelow",
-            "Binnie", "Wensley", "Kerwin", "Kubicek", "Southan", "Whitefoot", "Elizabeth", "Bowne", "Baggelley",
-            "Chiplen", "Ordish", "Rois", "Chrestien", "Suatt", "Seppey", "Asquez", "Ible", "Casford", "Spurrett",
-            "De Maria", };
+    private final String[] randLastNames = {"Seivertsen", "Conquer", "Stoop", "Gatch", "Eck", "Iddon", "Forst", "Bernette", "Ambrus", "Winfield", "Coughtrey",
+            "Beadel", "Bonney", "Longcake", "MacEveley", "Sey", "Headford", "Le Surf", "Tree", "Vicent", "Lampens", "Devall", "Need", "Norquay", "Mioni",
+            "Moreside", "Lehemann", "Bilborough", "Claxson", "Conti", "McAlpine", "Ferschke", "Tretwell", "Davioud", "Hallwell", "McGonagle", "Freda",
+            "Palphramand", "Shreve", "Mardell", "Scholard", "De Banke", "Feifer", "Dinan", "O'Conor", "Minshull", "Faulconer", "Burnand", "Bellenger",
+            "Hamfleet", "Stathor", "Pykett", "Makiver", "Loffill", "Schankelborg", "Fryd", "Helling", "Laflin", "Walasik", "Voase", "Quilleash", "Cleever",
+            "Fillgate", "Dibdale", "O'Cooney", "Ogers", "Flecknell", "Shermar", "Gonnin", "Connell", "Patient", "Fassum", "Skeats", "Jolliff", "Govett",
+            "Chavrin", "Trevascus", "Norcutt", "Zimmermeister", "Cluelow", "Binnie", "Wensley", "Kerwin", "Kubicek", "Southan", "Whitefoot", "Elizabeth",
+            "Bowne", "Baggelley", "Chiplen", "Ordish", "Rois", "Chrestien", "Suatt", "Seppey", "Asquez", "Ible", "Casford", "Spurrett", "De Maria",};
 
-    private final String[] randFirstNames = { "Remington", "Vaughan", "Kira", "Arnie", "Dawna", "Claudian", "Cal",
-            "Giovanna", "Katey", "Fleming", "Lillian", "Chaddie", "Wilmar", "Gwen", "Gerhardine", "Adrienne", "Dur",
-            "Krispin", "Roarke", "Kandy", "Bird", "Betteann", "Janot", "Myrle", "Antoinette", "Charline", "Etienne",
-            "Adamo", "Chicky", "Elga", "Shaylynn", "Therine", "Janessa", "Yvon", "Anna-diana", "Trever", "Philly",
-            "Lorrin", "Jillian", "Brook", "Joshuah", "Angie", "Chrystel", "Diane-marie", "Tammie", "Dieter", "Eberto",
-            "Sheilakathryn", "Wyatan", "Joey", "Nicola", "Yvon", "Gerianne", "Cal", "Charisse", "Hobie", "Trixy",
-            "Bendite", "Gabie", "Elena", "Sean", "Kessiah", "Jorgan", "Nydia", "Sybilla", "Indira", "Kala", "Rogers",
-            "Michell", "Rebe", "Tiertza", "Orton", "Gan", "Rodrick", "Ephraim", "Stanford", "Paddie", "Antoni",
-            "Marnia", "Amerigo", "Felicle", "Germana", "Marney", "Odette", "Terrence", "Rudolf", "Harcourt", "Theressa",
-            "Philippa", "Johnathan", "Colby", "Odille", "Johan", "Dolley", "Jefferson", "Zia", "Caitrin", "Angeline",
-            "Winn", "Morley", };
+    private final String[] randFirstNames = {"Remington", "Vaughan", "Kira", "Arnie", "Dawna", "Claudian", "Cal", "Giovanna", "Katey", "Fleming", "Lillian",
+            "Chaddie", "Wilmar", "Gwen", "Gerhardine", "Adrienne", "Dur", "Krispin", "Roarke", "Kandy", "Bird", "Betteann", "Janot", "Myrle", "Antoinette",
+            "Charline", "Etienne", "Adamo", "Chicky", "Elga", "Shaylynn", "Therine", "Janessa", "Yvon", "Anna-diana", "Trever", "Philly", "Lorrin", "Jillian",
+            "Brook", "Joshuah", "Angie", "Chrystel", "Diane-marie", "Tammie", "Dieter", "Eberto", "Sheilakathryn", "Wyatan", "Joey", "Nicola", "Yvon",
+            "Gerianne", "Cal", "Charisse", "Hobie", "Trixy", "Bendite", "Gabie", "Elena", "Sean", "Kessiah", "Jorgan", "Nydia", "Sybilla", "Indira", "Kala",
+            "Rogers", "Michell", "Rebe", "Tiertza", "Orton", "Gan", "Rodrick", "Ephraim", "Stanford", "Paddie", "Antoni", "Marnia", "Amerigo", "Felicle",
+            "Germana", "Marney", "Odette", "Terrence", "Rudolf", "Harcourt", "Theressa", "Philippa", "Johnathan", "Colby", "Odille", "Johan", "Dolley",
+            "Jefferson", "Zia", "Caitrin", "Angeline", "Winn", "Morley",};
 }
