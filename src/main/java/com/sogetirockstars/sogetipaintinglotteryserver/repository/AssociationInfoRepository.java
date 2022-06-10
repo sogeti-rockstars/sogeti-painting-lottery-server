@@ -1,7 +1,5 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.repository;
 
-import java.util.List;
-
 import com.sogetirockstars.sogetipaintinglotteryserver.model.AssociationInfo;
 
 import org.springframework.data.jpa.repository.JpaRepository;

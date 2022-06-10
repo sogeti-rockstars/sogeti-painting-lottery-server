@@ -29,12 +29,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MockDataConfig {
-
     private String mockPhotosSrc = "src/main/resources/mock-photos";
     private final PhotoService photoService;
     private List<Contestant> contestants;
     private List<Lottery> lotteries;
-    private List<Winner> winners;
+    private final Random rand = new Random();
 
     @Autowired
     public MockDataConfig(PhotoService photoService, LotteryService lotteryService) {
@@ -53,41 +52,37 @@ public class MockDataConfig {
 
             contestants = fakeContestants();
             lotteries = fakeLotteries();
-            List<LotteryItem> lotteryItems0 = fakeLotteryItems(lotteries);
-            List<LotteryItem> lotteryItems1 = fakeLotteryItems(lotteries);
-            List<LotteryItem> lotteryItems2 = fakeLotteryItems(lotteries).stream().limit(5).toList();
-            winners = fakeWinners(contestants, lotteryItems0, lotteries);
 
-            lotteryRepo.saveAllAndFlush(lotteries);
-            lottItemsRepo.saveAllAndFlush(lotteryItems0).stream().forEach(i -> updatePictureUrl(i, lottItemsRepo));
-            lottItemsRepo.saveAllAndFlush(lotteryItems1).stream().forEach(i -> updatePictureUrl(i, lottItemsRepo));
-            lottItemsRepo.saveAllAndFlush(lotteryItems2).stream().forEach(i -> updatePictureUrl(i, lottItemsRepo));
-            contRepo.saveAllAndFlush(contestants);
-            winnerRepo.saveAllAndFlush(winners);
+            lotteryRepo.saveAll(lotteries);
+            contRepo.saveAll(contestants);
 
-            contRepo.saveAllAndFlush(contestants);
-            lotteries.get(0).setLotteryItems(lotteryItems0);
-            lotteries.get(1).setLotteryItems(lotteryItems1);
-            lotteries.get(2).setLotteryItems(lotteryItems2);
-            lotteries.get(0).setWinners(winners);
-            lotteryItems0.get(0).setLottery(lotteries.get(0));
-            lotteryItems1.get(1).setLottery(lotteries.get(1));
-            lottItemsRepo.saveAllAndFlush(lotteryItems0);
-            lottItemsRepo.saveAllAndFlush(lotteryItems1);
+            for (int i = 0; i < lotteries.size() - 1; i++) {
+                Lottery curLottery = lotteries.get(i);
+                List<LotteryItem> curItems = fakeLotteryItems();
 
-            lotteryRepo.saveAllAndFlush(lotteries);
+                for (int u = 0; u <= lotteries.size() - i; u++) {
+                    LotteryItem curItem = curItems.get(u);
+
+                    Winner winner = new Winner(contestants.get(i), u);
+                    winner.setLottery(curLottery);
+                    winnerRepo.save(winner);
+                    curLottery.addWinners(winner);
+
+                    curItem.setLottery(curLottery);
+                    lottItemsRepo.save(curItem);
+                    updatePictureUrl(curItem);
+                    curLottery.addLotteryItems(curItem);
+                    lotteryRepo.save(curLottery);
+
+                }
+            }
+
+            winnerRepo.flush();
+            contRepo.flush();
+            lotteryRepo.flush();
+            lottItemsRepo.flush();
+            infoRepo.flush();
         };
-    }
-
-    private List<Winner> fakeWinners(List<Contestant> contestants, List<LotteryItem> lotteryItems, List<Lottery> lotterys) {
-        List<Winner> winners = List.of(new Winner(), new Winner(), new Winner());
-        for (int i = 0; i < winners.size(); i++) {
-            winners.get(i).setLottery(lotterys.get(i));
-            // winners.get(i).setLotteryItem(lotteryItems.get(i));
-            winners.get(i).setContestant(contestants.get(i));
-            winners.get(i).setPlacement(i);
-        }
-        return winners;
     }
 
     private List<Lottery> fakeLotteries() {
@@ -120,10 +115,10 @@ public class MockDataConfig {
         return contestants;
     }
 
-    private List<LotteryItem> fakeLotteryItems(List<Lottery> lotteries) {
-        return List.of(new LotteryItem("", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(1)),
-                new LotteryItem("", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(0)),
-                new LotteryItem("", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(2)),
+    private List<LotteryItem> fakeLotteryItems() {
+        return List.of(new LotteryItem("", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil"),
+                new LotteryItem("", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil"),
+                new LotteryItem("", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil"),
                 new LotteryItem("", "David", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
                 new LotteryItem("", "Mikael Blomqkvist", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
                 new LotteryItem("", "Mona lisa", "Da vinci", "10x10m", "wood", "999.999.999kr", "oil"),
@@ -151,7 +146,7 @@ public class MockDataConfig {
     private int lastMockId = 0;
     private final int numFakePhotos = 16;
 
-    private void updatePictureUrl(LotteryItem item, LotteryItemRepository repo) {
+    private void updatePictureUrl(LotteryItem item) {
         try {
             String photoPath = mockPhotosSrc + "/" + lastMockId++ % numFakePhotos + ".jpg";
             System.out.println("Using photo: " + photoPath);
@@ -163,8 +158,6 @@ public class MockDataConfig {
             System.exit(1);
         }
     }
-
-    private final Random rand = new Random();
 
     private String getRandomName() {
         String fname = randFirstNames[rand.nextInt(randFirstNames.length - 1)];

@@ -1,9 +1,11 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,26 +22,24 @@ public class PhotoService {
     @Value("${photobucket.path}")
     private String configPhotosPath;
 
+    private String resourcePath = "src/main/resources/photo-service/";
+    private String noImagePath = resourcePath + "No-image-available.png";
+
     private Path photosPath;
 
     public PhotoService() {
     }
 
-    private void ensurePathExists() throws IOException, PhotoWriteException {
-        if (photosPath != null)
-            return;
-        if (configPhotosPath == null)
-            throw new IOException("No path configured for saving photos!");
-        if (configPhotosPath.equals("###TEMPDIR###"))
-            configPhotosPath = System.getProperty("java.io.tmpdir") + "/sogeti-lottery";
-
-        photosPath = Paths.get(configPhotosPath);
+    public void setPlaceholderPhoto(Long id) throws PhotoWriteException {
         try {
-            if (!Files.exists(photosPath))
-                Files.createDirectories(photosPath);
+            ensurePathExists();
+            Path placeholderPath = Paths.get(noImagePath).toAbsolutePath();
+            Path targetPath = photosPath.resolve(id.toString().trim());
+            Files.deleteIfExists(targetPath);
+            Files.createSymbolicLink(targetPath, placeholderPath);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new PhotoWriteException("Failed to create directory " + configPhotosPath + ".");
+            throw new PhotoWriteException("Previously existing path failed being written to. Contact your system administrator.");
         }
     }
 
@@ -47,11 +47,10 @@ public class PhotoService {
         try {
             ensurePathExists();
             Path filePath = photosPath.resolve(id.toString().trim());
-            System.out.println("Saving photo to " + filePath.toString());
             Files.copy(photoInStream, filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println(this.getClass().toString() + "Previously existing path failed being written to.");
+            throw new PhotoWriteException("Previously existing path failed being written to. Contact your system administrator.");
         }
     }
 
@@ -62,4 +61,25 @@ public class PhotoService {
             throw new PhotoMissingException("Photo for item with id " + id + " does not exist");
         }
     }
+
+    private void ensurePathExists() throws IOException, PhotoWriteException {
+        if (photosPath != null)
+            return;
+        if (configPhotosPath == null)
+            throw new IOException("No path configured for saving photos!");
+
+        if (configPhotosPath.equals("###TEMPDIR###")) // For production enviroment
+            configPhotosPath = System.getProperty("java.io.tmpdir") + "/sogeti-lottery";
+
+        photosPath = Paths.get(configPhotosPath);
+
+        try {
+            if (!Files.exists(photosPath))
+                Files.createDirectories(photosPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new PhotoWriteException("Failed to create directory " + configPhotosPath + ".");
+        }
+    }
+
 }

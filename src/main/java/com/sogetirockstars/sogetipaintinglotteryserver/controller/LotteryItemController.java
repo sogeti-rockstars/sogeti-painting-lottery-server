@@ -62,9 +62,15 @@ public class LotteryItemController {
     }
 
     @PostMapping
-    public ResponseEntity<LotteryItem> addNew(@RequestBody LotteryItem lotteryItem) {
+    public ResponseEntity<?> addNew(@RequestBody LotteryItem lotteryItem) {
         lotteryItem.setId(null);
-        return ResponseEntity.ok().body(lotteryItemService.add(lotteryItem));
+        LotteryItem item = lotteryItemService.add(lotteryItem);
+        try {
+            photoService.setPlaceholderPhoto(item.getId());
+        } catch (PhotoWriteException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok().body(item);
     }
 
     @PutMapping(value = "{id}")
