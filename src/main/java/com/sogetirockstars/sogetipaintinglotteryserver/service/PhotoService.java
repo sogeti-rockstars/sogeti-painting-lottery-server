@@ -30,6 +30,8 @@ public class PhotoService {
             return;
         if (configPhotosPath == null)
             throw new IOException("No path configured for saving photos!");
+        if (configPhotosPath.equals("###TEMPDIR###"))
+            configPhotosPath = System.getProperty("java.io.tmpdir") + "/sogeti-lottery";
 
         photosPath = Paths.get(configPhotosPath);
         try {
