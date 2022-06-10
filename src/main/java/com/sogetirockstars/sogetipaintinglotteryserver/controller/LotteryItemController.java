@@ -90,8 +90,7 @@ public class LotteryItemController {
     }
 
     @PutMapping("/update-image/{id}")
-    public ResponseEntity<?> uploadPicture(@PathVariable Long id, @RequestPart("image") MultipartFile multipartFile)
-            throws IOException {
+    public ResponseEntity<?> uploadPicture(@PathVariable Long id, @RequestPart("image") MultipartFile multipartFile) throws IOException {
         try {
             LotteryItem item = lotteryItemService.getItem(id); // Ensure the requested resource exists.
             photoService.savePhoto(id, multipartFile.getInputStream());

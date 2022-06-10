@@ -24,8 +24,8 @@ public class LotteryService {
     private final PhotoService photoService;
 
     @Autowired
-    public LotteryService(LotteryRepository repository, ContestantService contestantService,
-            WinnerService winnerService, LotteryItemService lotteryItemService, PhotoService photoService) {
+    public LotteryService(LotteryRepository repository, ContestantService contestantService, WinnerService winnerService, LotteryItemService lotteryItemService,
+            PhotoService photoService) {
         this.repository = repository;
         this.contestantService = contestantService;
         this.winnerService = winnerService;
@@ -75,18 +75,15 @@ public class LotteryService {
         return newLottery;
     }
 
-    public Winner spinTheWheelNoItem(Lottery lottery)
-            throws IdException, AllContestantsTakenException, EmptyLotteryWinnerAssignmentException {
+    public Winner spinTheWheelNoItem(Lottery lottery) throws IdException, AllContestantsTakenException, EmptyLotteryWinnerAssignmentException {
         if (contestantService.getAll().size() == 0)
             throw new EmptyLotteryWinnerAssignmentException("No contestants in lottery " + lottery.getId());
 
         List<Long> winnerIds = lottery.getWinners().stream().map(c -> c.getContestantId()).toList();
-        List<Long> nonWinnerIds = contestantService.getAll().stream().map(c -> c.getId())
-                .filter(id -> !winnerIds.contains(id)).toList();
+        List<Long> nonWinnerIds = contestantService.getAll().stream().map(c -> c.getId()).filter(id -> !winnerIds.contains(id)).toList();
 
         if (nonWinnerIds.size() == 0)
-            throw new AllContestantsTakenException(
-                    "No non-winning contestants in lottery with id " + lottery.getId() + ".");
+            throw new AllContestantsTakenException("No non-winning contestants in lottery with id " + lottery.getId() + ".");
 
         int randomContestantIdx = (int) (Math.random() * (nonWinnerIds.size()));
         Long winnerContestantId = nonWinnerIds.get(randomContestantIdx);
