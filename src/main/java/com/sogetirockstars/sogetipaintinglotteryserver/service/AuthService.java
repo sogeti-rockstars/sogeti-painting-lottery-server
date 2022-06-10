@@ -4,7 +4,6 @@ import com.sogetirockstars.sogetipaintinglotteryserver.model.UserAccount;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.AuthenticationRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
