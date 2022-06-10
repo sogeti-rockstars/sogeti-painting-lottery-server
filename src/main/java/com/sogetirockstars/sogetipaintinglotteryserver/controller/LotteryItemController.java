@@ -1,7 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
 import java.io.IOException;
-import java.util.List;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.PhotoMissingException;
@@ -38,15 +37,14 @@ public class LotteryItemController {
         this.photoService = photoService;
     }
 
-    @GetMapping
-    public List<LotteryItem> getAll() {
-        return lotteryItemService.getAll();
+    @GetMapping(value = "get-all")
+    public ResponseEntity<?> getAll() {
+        return new ResponseEntity<>(lotteryItemService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping(value = "{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
-            System.out.println("Sending painting with id " + id);
             LotteryItem item = lotteryItemService.getItem(id);
             return new ResponseEntity<>(item, HttpStatus.OK);
         } catch (IdException e) {
@@ -65,7 +63,6 @@ public class LotteryItemController {
 
     @PostMapping
     public ResponseEntity<LotteryItem> addNew(@RequestBody LotteryItem lotteryItem) {
-        System.out.println("Adding painting " + lotteryItem.getItemName() + " id: " + lotteryItem.getId());
         lotteryItem.setId(null);
         return ResponseEntity.ok().body(lotteryItemService.add(lotteryItem));
     }
@@ -84,8 +81,7 @@ public class LotteryItemController {
     public ResponseEntity<?> getImage(@PathVariable Long id) throws IOException {
         try {
             lotteryItemService.getItem(id); // Ensure the requested resource exists.
-            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG)
-                    .body(new InputStreamResource(photoService.getPhoto(id)));
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(new InputStreamResource(photoService.getPhoto(id)));
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (PhotoMissingException e) {
