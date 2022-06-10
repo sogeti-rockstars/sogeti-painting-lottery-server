@@ -1,5 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.config;
 
+import com.sogetirockstars.sogetipaintinglotteryserver.exception.PhotoWriteException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.AssociationInfo;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
@@ -155,7 +156,7 @@ public class MockDataConfig {
             System.out.println("Using photo: " + photoPath);
             Path src = Paths.get(photoPath);
             photoService.savePhoto(item.getId(), new FileInputStream(src.toFile()));
-        } catch (IOException e) {
+        } catch (IOException | PhotoWriteException e) {
             e.printStackTrace();
             System.err.println("Mock data failed to be created");
             System.exit(1);
