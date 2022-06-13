@@ -35,6 +35,27 @@ public class Winner {
         this.lottery = lottery;
     }
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private LotteryItem lotteryItem;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public LotteryItem getLotteryItem() {
+        return lotteryItem;
+    }
+
+    public Long getLotteryItemId() {
+        if (this.lotteryItem != null)
+            return lotteryItem.getId();
+        else
+            return null;
+    }
+
+    public void setLotteryItem(LotteryItem lotteryItem) {
+        this.lotteryItem = lotteryItem;
+    }
+
     public Winner() {
     }
 

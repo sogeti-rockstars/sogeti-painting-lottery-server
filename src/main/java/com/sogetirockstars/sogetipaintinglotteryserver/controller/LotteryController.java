@@ -40,7 +40,7 @@ public class LotteryController {
         List<Lottery> resp = new LinkedList<>();
 
         for (Lottery lottery : lotteryService.getAll()) {
-            Lottery newLott = new Lottery(lottery.getId(), lottery.getTitle(), lottery.getDate());
+            Lottery newLott = new Lottery(lottery.getId(), lottery.getTitle());
             resp.add(newLott);
         }
         return new ResponseEntity<>(resp, HttpStatus.OK);
