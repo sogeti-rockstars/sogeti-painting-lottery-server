@@ -9,31 +9,16 @@ public class Winner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Contestant contestant;
-
-    private Integer placement;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Lottery lottery;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    public Lottery getLottery() {
-        return lottery;
-    }
-
-    public Long getLottery_id() {
-        if (this.lottery != null)
-            return lottery.getId();
-        else
-            return null;
-    }
-
-    public void setLottery(Lottery lottery) {
-        this.lottery = lottery;
-    }
+    private Integer placement;
 
     public Winner() {
     }
@@ -54,6 +39,15 @@ public class Winner {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public Contestant getContestant() {
         return contestant;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Lottery getLottery() {
+        return lottery;
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
     }
 
     public Long getContestantId() {

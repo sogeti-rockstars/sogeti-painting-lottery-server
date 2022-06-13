@@ -6,10 +6,13 @@ import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.AssociationInfo;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.AssociationInfoRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AssociationInfoService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssociationInfoService.class);
     private final AssociationInfoRepository repository;
 
     public AssociationInfoService(AssociationInfoRepository repo) {
@@ -47,8 +50,11 @@ public class AssociationInfoService {
     }
 
     public void assertExists(Long id) throws IdException {
-        if (!repository.existsById(id))
-            throw new IdException("AssociationInfo item with id " + id + " doesn't exist.");
+        if (repository.existsById(id))
+            return;
+        else
+            LOGGER.info("assertExists: " + id);
+        throw new IdException("Item with id " + id + " doesn't exist.");
     }
 
     // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt

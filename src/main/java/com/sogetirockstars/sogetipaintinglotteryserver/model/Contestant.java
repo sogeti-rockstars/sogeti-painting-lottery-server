@@ -18,14 +18,6 @@ public class Contestant {
     @OneToMany(mappedBy = "contestant", cascade = CascadeType.REMOVE)
     private List<Winner> winner = new ArrayList<>();
 
-    public List<Winner> getWinner() {
-        return winner;
-    }
-
-    public void setWinner(List<Winner> winner) {
-        this.winner = winner;
-    }
-
     public Contestant() {
     }
 
@@ -81,6 +73,14 @@ public class Contestant {
 
     public String getTeleNumber() {
         return teleNumber;
+    }
+
+    public List<Winner> getWinner() {
+        return winner;
+    }
+
+    public void setWinner(List<Winner> winner) {
+        this.winner = winner;
     }
 
     @Override

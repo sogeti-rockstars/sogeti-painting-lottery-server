@@ -75,7 +75,6 @@ public class MockDataConfig {
                     Winner winner = new Winner(contestants.get(i), u);
                     winner.setLottery(curLottery);
                     winnerRepo.save(winner);
-                    curLottery.addWinners(winner);
 
                     curItem.setLottery(curLottery);
                     lottItemsRepo.save(curItem);

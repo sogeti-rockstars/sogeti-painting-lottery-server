@@ -5,7 +5,6 @@ import java.util.List;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
-import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +18,14 @@ import org.springframework.stereotype.Service;
 public class LotteryItemService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LotteryItemService.class);
 
+    private final ServiceManager serviceManager;
     private final LotteryItemRepository repository;
-    private final LotteryRepository lotteryRepo;
 
     @Autowired
-    public LotteryItemService(LotteryItemRepository repository, LotteryRepository lotteryRepo) {
+    public LotteryItemService(LotteryItemRepository repository, ServiceManager serviceManager) {
         this.repository = repository;
-        this.lotteryRepo = lotteryRepo;
+        this.serviceManager = serviceManager;
+        serviceManager.addService(this);
     }
 
     public List<LotteryItem> getAll() {
@@ -37,54 +37,32 @@ public class LotteryItemService {
         return repository.findById(id).get();
     }
 
-    public LotteryItem getRandomItem() throws IdException {
-        int size = this.getAll().size();
-        long id = (long) (Math.random() * (size));
-        List<LotteryItem> lotteryItems = this.getAll();
-        assertExists(lotteryItems.get((int) id).getId());
-        return lotteryItems.get((int) id);
-    }
-
     public LotteryItem add(LotteryItem item) {
-        item.setId(null);
-        LOGGER.info("LotteryItem skapat " + item.toString());
-
-        return repository.save(item);
-    }
-
-    public List<LotteryItem> saveAllAndFlush(LotteryItem item) throws IdException {
-        assertExists(item.getId());
-        List<LotteryItem> items = repository.findAll();
-        items.set(Math.toIntExact(item.getId()), item);
-        return repository.saveAllAndFlush(items);
-    }
-
-    public LotteryItem save(LotteryItem item) throws IdException {
-        assertExists(item.getId());
+        repository.save(item);
+        LOGGER.info("add: " + item.toString());
         return repository.save(item);
     }
 
     public LotteryItem update(LotteryItem newItem) throws IdException {
-        assertExists(newItem.getId());
-        LotteryItem origItem = repository.getById(newItem.getId());
+        LotteryItem origItem = getItem(newItem.getId());
+        LOGGER.info("update: " + newItem.toString());
         return repository.save(mergeItems(origItem, newItem));
     }
 
     public boolean delete(Long id) throws IdException {
-        assertExists(id);
-        LotteryItem item = repository.findById(id).get();
-        lotteryRepo.findAll().stream().forEach(lott -> {
-            if (lott.getLotteryItems().remove(item))
-                lotteryRepo.save(lott);
-        });
-        lotteryRepo.flush();
+        LotteryItem item = getItem(id);
+        serviceManager.removeAllItemOccurances(item);
         repository.deleteById(id);
+        // LOGGER.info("delete: " + item.toString());
         return true;
     }
 
     private void assertExists(Long id) throws IdException {
-        if (!repository.existsById(id))
-            throw new IdException("Item with id " + id + " doesn't exist.");
+        if (repository.existsById(id))
+            return;
+        else
+            LOGGER.info("assertExists: " + id);
+        throw new IdException("Item with id " + id + " doesn't exist.");
     }
 
     // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt att skapa JSON

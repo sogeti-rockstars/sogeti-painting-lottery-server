@@ -12,11 +12,14 @@ import java.nio.file.StandardCopyOption;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.PhotoMissingException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.PhotoWriteException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PhotoService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PhotoService.class);
     @Value("${photobucket.path}")
     private String configPhotosPath;
 
@@ -30,11 +33,14 @@ public class PhotoService {
 
     public void setPlaceholderPhoto(Long id) throws PhotoWriteException {
         try {
+            LOGGER.info("setPlaceholderPhoto");
             ensurePathExists();
             Path placeholderPath = Paths.get(noImagePath).toAbsolutePath();
             Path targetPath = photosPath.resolve(id.toString().trim());
             Files.deleteIfExists(targetPath);
             Files.createSymbolicLink(targetPath, placeholderPath);
+
+            LOGGER.info("targetPath:" + targetPath + " " + ", placeholderPath: " + placeholderPath);
         } catch (IOException e) {
             e.printStackTrace();
             throw new PhotoWriteException("Previously existing path failed being written to. Contact your system administrator.");
@@ -43,9 +49,12 @@ public class PhotoService {
 
     public void savePhoto(Long id, InputStream photoInStream) throws PhotoWriteException {
         try {
+            LOGGER.info("savePhoto:");
             ensurePathExists();
             Path filePath = photosPath.resolve(id.toString().trim());
             Files.copy(photoInStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            LOGGER.info("filePath: " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
             throw new PhotoWriteException("Previously existing path failed being written to. Contact your system administrator.");

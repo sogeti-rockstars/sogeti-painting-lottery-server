@@ -1,8 +1,15 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Painting
@@ -25,22 +32,6 @@ public class LotteryItem {
     @JoinColumn
     private Lottery lottery;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    public Lottery getLottery() {
-        return lottery;
-    }
-
-    public void setLottery(Lottery lottery) {
-        this.lottery = lottery;
-    }
-
-    public Long getLottery_id() {
-        if (this.lottery != null)
-            return lottery.getId();
-        else
-            return null;
-    }
-
     public LotteryItem() {
     }
 
@@ -50,17 +41,6 @@ public class LotteryItem {
     }
 
     public LotteryItem(String pictureUrl, String itemName, String artistName, String size, String frameDescription, String value, String technique) {
-        // this.pictureUrl = pictureUrl;
-        this.itemName = itemName;
-        this.artistName = artistName;
-        this.size = size;
-        this.frameDescription = frameDescription;
-        this.value = value;
-        this.technique = technique;
-    }
-
-    public LotteryItem(String pictureUrl, String itemName, String artistName, String size, String frameDescription, String value, String technique,
-            Lottery lottery) {
         this.itemName = itemName;
         this.artistName = artistName;
         this.size = size;
@@ -73,9 +53,14 @@ public class LotteryItem {
         return id;
     }
 
-    // public String getPictureUrl() {
-    // return pictureUrl;
-    // }
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Lottery getLottery() {
+        return lottery;
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
+    }
 
     public String getItemName() {
         return itemName;
@@ -131,7 +116,9 @@ public class LotteryItem {
 
     @Override
     public String toString() {
-        return "LotteryItem [artistName=" + artistName + ", frameDescription=" + frameDescription + ", id=" + id + ", itemName=" + itemName + ", lottery="
-                + lottery + ", size=" + size + ", technique=" + technique + ", value=" + value + "]";
+        return "LotteryItem [" + "artistName=" + (artistName == null ? "null" : artistName) + ", frameDescription="
+                + (frameDescription == null ? "null" : frameDescription) + ", id=" + (id == null ? "null" : id) + ", itemName="
+                + (itemName == null ? "null" : itemName) + ", lottery=" + (lottery == null ? "null" : lottery) + ", size=" + (size == null ? "null" : size)
+                + ", technique=" + (technique == null ? "null" : technique) + ", value=" + (value == null ? "null" : value) + "]";
     }
 }

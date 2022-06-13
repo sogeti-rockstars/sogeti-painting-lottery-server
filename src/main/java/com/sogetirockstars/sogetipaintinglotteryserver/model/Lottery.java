@@ -45,10 +45,6 @@ public class Lottery {
         this.winners = winners;
     }
 
-    public void addWinners(Winner winner) {
-        this.winners.add(winner);
-    }
-
     public Date getDate() {
         return date;
     }
@@ -83,6 +79,6 @@ public class Lottery {
 
     @Override
     public String toString() {
-        return "Lottery [date=" + date + ", id=" + id + ", lotteryItems=" + lotteryItems + ", title=" + title + ", winners=" + winners + "]";
+        return "[title=" + (title != null ? title : "null") + ",id=" + (id != null ? id : "null") + "]";
     }
 }
