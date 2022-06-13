@@ -1,5 +1,14 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.config;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+
+import com.sogetirockstars.sogetipaintinglotteryserver.exception.PhotoWriteException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.AssociationInfo;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
@@ -12,27 +21,19 @@ import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryReposit
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.LotteryService;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-
 @Configuration
 public class MockDataConfig {
-
     private String mockPhotosSrc = "src/main/resources/mock-photos";
     private final PhotoService photoService;
     private List<Contestant> contestants;
     private List<Lottery> lotteries;
-    private List<Winner> winners;
+    private final Random rand = new Random();
 
     @Autowired
     public MockDataConfig(PhotoService photoService, LotteryService lotteryService) {
@@ -40,8 +41,8 @@ public class MockDataConfig {
     }
 
     @Bean
-    CommandLineRunner mockData(ContestantRepository contRepo, LotteryItemRepository lottItemsRepo, LotteryRepository lotteryRepo,
-                               WinnerRepository winnerRepo, AssociationInfoRepository infoRepo) {
+    CommandLineRunner mockData(ContestantRepository contRepo, LotteryItemRepository lottItemsRepo, LotteryRepository lotteryRepo, WinnerRepository winnerRepo,
+            AssociationInfoRepository infoRepo) {
         return (String[] args) -> {
             infoRepo.save(new AssociationInfo("title", "Om föreningen"));
             infoRepo.saveAndFlush(new AssociationInfo("info",
@@ -51,41 +52,37 @@ public class MockDataConfig {
 
             contestants = fakeContestants();
             lotteries = fakeLotteries();
-            List<LotteryItem> lotteryItems0 = fakeLotteryItems(lotteries);
-            List<LotteryItem> lotteryItems1 = fakeLotteryItems(lotteries);
-            List<LotteryItem> lotteryItems2 = fakeLotteryItems(lotteries).stream().limit(5).toList();
-            winners = fakeWinners(contestants, lotteryItems0, lotteries);
 
-            lotteryRepo.saveAllAndFlush(lotteries);
-            lottItemsRepo.saveAllAndFlush(lotteryItems0).stream().forEach(i -> updatePictureUrl(i, lottItemsRepo));
-            lottItemsRepo.saveAllAndFlush(lotteryItems1).stream().forEach(i -> updatePictureUrl(i, lottItemsRepo));
-            lottItemsRepo.saveAllAndFlush(lotteryItems2).stream().forEach(i -> updatePictureUrl(i, lottItemsRepo));
-            contRepo.saveAllAndFlush(contestants);
-            winnerRepo.saveAllAndFlush(winners);
+            lotteryRepo.saveAll(lotteries);
+            contRepo.saveAll(contestants);
 
-            contRepo.saveAllAndFlush(contestants);
-            lotteries.get(0).setLotteryItems(lotteryItems0);
-            lotteries.get(1).setLotteryItems(lotteryItems1);
-            lotteries.get(2).setLotteryItems(lotteryItems2);
-            lotteries.get(0).setWinners(winners);
-            lotteryItems0.get(0).setLottery(lotteries.get(0));
-            lotteryItems1.get(1).setLottery(lotteries.get(1));
-            lottItemsRepo.saveAllAndFlush(lotteryItems0);
-            lottItemsRepo.saveAllAndFlush(lotteryItems1);
+            for (int i = 0; i < lotteries.size() - 1; i++) {
+                Lottery curLottery = lotteries.get(i);
+                List<LotteryItem> curItems = fakeLotteryItems();
 
-            lotteryRepo.saveAllAndFlush(lotteries);
+                for (int u = 0; u <= lotteries.size() - i; u++) {
+                    LotteryItem curItem = curItems.get(u);
+
+                    Winner winner = new Winner(contestants.get(i), u);
+                    winner.setLottery(curLottery);
+                    winnerRepo.save(winner);
+                    curLottery.addWinners(winner);
+
+                    curItem.setLottery(curLottery);
+                    lottItemsRepo.save(curItem);
+                    updatePictureUrl(curItem);
+                    curLottery.addLotteryItems(curItem);
+                    lotteryRepo.save(curLottery);
+
+                }
+            }
+
+            winnerRepo.flush();
+            contRepo.flush();
+            lotteryRepo.flush();
+            lottItemsRepo.flush();
+            infoRepo.flush();
         };
-    }
-
-    private List<Winner> fakeWinners(List<Contestant> contestants, List<LotteryItem> lotteryItems, List<Lottery> lotterys) {
-        List<Winner> winners = List.of(new Winner(), new Winner(), new Winner());
-        for (int i = 0; i < winners.size(); i++) {
-            winners.get(i).setLottery(lotterys.get(i));
-            // winners.get(i).setLotteryItem(lotteryItems.get(i));
-            winners.get(i).setContestant(contestants.get(i));
-            winners.get(i).setPlacement(i);
-        }
-        return winners;
     }
 
     private List<Lottery> fakeLotteries() {
@@ -118,10 +115,10 @@ public class MockDataConfig {
         return contestants;
     }
 
-    private List<LotteryItem> fakeLotteryItems(List<Lottery> lotteries) {
-        return List.of(new LotteryItem("", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(1)),
-                new LotteryItem("", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(0)),
-                new LotteryItem("", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil", lotteries.get(2)),
+    private List<LotteryItem> fakeLotteryItems() {
+        return List.of(new LotteryItem("", "Guernica", "Picasso", "10x10m", "wood", "999.999.999kr", "oil"),
+                new LotteryItem("", "The burning giraffe", "Dali", "10x10m", "wood", "999.999.999kr", "oil"),
+                new LotteryItem("", "View of Toledo", "El Greco", "10x10m", "wood", "999.999.999kr", "oil"),
                 new LotteryItem("", "David", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
                 new LotteryItem("", "Mikael Blomqkvist", "Michael Angelo", "10x10m", "wood", "999.999.999kr", "oil"),
                 new LotteryItem("", "Mona lisa", "Da vinci", "10x10m", "wood", "999.999.999kr", "oil"),
@@ -149,20 +146,18 @@ public class MockDataConfig {
     private int lastMockId = 0;
     private final int numFakePhotos = 16;
 
-    private void updatePictureUrl(LotteryItem item, LotteryItemRepository repo) {
+    private void updatePictureUrl(LotteryItem item) {
         try {
             String photoPath = mockPhotosSrc + "/" + lastMockId++ % numFakePhotos + ".jpg";
             System.out.println("Using photo: " + photoPath);
             Path src = Paths.get(photoPath);
             photoService.savePhoto(item.getId(), new FileInputStream(src.toFile()));
-        } catch (IOException e) {
+        } catch (IOException | PhotoWriteException e) {
             e.printStackTrace();
             System.err.println("Mock data failed to be created");
             System.exit(1);
         }
     }
-
-    private final Random rand = new Random();
 
     private String getRandomName() {
         String fname = randFirstNames[rand.nextInt(randFirstNames.length - 1)];
@@ -170,21 +165,21 @@ public class MockDataConfig {
         return fname + " " + lname;
     }
 
-    private final String[] randLastNames = {"Seivertsen", "Conquer", "Stoop", "Gatch", "Eck", "Iddon", "Forst", "Bernette", "Ambrus", "Winfield", "Coughtrey",
+    private final String[] randLastNames = { "Seivertsen", "Conquer", "Stoop", "Gatch", "Eck", "Iddon", "Forst", "Bernette", "Ambrus", "Winfield", "Coughtrey",
             "Beadel", "Bonney", "Longcake", "MacEveley", "Sey", "Headford", "Le Surf", "Tree", "Vicent", "Lampens", "Devall", "Need", "Norquay", "Mioni",
             "Moreside", "Lehemann", "Bilborough", "Claxson", "Conti", "McAlpine", "Ferschke", "Tretwell", "Davioud", "Hallwell", "McGonagle", "Freda",
             "Palphramand", "Shreve", "Mardell", "Scholard", "De Banke", "Feifer", "Dinan", "O'Conor", "Minshull", "Faulconer", "Burnand", "Bellenger",
             "Hamfleet", "Stathor", "Pykett", "Makiver", "Loffill", "Schankelborg", "Fryd", "Helling", "Laflin", "Walasik", "Voase", "Quilleash", "Cleever",
             "Fillgate", "Dibdale", "O'Cooney", "Ogers", "Flecknell", "Shermar", "Gonnin", "Connell", "Patient", "Fassum", "Skeats", "Jolliff", "Govett",
             "Chavrin", "Trevascus", "Norcutt", "Zimmermeister", "Cluelow", "Binnie", "Wensley", "Kerwin", "Kubicek", "Southan", "Whitefoot", "Elizabeth",
-            "Bowne", "Baggelley", "Chiplen", "Ordish", "Rois", "Chrestien", "Suatt", "Seppey", "Asquez", "Ible", "Casford", "Spurrett", "De Maria",};
+            "Bowne", "Baggelley", "Chiplen", "Ordish", "Rois", "Chrestien", "Suatt", "Seppey", "Asquez", "Ible", "Casford", "Spurrett", "De Maria", };
 
-    private final String[] randFirstNames = {"Remington", "Vaughan", "Kira", "Arnie", "Dawna", "Claudian", "Cal", "Giovanna", "Katey", "Fleming", "Lillian",
+    private final String[] randFirstNames = { "Remington", "Vaughan", "Kira", "Arnie", "Dawna", "Claudian", "Cal", "Giovanna", "Katey", "Fleming", "Lillian",
             "Chaddie", "Wilmar", "Gwen", "Gerhardine", "Adrienne", "Dur", "Krispin", "Roarke", "Kandy", "Bird", "Betteann", "Janot", "Myrle", "Antoinette",
             "Charline", "Etienne", "Adamo", "Chicky", "Elga", "Shaylynn", "Therine", "Janessa", "Yvon", "Anna-diana", "Trever", "Philly", "Lorrin", "Jillian",
             "Brook", "Joshuah", "Angie", "Chrystel", "Diane-marie", "Tammie", "Dieter", "Eberto", "Sheilakathryn", "Wyatan", "Joey", "Nicola", "Yvon",
             "Gerianne", "Cal", "Charisse", "Hobie", "Trixy", "Bendite", "Gabie", "Elena", "Sean", "Kessiah", "Jorgan", "Nydia", "Sybilla", "Indira", "Kala",
             "Rogers", "Michell", "Rebe", "Tiertza", "Orton", "Gan", "Rodrick", "Ephraim", "Stanford", "Paddie", "Antoni", "Marnia", "Amerigo", "Felicle",
             "Germana", "Marney", "Odette", "Terrence", "Rudolf", "Harcourt", "Theressa", "Philippa", "Johnathan", "Colby", "Odille", "Johan", "Dolley",
-            "Jefferson", "Zia", "Caitrin", "Angeline", "Winn", "Morley",};
+            "Jefferson", "Zia", "Caitrin", "Angeline", "Winn", "Morley", };
 }

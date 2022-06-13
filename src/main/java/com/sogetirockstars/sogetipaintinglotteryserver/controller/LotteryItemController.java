@@ -1,10 +1,10 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
 import java.io.IOException;
-import java.util.List;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.PhotoMissingException;
+import com.sogetirockstars.sogetipaintinglotteryserver.exception.PhotoWriteException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.LotteryItemService;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
@@ -25,7 +25,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@RestController @RequestMapping(path = "/api/v1/item")
+@RestController
+@RequestMapping(path = "/api/v1/item")
 public class LotteryItemController {
     private final LotteryItemService lotteryItemService;
     private final PhotoService photoService;
@@ -36,15 +37,14 @@ public class LotteryItemController {
         this.photoService = photoService;
     }
 
-    @GetMapping
-    public List<LotteryItem> getAll() {
-        return lotteryItemService.getAll();
+    @GetMapping(value = "get-all")
+    public ResponseEntity<?> getAll() {
+        return new ResponseEntity<>(lotteryItemService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping(value = "{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
-            System.out.println("Sending painting with id " + id);
             LotteryItem item = lotteryItemService.getItem(id);
             return new ResponseEntity<>(item, HttpStatus.OK);
         } catch (IdException e) {
@@ -62,10 +62,15 @@ public class LotteryItemController {
     }
 
     @PostMapping
-    public ResponseEntity<LotteryItem> addNew(@RequestBody LotteryItem lotteryItem) {
-        System.out.println("Adding painting " + lotteryItem.getItemName() + " id: " + lotteryItem.getId());
+    public ResponseEntity<?> addNew(@RequestBody LotteryItem lotteryItem) {
         lotteryItem.setId(null);
-        return ResponseEntity.ok().body(lotteryItemService.add(lotteryItem));
+        LotteryItem item = lotteryItemService.add(lotteryItem);
+        try {
+            photoService.setPlaceholderPhoto(item.getId());
+        } catch (PhotoWriteException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok().body(item);
     }
 
     @PutMapping(value = "{id}")
@@ -98,6 +103,8 @@ public class LotteryItemController {
             return new ResponseEntity<>(item, HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (PhotoWriteException e) {
+            return new ResponseEntity<>(e.getMessage() + "\nContact your system administrator!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
