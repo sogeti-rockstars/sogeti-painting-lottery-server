@@ -7,6 +7,8 @@ import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class LotteryItemService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LotteryItemService.class);
+
     private final LotteryItemRepository repository;
     private final LotteryRepository lotteryRepo;
 
@@ -43,6 +47,8 @@ public class LotteryItemService {
 
     public LotteryItem add(LotteryItem item) {
         item.setId(null);
+        LOGGER.info("LotteryItem skapat " + item.toString());
+
         return repository.save(item);
     }
 

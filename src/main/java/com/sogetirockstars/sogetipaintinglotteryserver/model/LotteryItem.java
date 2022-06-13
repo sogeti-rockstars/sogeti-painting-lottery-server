@@ -14,7 +14,6 @@ public class LotteryItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Internal object id;
 
-
     // private String pictureUrl;
     private String itemName;
     private String artistName;
@@ -32,11 +31,9 @@ public class LotteryItem {
         return lottery;
     }
 
-
     public void setLottery(Lottery lottery) {
         this.lottery = lottery;
     }
-
 
     public Long getLottery_id() {
         if (this.lottery != null)
@@ -45,18 +42,15 @@ public class LotteryItem {
             return null;
     }
 
-
     public LotteryItem() {
     }
-
 
     public LotteryItem(String itemName, String artistName) {
         this.artistName = artistName;
         this.itemName = itemName;
     }
 
-    public LotteryItem(String pictureUrl, String itemName, String artistName,
-                       String size, String frameDescription, String value, String technique) {
+    public LotteryItem(String pictureUrl, String itemName, String artistName, String size, String frameDescription, String value, String technique) {
         // this.pictureUrl = pictureUrl;
         this.itemName = itemName;
         this.artistName = artistName;
@@ -66,8 +60,8 @@ public class LotteryItem {
         this.technique = technique;
     }
 
-    public LotteryItem(String pictureUrl, String itemName, String artistName,
-                       String size, String frameDescription, String value, String technique, Lottery lottery) {
+    public LotteryItem(String pictureUrl, String itemName, String artistName, String size, String frameDescription, String value, String technique,
+            Lottery lottery) {
         this.itemName = itemName;
         this.artistName = artistName;
         this.size = size;
@@ -81,7 +75,7 @@ public class LotteryItem {
     }
 
     // public String getPictureUrl() {
-    //     return pictureUrl;
+    // return pictureUrl;
     // }
 
     public String getItemName() {
@@ -113,7 +107,7 @@ public class LotteryItem {
     }
 
     // public void setPictureUrl(String pictureUrl) {
-    //     this.pictureUrl = pictureUrl;
+    // this.pictureUrl = pictureUrl;
     // }
 
     public void setItemName(String itemName) {
@@ -138,5 +132,11 @@ public class LotteryItem {
 
     public void setTechnique(String technique) {
         this.technique = technique;
+    }
+
+    @Override
+    public String toString() {
+        return "LotteryItem [artistName=" + artistName + ", frameDescription=" + frameDescription + ", id=" + id + ", itemName=" + itemName + ", lottery="
+                + lottery + ", size=" + size + ", technique=" + technique + ", value=" + value + "]";
     }
 }
