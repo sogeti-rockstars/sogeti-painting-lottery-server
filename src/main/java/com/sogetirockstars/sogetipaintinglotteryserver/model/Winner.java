@@ -92,6 +92,11 @@ public class Winner {
 
     @Override
     public String toString() {
-        return "Winner [contestant=" + contestant + ", id=" + id + ", lottery=" + lottery + ", placement=" + placement + "]";
+        return   "Winner [" +
+                        "contestant="  + (contestant == null ? "null" : contestant ) + 
+                        ", id="        + (id == null ? "null" :         id         ) +
+                        ", lottery="   + (lottery == null ? "null" :    lottery    ) +
+                        ", placement=" + (placement == null ? "null" :  placement  ) +
+                        "]";
     }
 }

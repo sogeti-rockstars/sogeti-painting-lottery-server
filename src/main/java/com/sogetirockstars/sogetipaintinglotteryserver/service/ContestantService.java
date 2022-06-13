@@ -38,16 +38,19 @@ public class ContestantService {
         Contestant cont = get(id);
         serviceManager.removeAllWinnerOccurances(cont);
         repository.deleteById(id);
+        LOGGER.info("delete: " + cont.toString());
         return true;
     }
 
     public Contestant add(Contestant cont) {
         cont.setId(null);
+        LOGGER.info("add: " + cont.toString());
         return repository.save(cont);
     }
 
     public Contestant update(Contestant cont) throws IdException {
         Contestant origCont = get(cont.getId());
+        LOGGER.info("update: " + cont.toString());
         return repository.save(merge(origCont, cont));
     }
 

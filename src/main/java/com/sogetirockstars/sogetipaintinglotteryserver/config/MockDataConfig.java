@@ -21,6 +21,7 @@ import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryReposit
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.LotteryService;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
+import com.sogetirockstars.sogetipaintinglotteryserver.service.ServiceManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,8 +47,8 @@ public class MockDataConfig {
     }
 
     @Bean
-    CommandLineRunner mockData(ContestantRepository contRepo, LotteryItemRepository lottItemsRepo, LotteryRepository lotteryRepo, WinnerRepository winnerRepo,
-            AssociationInfoRepository infoRepo) {
+    CommandLineRunner mockData(ServiceManager serviceManager, ContestantRepository contRepo, LotteryItemRepository lottItemsRepo, LotteryRepository lotteryRepo,
+            WinnerRepository winnerRepo, AssociationInfoRepository infoRepo) {
         if (!createMockdata)
             return (String[] args) -> {
             };
@@ -72,9 +73,9 @@ public class MockDataConfig {
                 for (int u = 0; u <= lotteries.size() - i; u++) {
                     LotteryItem curItem = curItems.get(u);
 
-                    Winner winner = new Winner(contestants.get(i), u);
-                    winner.setLottery(curLottery);
-                    winnerRepo.save(winner);
+                    Winner nWinner = serviceManager.addWinner(contestants.get(u).getId(), curLottery, u);
+                    curLottery.getWinners().add(nWinner);
+                    lotteryRepo.saveAndFlush(curLottery);
 
                     curItem.setLottery(curLottery);
                     lottItemsRepo.save(curItem);

@@ -71,6 +71,11 @@ public class Lottery {
 
     @Override
     public String toString() {
-        return "[title=" + (title != null ? title : "null") + ",id=" + (id != null ? id : "null") + "]";
+        return "[" +
+            "title=" + (title != null ? title : "null") +
+            " ,id="   + (id != null ? id : "null") +
+            " ,lotteryItems.size()="   + lotteryItems.size() +
+            " ,winners.size()="        + winners.size() +
+        "]";
     }
 }

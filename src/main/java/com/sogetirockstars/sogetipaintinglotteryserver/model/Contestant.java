@@ -16,7 +16,7 @@ public class Contestant {
     private String teleNumber;
 
     @OneToMany(mappedBy = "contestant", cascade = CascadeType.REMOVE)
-    private List<Winner> winner = new ArrayList<>();
+    private List<Winner> winners = new ArrayList<>();
 
     public Contestant() {
     }
@@ -76,16 +76,22 @@ public class Contestant {
     }
 
     public List<Winner> getWinner() {
-        return winner;
+        return winners;
     }
 
-    public void setWinner(List<Winner> winner) {
-        this.winner = winner;
+    public void setWinner(List<Winner> winners) {
+        this.winners = winners;
     }
 
     @Override
     public String toString() {
-        return "Contestant [email=" + email + ", employeeId=" + employeeId + ", id=" + id + ", name=" + name + ", teleNumber=" + teleNumber + ", winner="
-                + winner + "]";
+        return "Contestant [" +
+              "email="      + ( email      == null ? "null" : email      ) +
+            ", employeeId=" + ( employeeId == null ? "null" : employeeId ) +
+            ", id="         + ( id         == null ? "null" : id         ) +
+            ", name="       + ( name       == null ? "null" : name       ) +
+            ", teleNumber=" + ( teleNumber == null ? "null" : teleNumber ) +
+            ", winners="    + winners.size() +
+            "]";
     }
 }
