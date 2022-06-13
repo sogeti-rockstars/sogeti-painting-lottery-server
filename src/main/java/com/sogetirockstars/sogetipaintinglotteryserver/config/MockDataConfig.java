@@ -23,13 +23,18 @@ import com.sogetirockstars.sogetipaintinglotteryserver.service.LotteryService;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MockDataConfig {
-    private String mockPhotosSrc = "src/main/resources/mock-photos";
+    @Value("${mockdata.create}")
+    private boolean createMockdata;
+    @Value("${mockdata.mock-photos-path}")
+    private String mockPhotosSrc;
+
     private final PhotoService photoService;
     private List<Contestant> contestants;
     private List<Lottery> lotteries;
@@ -43,6 +48,10 @@ public class MockDataConfig {
     @Bean
     CommandLineRunner mockData(ContestantRepository contRepo, LotteryItemRepository lottItemsRepo, LotteryRepository lotteryRepo, WinnerRepository winnerRepo,
             AssociationInfoRepository infoRepo) {
+        if (!createMockdata)
+            return (String[] args) -> {
+            };
+
         return (String[] args) -> {
             infoRepo.save(new AssociationInfo("title", "Om föreningen"));
             infoRepo.saveAndFlush(new AssociationInfo("info",

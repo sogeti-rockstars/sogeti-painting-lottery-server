@@ -54,9 +54,13 @@ public class PhotoService {
 
     public InputStream getPhoto(Long id) throws PhotoMissingException {
         try {
+            ensurePathExists();
             return new FileInputStream(photosPath.resolve(id.toString()).toFile());
         } catch (FileNotFoundException e) {
-            throw new PhotoMissingException("Photo for item with id " + id + " does not exist");
+            throw new PhotoMissingException("Photo for item with id " + id + " does not exist.");
+        } catch (IOException | PhotoWriteException e) {
+            e.printStackTrace();
+            throw new PhotoMissingException("Photo directory does not exist.");
         }
     }
 
