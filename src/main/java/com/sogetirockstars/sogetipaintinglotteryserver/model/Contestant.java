@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Entity
 public class Contestant {
     @Id
@@ -16,7 +15,6 @@ public class Contestant {
     private String email;
     private String teleNumber;
 
-
     @OneToMany(mappedBy = "contestant", cascade = CascadeType.REMOVE)
     private List<Winner> winner = new ArrayList<>();
 
@@ -27,7 +25,6 @@ public class Contestant {
     public void setWinner(List<Winner> winner) {
         this.winner = winner;
     }
-    
 
     public Contestant() {
     }
@@ -66,7 +63,6 @@ public class Contestant {
         this.teleNumber = teleNumber;
     }
 
-
     public Long getId() {
         return id;
     }
@@ -85,5 +81,11 @@ public class Contestant {
 
     public String getTeleNumber() {
         return teleNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Contestant [email=" + email + ", employeeId=" + employeeId + ", id=" + id + ", name=" + name + ", teleNumber=" + teleNumber + ", winner="
+                + winner + "]";
     }
 }

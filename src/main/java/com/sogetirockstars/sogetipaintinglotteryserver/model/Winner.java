@@ -75,4 +75,8 @@ public class Winner {
         this.placement = placement;
     }
 
+    @Override
+    public String toString() {
+        return "Winner [contestant=" + contestant + ", id=" + id + ", lottery=" + lottery + ", placement=" + placement + "]";
+    }
 }

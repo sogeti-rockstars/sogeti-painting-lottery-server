@@ -76,8 +76,13 @@ public class Lottery {
     public void setLotteryItems(List<LotteryItem> lotteryItems) {
         this.lotteryItems = lotteryItems;
     }
-    
+
     public void addLotteryItems(LotteryItem lotteryItem) {
         this.lotteryItems.add(lotteryItem);
+    }
+
+    @Override
+    public String toString() {
+        return "Lottery [date=" + date + ", id=" + id + ", lotteryItems=" + lotteryItems + ", title=" + title + ", winners=" + winners + "]";
     }
 }

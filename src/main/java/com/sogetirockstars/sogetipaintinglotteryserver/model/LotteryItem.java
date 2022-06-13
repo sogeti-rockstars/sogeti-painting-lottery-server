@@ -14,7 +14,6 @@ public class LotteryItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Internal object id;
 
-    // private String pictureUrl;
     private String itemName;
     private String artistName;
     private String size; // Example 12x12cm, string sounds reasonable for now.
@@ -105,10 +104,6 @@ public class LotteryItem {
     public void setId(Long id) {
         this.id = id;
     }
-
-    // public void setPictureUrl(String pictureUrl) {
-    // this.pictureUrl = pictureUrl;
-    // }
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
