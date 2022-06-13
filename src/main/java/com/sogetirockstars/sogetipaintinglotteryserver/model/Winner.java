@@ -1,5 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -20,26 +21,8 @@ public class Winner {
 
     private Integer placement;
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @OneToOne
     private LotteryItem lotteryItem;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    public LotteryItem getLotteryItem() {
-        return lotteryItem;
-    }
-
-    public Long getLotteryItemId() {
-        if (this.lotteryItem != null)
-            return lotteryItem.getId();
-        else
-            return null;
-    }
-
-    public void setLotteryItem(LotteryItem lotteryItem) {
-        this.lotteryItem = lotteryItem;
-    }
 
     public Winner() {
     }
@@ -88,6 +71,15 @@ public class Winner {
 
     public void setPlacement(Integer placement) {
         this.placement = placement;
+    }
+
+    public void setLotteryItem(LotteryItem lotteryItem) {
+        this.lotteryItem = lotteryItem;
+    }
+
+    @JsonInclude(value=JsonInclude.Include.NON_NULL)
+    public LotteryItem getLotteryItem() {
+        return lotteryItem;
     }
 
     @Override

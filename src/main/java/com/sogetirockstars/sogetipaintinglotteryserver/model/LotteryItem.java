@@ -32,7 +32,7 @@ public class LotteryItem {
     @JoinColumn
     private Lottery lottery;
 
-    public LotteryItem() {
+	public LotteryItem() {
     }
 
     public LotteryItem(String itemName, String artistName) {
@@ -116,9 +116,16 @@ public class LotteryItem {
 
     @Override
     public String toString() {
-        return "LotteryItem [" + "artistName=" + (artistName == null ? "null" : artistName) + ", frameDescription="
-                + (frameDescription == null ? "null" : frameDescription) + ", id=" + (id == null ? "null" : id) + ", itemName="
-                + (itemName == null ? "null" : itemName) + ", lottery=" + (lottery == null ? "null" : lottery) + ", size=" + (size == null ? "null" : size)
-                + ", technique=" + (technique == null ? "null" : technique) + ", value=" + (value == null ? "null" : value) + "]";
+        return "LotteryItem [" +
+                "artistName="         + (artistName == null ? "null" : artistName) +
+                ", frameDescription=" + (frameDescription == null ? "null" : frameDescription) +
+                ", id="               + (id == null ? "null" : id) +
+                ", itemName="         + (itemName == null ? "null" : itemName) +
+                ", lottery="          + (lottery == null ? "null" : lottery) +
+                ", size="             + (size == null ? "null" : size) +
+                ", technique="        + (technique == null ? "null" : technique) +
+                ", value="            + (value == null ? "null" : value) +
+                // ", winner="           + (winner == null ? "null" : winner ) +
+            "]";
     }
 }

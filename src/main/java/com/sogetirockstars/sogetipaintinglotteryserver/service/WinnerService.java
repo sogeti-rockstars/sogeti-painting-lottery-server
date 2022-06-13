@@ -45,10 +45,10 @@ public class WinnerService {
         return repository.saveAndFlush(nWinner);
     }
 
-    public Winner update(Winner newWinner) throws IdException {
-        assertExists(newWinner.getId());
-        Winner origWinner = repository.findById(newWinner.getId()).get();
-        return repository.save(mergeWinners(origWinner, newWinner));
+    public Winner update(Winner winner) throws IdException {
+        Winner origWinner = get(winner.getId());
+        LOGGER.info("update: " + winner);
+        return repository.save(mergeWinners(origWinner, winner));
     }
 
     public boolean delete(Long id) throws IdException {
