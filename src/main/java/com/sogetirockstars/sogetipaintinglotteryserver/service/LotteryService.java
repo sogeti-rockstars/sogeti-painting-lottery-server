@@ -124,6 +124,7 @@ public class LotteryService {
     public boolean delete(Long id) throws IdException {
         assertExists(id);
         repository.deleteById(id);
+        LOGGER.info("delete: " + id);
         return true;
     }
 

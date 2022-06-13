@@ -157,7 +157,6 @@ public class MockDataConfig {
     private void updatePictureUrl(LotteryItem item) {
         try {
             String photoPath = mockPhotosSrc + "/" + lastMockId++ % numFakePhotos + ".jpg";
-            System.out.println("Using photo: " + photoPath);
             Path src = Paths.get(photoPath);
             photoService.savePhoto(item.getId(), new FileInputStream(src.toFile()));
         } catch (IOException | PhotoWriteException e) {
