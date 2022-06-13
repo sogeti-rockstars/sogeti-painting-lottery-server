@@ -2,7 +2,6 @@ package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -16,8 +15,6 @@ public class Lottery {
 
     @OneToMany(mappedBy = "lottery")
     private List<Winner> winners = new ArrayList<>();
-
-    private Date date;
     private String title;
 
     public List<LotteryItem> getLotteryItems() {
@@ -27,9 +24,8 @@ public class Lottery {
     public Lottery() {
     }
 
-    public Lottery(Long id, String title, Date date) {
+    public Lottery(Long id, String title) {
         this.id = id;
-        this.date = date;
         this.title = title;
     }
 
@@ -45,12 +41,8 @@ public class Lottery {
         this.winners = winners;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
+    public void addWinners(Winner winner) {
+        this.winners.add(winner);
     }
 
     public Long getId() {

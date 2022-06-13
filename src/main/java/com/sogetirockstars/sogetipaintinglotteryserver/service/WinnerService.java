@@ -80,6 +80,8 @@ public class WinnerService {
             origWinner.setContestant(newWinner.getContestant());
         if (newWinner.getPlacement() != null)
             origWinner.setPlacement(newWinner.getPlacement());
+        if (newWinner.getLotteryItem() != null)
+            origWinner.setLotteryItem(newWinner.getLotteryItem());
         return origWinner;
     }
 }
