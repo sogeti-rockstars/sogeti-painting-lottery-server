@@ -3,6 +3,8 @@ package com.sogetirockstars.sogetipaintinglotteryserver.service;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.UserAccount;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.AuthenticationRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -13,9 +15,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AuthService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
+
     private final AuthenticationRepository authRepo;
     private UserDetailsManager manager;
-    // private final int minPassLength = 4;
 
     @Autowired
     public AuthService(AuthenticationRepository authRepo) {
@@ -42,6 +45,8 @@ public class AuthService {
         if (encPass == null)
             return null;
         authRepo.saveAndFlush(new UserAccount("admin", encPass));
+
+        LOGGER.info("setSavedPassword: [ommitted by logger]");
         return encPass;
     }
 
@@ -51,6 +56,8 @@ public class AuthService {
             return null;
         String oldPass = this.manager.loadUserByUsername("admin").getPassword();
         this.manager.changePassword(oldPass, encPass);
+
+        LOGGER.info("setPassForCurrentUser: [ommitted by logger]");
         return encPass;
     }
 

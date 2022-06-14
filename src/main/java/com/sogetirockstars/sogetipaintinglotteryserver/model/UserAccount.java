@@ -39,4 +39,8 @@ public class UserAccount {
         this.pass = pass;
     }
 
+    @Override
+    public String toString() {
+        return "UserAccount [pass=" + pass + ", user=" + user + "]";
+    }
 }

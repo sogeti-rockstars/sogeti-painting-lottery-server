@@ -10,7 +10,7 @@ public class Lottery {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "lottery")
+    @OneToMany(mappedBy = "lottery", cascade = CascadeType.REMOVE)
     private List<LotteryItem> lotteryItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "lottery")
@@ -67,5 +67,15 @@ public class Lottery {
 
     public void addLotteryItems(LotteryItem lotteryItem) {
         this.lotteryItems.add(lotteryItem);
+    }
+
+    @Override
+    public String toString() {
+        return "[" +
+            "title=" + (title != null ? title : "null") +
+            " ,id="   + (id != null ? id : "null") +
+            " ,lotteryItems.size()="   + lotteryItems.size() +
+            " ,winners.size()="        + winners.size() +
+        "]";
     }
 }

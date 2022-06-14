@@ -9,79 +9,23 @@ import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
-import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LotteryService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LotteryService.class);
+
     private final LotteryRepository repository;
-    private final ContestantService contestantService;
-    private final WinnerService winnerService;
-    private final LotteryItemService lotteryItemService;
-    private final LotteryItemRepository lotteryItemRepo;
+    private final ServiceManager serviceManager;
 
-    @Autowired
-    public LotteryService(LotteryRepository repository, ContestantService contestantService, WinnerService winnerService, LotteryItemService lotteryItemService,
-            LotteryItemRepository lotteryItemRepo) {
+    public LotteryService(LotteryRepository repository, ServiceManager serviceManager) {
         this.repository = repository;
-        this.contestantService = contestantService;
-        this.winnerService = winnerService;
-        this.lotteryItemService = lotteryItemService;
-        this.lotteryItemRepo = lotteryItemRepo;
-    }
-
-    public Lottery addNewContestantToLottery(Long id, Contestant contestant) throws IdException {
-        assertExists(id);
-        contestantService.save(contestant);
-        Lottery lottery = repository.getById(id);
-        return repository.saveAndFlush(lottery);
-    }
-
-    public Lottery addExistingContestantToLottery(Long lottId, Long contestantId) throws IdException {
-        assertExists(lottId);
-        contestantService.assertExists(contestantId);
-        Lottery lottery = repository.getById(lottId);
-        return repository.saveAndFlush(lottery);
-    }
-
-    public Lottery addItemToLottery(Long id, LotteryItem lotteryItem) throws IdException {
-        assertExists(id);
-        lotteryItemRepo.save(lotteryItem);
-        Lottery lottery = repository.getById(id);
-        lottery.addLotteryItems(lotteryItem);
-        return lottery;
-    }
-
-    public Lottery editItemToLottery(Long id, LotteryItem lotteryItem) throws IdException {
-        Lottery newLottery = get(id);
-        lotteryItem.setLottery(newLottery);
-        lotteryItemService.save(lotteryItem);
-        return newLottery;
-    }
-
-    public Winner spinTheWheelNoItem(Lottery lottery) throws IdException, AllContestantsTakenException, EmptyLotteryWinnerAssignmentException {
-        if (contestantService.getAll().size() == 0)
-            throw new EmptyLotteryWinnerAssignmentException("No contestants in lottery " + lottery.getId());
-
-        List<Long> winnerIds = lottery.getWinners().stream().map(c -> c.getContestantId()).toList();
-        List<Long> nonWinnerIds = contestantService.getAll().stream().map(c -> c.getId()).filter(id -> !winnerIds.contains(id)).toList();
-
-        if (nonWinnerIds.size() == 0)
-            throw new AllContestantsTakenException("No non-winning contestants in lottery with id " + lottery.getId() + ".");
-
-        int randomContestantIdx = (int) (Math.random() * (nonWinnerIds.size()));
-        Long winnerContestantId = nonWinnerIds.get(randomContestantIdx);
-
-        Winner nWinner = new Winner(contestantService.get(winnerContestantId), winnerIds.size());
-        nWinner.setLottery(lottery);
-        winnerService.save(nWinner);
-
-        lottery.addWinners(nWinner);
-        repository.saveAndFlush(lottery);
-        return nWinner;
+        this.serviceManager = serviceManager;
+        serviceManager.addService(this);
     }
 
     public List<Lottery> getAll() {
@@ -94,18 +38,11 @@ public class LotteryService {
     }
 
     public List<LotteryItem> getLotteryItems(Long id) throws IdException {
-        assertExists(id);
-        return repository.findById(id).get().getLotteryItems();
-    }
-
-    public List<Contestant> getContestants(Long id) throws IdException {
-        assertExists(id);
-        return contestantService.getAll();
+        return get(id).getLotteryItems();
     }
 
     public List<Winner> getWinners(Long id) throws IdException {
-        assertExists(id);
-        return repository.findById(id).get().getWinners();
+        return get(id).getWinners();
     }
 
     public Lottery add(Lottery lottery) {
@@ -114,9 +51,54 @@ public class LotteryService {
     }
 
     public Lottery update(Lottery newLottery) throws IdException {
-        assertExists(newLottery.getId());
-        Lottery originalLottery = repository.getById(newLottery.getId());
+        Lottery originalLottery = get(newLottery.getId());
+        LOGGER.info("update: " + originalLottery.toString());
         return repository.save(mergeLotterys(originalLottery, newLottery));
+    }
+
+    public Lottery addItemToLottery(Long id, LotteryItem lotteryItem) throws IdException {
+        Lottery lottery = get(id);
+        lotteryItem.setLottery(lottery);
+        serviceManager.addLotteryItem(lotteryItem);
+        lottery.addLotteryItems(lotteryItem);
+        LOGGER.info("addItemToLottery: Lottery:" + lottery.toString() + ", item:" + lotteryItem.toString());
+        return lottery;
+    }
+
+    public Winner spinTheWheelNoItem(Lottery lottery) throws IdException, AllContestantsTakenException, EmptyLotteryWinnerAssignmentException {
+        List<Contestant> contestants = serviceManager.getAllContestants();
+        if (contestants.size() == 0)
+            throw new EmptyLotteryWinnerAssignmentException("No contestants in lottery " + lottery.getId());
+
+        List<Long> winnerIds = lottery.getWinners().stream().map(c -> c.getContestantId()).toList();
+        List<Long> nonWinnerIds = contestants.stream().map(c -> c.getId()).filter(id -> !winnerIds.contains(id)).toList();
+
+        if (nonWinnerIds.size() == 0)
+            throw new AllContestantsTakenException("No non-winning contestants in lottery with id " + lottery.getId() + ".");
+
+        int randomContestantIdx = (int) (Math.random() * (nonWinnerIds.size()));
+        Long winnerContestantId = nonWinnerIds.get(randomContestantIdx);
+
+        Winner nWinner = serviceManager.addWinner(winnerContestantId, lottery, winnerIds.size());
+        lottery.getWinners().add(nWinner);
+        repository.saveAndFlush(lottery);
+
+        LOGGER.info("spinTheWheelNoItem: Lottery:" + lottery.toString() + ", winner:" + nWinner.toString());
+        return nWinner;
+    }
+
+    // BUG: deleting a contestant who has a chosen art item deletes the art item too.
+    public void removeAllWinnerOccurances(Contestant cont) {
+        getAll().stream().filter(lott -> {
+            return lott.getWinners().removeIf(win -> win.getContestant() == cont);
+        }).forEach(lott -> repository.save(lott));
+    }
+
+    public boolean delete(Long id) throws IdException {
+        assertExists(id);
+        repository.deleteById(id);
+        LOGGER.info("delete: " + id);
+        return true;
     }
 
     private Lottery mergeLotterys(Lottery origItem, Lottery newItem) {
@@ -127,14 +109,11 @@ public class LotteryService {
         return origItem;
     }
 
-    public boolean delete(Long id) throws IdException {
-        assertExists(id);
-        repository.deleteById(id);
-        return true;
-    }
-
     private void assertExists(Long id) throws IdException {
-        if (!repository.existsById(id))
-            throw new IdException(" with id " + id + " doesn't exist.");
+        if (repository.existsById(id))
+            return;
+        else
+            LOGGER.info("assertExists: " + id);
+        throw new IdException("Item with id " + id + " doesn't exist.");
     }
 }

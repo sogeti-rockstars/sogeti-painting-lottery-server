@@ -1,26 +1,28 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
+import java.util.List;
+
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.ContestantRepository;
-import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
-import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class ContestantService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContestantService.class);
+
     private final ContestantRepository repository;
-    private final LotteryRepository lotteryRepo;
-    private final WinnerRepository winnerRepo;
+    private final ServiceManager serviceManager;
 
     @Autowired
-    public ContestantService(ContestantRepository repository, LotteryRepository lotteryRepo, WinnerRepository winnerRepo) {
+    public ContestantService(ContestantRepository repository, ServiceManager serviceManager) {
         this.repository = repository;
-        this.lotteryRepo = lotteryRepo;
-        this.winnerRepo = winnerRepo;
+        this.serviceManager = serviceManager;
+        serviceManager.addService(this);
     }
 
     public List<Contestant> getAll() {
@@ -32,35 +34,33 @@ public class ContestantService {
         return repository.findById(id).get();
     }
 
+    // BUG: deleting a contestant who has a chosen art item deletes the art item too.
     public boolean delete(Long id) throws IdException {
-        assertExists(id);
-
-        Contestant cont = repository.findById(id).get();
-        lotteryRepo.findAll().stream().filter(lott -> lott.getWinners().removeIf(win -> win.getContestant() == cont)).forEach(lott -> lotteryRepo.save(lott));
-        winnerRepo.findAll().stream().filter(winner -> winner.getContestant().equals(cont)).forEach(winner -> winnerRepo.delete(winner));
-
+        Contestant cont = get(id);
+        serviceManager.removeAllWinnerOccurances(cont);
         repository.deleteById(id);
+        LOGGER.info("delete: " + cont.toString());
         return true;
     }
 
     public Contestant add(Contestant cont) {
         cont.setId(null);
+        LOGGER.info("add: " + cont.toString());
         return repository.save(cont);
     }
 
     public Contestant update(Contestant cont) throws IdException {
-        assertExists(cont.getId());
-        Contestant origCont = repository.getById(cont.getId());
+        Contestant origCont = get(cont.getId());
+        LOGGER.info("update: " + cont.toString());
         return repository.save(merge(origCont, cont));
     }
 
     public void assertExists(Long id) throws IdException {
-        if (!repository.existsById(id))
-            throw new IdException("Item with id " + id + " doesn't exist.");
-    }
-
-    public Contestant save(Contestant contestant) {
-        return repository.save(contestant);
+        if (repository.existsById(id))
+            return;
+        else
+            LOGGER.info("assertExists: " + id);
+        throw new IdException("Item with id " + id + " doesn't exist.");
     }
 
     // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt

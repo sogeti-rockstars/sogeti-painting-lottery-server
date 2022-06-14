@@ -1,5 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -9,52 +10,18 @@ public class Winner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Contestant contestant;
 
-    private Integer placement;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Lottery lottery;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    public Lottery getLottery() {
-        return lottery;
-    }
+    private Integer placement;
 
-    public Long getLottery_id() {
-        if (this.lottery != null)
-            return lottery.getId();
-        else
-            return null;
-    }
-
-    public void setLottery(Lottery lottery) {
-        this.lottery = lottery;
-    }
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @OneToOne(mappedBy="winner",cascade=CascadeType.REMOVE) 
     private LotteryItem lotteryItem;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    public LotteryItem getLotteryItem() {
-        return lotteryItem;
-    }
-
-    public Long getLotteryItemId() {
-        if (this.lotteryItem != null)
-            return lotteryItem.getId();
-        else
-            return null;
-    }
-
-    public void setLotteryItem(LotteryItem lotteryItem) {
-        this.lotteryItem = lotteryItem;
-    }
 
     public Winner() {
     }
@@ -77,6 +44,15 @@ public class Winner {
         return contestant;
     }
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Lottery getLottery() {
+        return lottery;
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
+    }
+
     public Long getContestantId() {
         if (this.contestant != null)
             return contestant.getId();
@@ -96,4 +72,23 @@ public class Winner {
         this.placement = placement;
     }
 
+    public void setLotteryItem(LotteryItem lotteryItem) {
+        this.lotteryItem = lotteryItem;
+    }
+
+    @JsonInclude(value=JsonInclude.Include.NON_NULL)
+    public LotteryItem getLotteryItem() {
+        return lotteryItem;
+    }
+
+    @Override
+    public String toString() {
+        return   "Winner [" +
+                        "contestant="  + (contestant == null ? "null" : contestant ) + 
+                        ", id="        + (id == null ? "null" :         id         ) +
+                        ", lottery="   + (lottery == null ? "null" :    lottery    ) +
+                        ", placement=" + (placement == null ? "null" :  placement  ) +
+                        ", itemArtist="+(lotteryItem == null ? "null" : lotteryItem.getArtistName() ) +
+                        "]";
+    }
 }

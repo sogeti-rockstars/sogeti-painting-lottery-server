@@ -52,5 +52,8 @@ public class AssociationInfo {
         this.data = data;
     }
 
-    // public
+    @Override
+    public String toString() {
+        return "AssociationInfo [data=" + data + ", field=" + field + ", id=" + id + "]";
+    }
 }
