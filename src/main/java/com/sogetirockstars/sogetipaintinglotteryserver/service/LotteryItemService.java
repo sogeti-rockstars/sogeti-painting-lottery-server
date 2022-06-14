@@ -45,7 +45,7 @@ public class LotteryItemService {
 
     public LotteryItem update(LotteryItem newItem) throws IdException {
         LotteryItem origItem = getItem(newItem.getId());
-        if (origItem.getLottery() != null && origItem.getLottery().equals(newItem.getLottery()))
+        if (origItem.getLottery() != null && newItem.getLottery() != null && !origItem.getLottery().equals(newItem.getLottery()))
             serviceManager.removeItemFromLottery(origItem);
         LOGGER.info("update origItem: " + origItem.toString() + "update newItem: " + newItem.toString());
         return repository.save(mergeItems(origItem, newItem));
