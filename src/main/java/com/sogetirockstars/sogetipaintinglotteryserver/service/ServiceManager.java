@@ -72,7 +72,8 @@ public class ServiceManager {
     }
 
     public LotteryItem updateLotteryItem(LotteryItem lotteryItem) throws IdException {
-        return this.lotteryItemService.update(lotteryItem);
+        lotteryService.get(lotteryItem.getLottery().getId()).getLotteryItems().add(lotteryItem);
+        return lotteryItemService.update(lotteryItem);
     }
 
     public Winner addWinner(long contestantId, Lottery lottery, int placement) throws IdException {
@@ -81,5 +82,9 @@ public class ServiceManager {
 
     public void addLotteryItem(LotteryItem item) {
         lotteryItemService.add(item);
+    }
+
+    public void removeItemFromLottery(LotteryItem lotteryItem) throws IdException {
+        lotteryService.removeItemFromLottery(lotteryItem.getLottery().getId(), lotteryItem);
     }
 }
