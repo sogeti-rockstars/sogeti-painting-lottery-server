@@ -1,5 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
+import java.util.List;
+
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.AllContestantsTakenException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.EmptyLotteryWinnerAssignmentException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
@@ -8,11 +10,10 @@ import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class LotteryService {
@@ -64,7 +65,6 @@ public class LotteryService {
         return lottery;
     }
 
-
     public Winner spinTheWheelNoItem(Lottery lottery) throws IdException, AllContestantsTakenException, EmptyLotteryWinnerAssignmentException {
         List<Contestant> contestants = serviceManager.getAllContestants();
         if (contestants.size() == 0)
@@ -101,7 +101,7 @@ public class LotteryService {
         return true;
     }
 
-    public Lottery mergeLotterys(Lottery origItem, Lottery newItem) {
+    private Lottery mergeLotterys(Lottery origItem, Lottery newItem) {
         if (newItem.getTitle() != null)
             origItem.setTitle(newItem.getTitle());
         if (newItem.getLotteryItems() != null)
