@@ -1,8 +1,5 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.AllContestantsTakenException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.EmptyLotteryWinnerAssignmentException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
@@ -11,27 +8,25 @@ import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.LotteryService;
 import com.sogetirockstars.sogetipaintinglotteryserver.service.PhotoService;
-
+import com.sogetirockstars.sogetipaintinglotteryserver.service.ServiceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/lottery")
 public class LotteryController {
     private final LotteryService lotteryService;
+    private final ServiceManager serviceManager;
 
     @Autowired
-    public LotteryController(LotteryService lotteryService, PhotoService photoService) {
+    public LotteryController(LotteryService lotteryService, PhotoService photoService, ServiceManager serviceManager) {
         this.lotteryService = lotteryService;
+        this.serviceManager = serviceManager;
     }
 
     @GetMapping
@@ -93,6 +88,16 @@ public class LotteryController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (AllContestantsTakenException | EmptyLotteryWinnerAssignmentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(value = "change-item-lottery/{id}")
+    public ResponseEntity<?> editItemToLottery(@PathVariable Long id, @RequestBody LotteryItem lotteryItem) {
+        System.out.println(id + "++-" + lotteryItem.toString());
+        try {
+            return new ResponseEntity<>(serviceManager.editItemToLottery(id, lotteryItem), HttpStatus.OK);
+        } catch (IdException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 

@@ -1,16 +1,8 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.persistence.*;
 
 /**
  * Painting
@@ -33,10 +25,10 @@ public class LotteryItem {
     @JoinColumn
     private Lottery lottery;
 
-    @OneToOne
+    @OneToOne(mappedBy = "lotteryItem")
     private Winner winner;
 
-	public LotteryItem() {
+    public LotteryItem() {
     }
 
     public LotteryItem(String itemName, String artistName) {
@@ -60,6 +52,13 @@ public class LotteryItem {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public Lottery getLottery() {
         return lottery;
+    }
+
+    public Long getLotteryId() {
+        if (lottery != null)
+            return lottery.getId();
+        else
+            return null;
     }
 
     public void setLottery(Lottery lottery) {
@@ -121,6 +120,13 @@ public class LotteryItem {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public Winner getWinner() {
         return winner;
+    }
+
+    public Long getWinnerId() {
+        if (winner != null)
+            return winner.getId();
+        else
+            return null;
     }
 
     public void setWinner(Winner winner) {

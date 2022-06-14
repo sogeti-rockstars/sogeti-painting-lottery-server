@@ -1,18 +1,17 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
-import java.util.List;
-
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class WinnerService {
@@ -49,7 +48,7 @@ public class WinnerService {
         LOGGER.info("update, origWinner: " + origWinner + "update, newWinner: " + origWinner);
         Winner newWinner = repository.save(mergeWinners(origWinner, winner));
         var lottItem = serviceManager.getLotteryItem(newWinner.getLotteryItem().getId());
-        lottItem.setWinner(newWinner);
+//        lottItem.setWinner(newWinner);
         serviceManager.updateLotteryItem(lottItem);
         return newWinner;
     }
