@@ -1,13 +1,14 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
+import java.util.List;
+
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import org.springframework.stereotype.Service;
 
 /**
  * Mediator class to facilitte inter-service interaction.
@@ -72,16 +73,6 @@ public class ServiceManager {
 
     public LotteryItem updateLotteryItem(LotteryItem lotteryItem) throws IdException {
         return this.lotteryItemService.update(lotteryItem);
-    }
-
-    public Lottery editItemToLottery(Long id, LotteryItem lotteryItem) throws IdException {
-        Lottery newLottery = lotteryService.get(id);
-        List<LotteryItem> newItem = newLottery.getLotteryItems();
-        newItem.add(lotteryItem);
-        newLottery.setLotteryItems(newItem);
-        lotteryItem.setLottery(newLottery);
-        lotteryItemService.add(lotteryItem);
-        return lotteryService.update(newLottery);
     }
 
     public Winner addWinner(long contestantId, Lottery lottery, int placement) throws IdException {
