@@ -81,8 +81,6 @@ public class LotteryItemService {
             origItem.setValue(newItem.getValue());
         if (newItem.getTechnique() != null)
             origItem.setTechnique(newItem.getTechnique());
-        if (newItem.getWinner() != null)
-            origItem.setWinner(newItem.getWinner());
         if (newItem.getLottery() != null)
             origItem.setLottery(newItem.getLottery());
 

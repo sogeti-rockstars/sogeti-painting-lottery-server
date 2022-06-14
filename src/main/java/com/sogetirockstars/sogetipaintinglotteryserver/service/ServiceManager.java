@@ -72,7 +72,7 @@ public class ServiceManager {
     }
 
     public LotteryItem updateLotteryItem(LotteryItem lotteryItem) throws IdException {
-        lotteryService.get(lotteryItem.getLottery().getId()).getLotteryItems().add(lotteryItem);
+        // lotteryService.get(lotteryItem.getLottery().getId()).getLotteryItems().add(lotteryItem);
         return lotteryItemService.update(lotteryItem);
     }
 

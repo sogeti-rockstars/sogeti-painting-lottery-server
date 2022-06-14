@@ -20,7 +20,7 @@ public class Winner {
 
     private Integer placement;
 
-    @OneToOne(mappedBy="winner",cascade=CascadeType.REMOVE) 
+    @OneToOne(cascade = CascadeType.REMOVE)
     private LotteryItem lotteryItem;
 
     public Winner() {
@@ -76,19 +76,15 @@ public class Winner {
         this.lotteryItem = lotteryItem;
     }
 
-    @JsonInclude(value=JsonInclude.Include.NON_NULL)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     public LotteryItem getLotteryItem() {
         return lotteryItem;
     }
 
     @Override
     public String toString() {
-        return   "Winner [" +
-                        "contestant="  + (contestant == null ? "null" : contestant ) + 
-                        ", id="        + (id == null ? "null" :         id         ) +
-                        ", lottery="   + (lottery == null ? "null" :    lottery    ) +
-                        ", placement=" + (placement == null ? "null" :  placement  ) +
-                        ", itemArtist="+(lotteryItem == null ? "null" : lotteryItem.getArtistName() ) +
-                        "]";
+        return "Winner [" + "contestant=" + (contestant == null ? "null" : contestant) + ", id=" + (id == null ? "null" : id) + ", lottery="
+                + (lottery == null ? "null" : lottery) + ", placement=" + (placement == null ? "null" : placement) + ", itemArtist="
+                + (lotteryItem == null ? "null" : lotteryItem.getArtistName()) + "]";
     }
 }

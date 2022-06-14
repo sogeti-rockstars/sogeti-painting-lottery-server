@@ -46,12 +46,11 @@ public class WinnerService {
 
     public Winner update(Winner winner) throws IdException {
         Winner origWinner = get(winner.getId());
-        LOGGER.info("update, origWinner: " + origWinner + "update, newWinner: " + origWinner);
-        Winner newWinner = repository.save(mergeWinners(origWinner, winner));
-        var lottItem = serviceManager.getLotteryItem(newWinner.getLotteryItem().getId());
-        lottItem.setWinner(newWinner);
-        serviceManager.updateLotteryItem(lottItem);
-        return newWinner;
+        Winner nWinner = mergeWinners(origWinner, winner);
+        repository.save(nWinner);
+        LOGGER.info("update, newWinner: " + nWinner);
+        LOGGER.info("update, oldWinner: " + origWinner);
+        return repository.saveAndFlush(nWinner);
     }
 
     public boolean delete(Long id) throws IdException {
