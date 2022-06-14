@@ -19,11 +19,13 @@ public class LotteryItemService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LotteryItemService.class);
 
     private final LotteryItemRepository repository;
+    private final ServiceManager serviceManager;
 
     @Autowired
     public LotteryItemService(LotteryItemRepository repository, ServiceManager serviceManager) {
         this.repository = repository;
         serviceManager.addService(this);
+        this.serviceManager = serviceManager;
     }
 
     public List<LotteryItem> getAll() {
@@ -43,6 +45,8 @@ public class LotteryItemService {
 
     public LotteryItem update(LotteryItem newItem) throws IdException {
         LotteryItem origItem = getItem(newItem.getId());
+        if (origItem.getLottery() != null && newItem.getLottery() != null && !origItem.getLottery().equals(newItem.getLottery()))
+            serviceManager.removeItemFromLottery(origItem);
         LOGGER.info("update origItem: " + origItem.toString() + "update newItem: " + newItem.toString());
         return repository.save(mergeItems(origItem, newItem));
     }
@@ -79,6 +83,8 @@ public class LotteryItemService {
             origItem.setTechnique(newItem.getTechnique());
         if (newItem.getWinner() != null)
             origItem.setWinner(newItem.getWinner());
+        if (newItem.getLottery() != null)
+            origItem.setLottery(newItem.getLottery());
 
         return origItem;
     }

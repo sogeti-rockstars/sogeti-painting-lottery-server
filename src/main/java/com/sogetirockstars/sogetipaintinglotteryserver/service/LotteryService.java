@@ -65,6 +65,15 @@ public class LotteryService {
         return lottery;
     }
 
+    public Lottery removeItemFromLottery(Long id, LotteryItem lotteryItem) throws IdException {
+        Lottery lottery = get(id);
+        lotteryItem.setLottery(null);
+        lottery.getLotteryItems().remove(lotteryItem);
+        LOGGER.info("removeItemFromLottery: Lottery:" + lottery.toString() + ", item:" + lotteryItem.toString());
+        repository.save(lottery);
+        return lottery;
+    }
+
     public Winner spinTheWheelNoItem(Lottery lottery) throws IdException, AllContestantsTakenException, EmptyLotteryWinnerAssignmentException {
         List<Contestant> contestants = serviceManager.getAllContestants();
         if (contestants.size() == 0)
