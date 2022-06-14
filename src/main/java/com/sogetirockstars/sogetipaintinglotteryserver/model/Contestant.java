@@ -2,8 +2,6 @@ package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 

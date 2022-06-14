@@ -1,7 +1,6 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
@@ -47,24 +46,18 @@ public class WinnerService {
 
     public Winner update(Winner winner) throws IdException {
         Winner origWinner = get(winner.getId());
-        LOGGER.info("update: " + winner);
-        return repository.save(mergeWinners(origWinner, winner));
+        LOGGER.info("update, origWinner: " + origWinner + "update, newWinner: " + origWinner);
+        Winner newWinner = repository.save(mergeWinners(origWinner, winner));
+        var lottItem = serviceManager.getLotteryItem(newWinner.getLotteryItem().getId());
+        lottItem.setWinner(newWinner);
+        serviceManager.updateLotteryItem(lottItem);
+        return newWinner;
     }
 
     public boolean delete(Long id) throws IdException {
-        Winner winner = get(id);
-        serviceManager.removeAllWinnerOccurances(winner);
+        assertExists(id);
         repository.deleteById(id);
         return true;
-    }
-
-    public boolean delete(Contestant contestant) {
-        Optional<Winner> matchingWinners = repository.findAll().stream().filter(winner -> winner.getContestant().equals(contestant)).findFirst();
-        if (matchingWinners.isPresent()) {
-            repository.delete(matchingWinners.get());
-            return true;
-        }
-        return false;
     }
 
     private void assertExists(Long id) throws IdException {
@@ -82,6 +75,8 @@ public class WinnerService {
             origWinner.setPlacement(newWinner.getPlacement());
         if (newWinner.getLotteryItem() != null)
             origWinner.setLotteryItem(newWinner.getLotteryItem());
+        if (newWinner.getLottery() != null)
+            origWinner.setLottery(newWinner.getLottery());
         return origWinner;
     }
 }

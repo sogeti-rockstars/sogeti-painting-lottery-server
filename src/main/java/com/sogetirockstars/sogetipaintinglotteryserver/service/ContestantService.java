@@ -34,6 +34,7 @@ public class ContestantService {
         return repository.findById(id).get();
     }
 
+    // BUG: deleting a contestant who has a chosen art item deletes the art item too.
     public boolean delete(Long id) throws IdException {
         Contestant cont = get(id);
         serviceManager.removeAllWinnerOccurances(cont);

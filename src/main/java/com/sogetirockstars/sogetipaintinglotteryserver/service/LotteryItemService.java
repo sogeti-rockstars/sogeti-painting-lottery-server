@@ -18,13 +18,11 @@ import org.springframework.stereotype.Service;
 public class LotteryItemService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LotteryItemService.class);
 
-    private final ServiceManager serviceManager;
     private final LotteryItemRepository repository;
 
     @Autowired
     public LotteryItemService(LotteryItemRepository repository, ServiceManager serviceManager) {
         this.repository = repository;
-        this.serviceManager = serviceManager;
         serviceManager.addService(this);
     }
 
@@ -45,15 +43,14 @@ public class LotteryItemService {
 
     public LotteryItem update(LotteryItem newItem) throws IdException {
         LotteryItem origItem = getItem(newItem.getId());
-        LOGGER.info("update: " + newItem.toString());
+        LOGGER.info("update origItem: " + origItem.toString() + "update newItem: " + newItem.toString());
         return repository.save(mergeItems(origItem, newItem));
     }
 
     public boolean delete(Long id) throws IdException {
         LotteryItem item = getItem(id);
-        serviceManager.removeAllItemOccurances(item);
         repository.deleteById(id);
-        // LOGGER.info("delete: " + item.toString());
+        LOGGER.info("delete: " + item.toString());
         return true;
     }
 
@@ -80,6 +77,8 @@ public class LotteryItemService {
             origItem.setValue(newItem.getValue());
         if (newItem.getTechnique() != null)
             origItem.setTechnique(newItem.getTechnique());
+        if (newItem.getWinner() != null)
+            origItem.setWinner(newItem.getWinner());
 
         return origItem;
     }

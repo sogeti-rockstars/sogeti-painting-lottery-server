@@ -16,12 +16,11 @@ public class Winner {
     private Contestant contestant;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Lottery lottery;
 
     private Integer placement;
 
-    @OneToOne
+    @OneToOne(mappedBy="winner",cascade=CascadeType.REMOVE) 
     private LotteryItem lotteryItem;
 
     public Winner() {
@@ -89,6 +88,7 @@ public class Winner {
                         ", id="        + (id == null ? "null" :         id         ) +
                         ", lottery="   + (lottery == null ? "null" :    lottery    ) +
                         ", placement=" + (placement == null ? "null" :  placement  ) +
+                        ", itemArtist="+(lotteryItem == null ? "null" : lotteryItem.getArtistName() ) +
                         "]";
     }
 }

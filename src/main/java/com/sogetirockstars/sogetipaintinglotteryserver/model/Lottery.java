@@ -10,7 +10,7 @@ public class Lottery {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "lottery")
+    @OneToMany(mappedBy = "lottery", cascade = CascadeType.REMOVE)
     private List<LotteryItem> lotteryItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "lottery")

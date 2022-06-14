@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,6 +32,9 @@ public class LotteryItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Lottery lottery;
+
+    @OneToOne
+    private Winner winner;
 
 	public LotteryItem() {
     }
@@ -114,18 +118,21 @@ public class LotteryItem {
         this.technique = technique;
     }
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Winner getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Winner winner) {
+        this.winner = winner;
+    }
+
     @Override
     public String toString() {
-        return "LotteryItem [" +
-                "artistName="         + (artistName == null ? "null" : artistName) +
-                ", frameDescription=" + (frameDescription == null ? "null" : frameDescription) +
-                ", id="               + (id == null ? "null" : id) +
-                ", itemName="         + (itemName == null ? "null" : itemName) +
-                ", lottery="          + (lottery == null ? "null" : lottery) +
-                ", size="             + (size == null ? "null" : size) +
-                ", technique="        + (technique == null ? "null" : technique) +
-                ", value="            + (value == null ? "null" : value) +
-                // ", winner="           + (winner == null ? "null" : winner ) +
-            "]";
+        return "LotteryItem [" + "artistName=" + (artistName == null ? "null" : artistName) + ", frameDescription="
+                + (frameDescription == null ? "null" : frameDescription) + ", id=" + (id == null ? "null" : id) + ", itemName="
+                + (itemName == null ? "null" : itemName) + ", lottery=" + (lottery == null ? "null" : lottery) + ", size=" + (size == null ? "null" : size)
+                + ", technique=" + (technique == null ? "null" : technique) + ", value=" + (value == null ? "null" : value) + ", winnerid="
+                + (winner == null ? "null" : winner.getId()) + "]";
     }
 }

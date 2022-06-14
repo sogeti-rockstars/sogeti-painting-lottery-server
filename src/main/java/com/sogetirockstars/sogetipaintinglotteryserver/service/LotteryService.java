@@ -87,30 +87,18 @@ public class LotteryService {
         return nWinner;
     }
 
-    public void removeAllItemOccurances(LotteryItem item) {
-        getAll().stream().forEach(lott -> {
-            boolean existed = lott.getLotteryItems().remove(item);
-            if (existed) {
-                repository.save(lott);
-                LOGGER.info("removeAllItemOccurances" + "Item: " + item.toString() + " Lottery: " + lott.toString());
-            }
-        });
-    }
-
-    public void removeAllWinnerOccurances(Winner winner) {
-        getAll().stream().forEach(lott -> {
-            boolean existed = lott.getWinners().remove(winner);
-            if (existed) {
-                repository.save(lott);
-                LOGGER.info("removeAllItemOccurances" + " " + winner + " " + lott.toString());
-            }
-        });
-    }
-
+    // BUG: deleting a contestant who has a chosen art item deletes the art item too.
     public void removeAllWinnerOccurances(Contestant cont) {
         getAll().stream().filter(lott -> {
             return lott.getWinners().removeIf(win -> win.getContestant() == cont);
         }).forEach(lott -> repository.save(lott));
+    }
+
+    public boolean delete(Long id) throws IdException {
+        assertExists(id);
+        repository.deleteById(id);
+        LOGGER.info("delete: " + id);
+        return true;
     }
 
     private Lottery mergeLotterys(Lottery origItem, Lottery newItem) {
@@ -119,13 +107,6 @@ public class LotteryService {
         if (newItem.getLotteryItems() != null)
             origItem.setLotteryItems(newItem.getLotteryItems());
         return origItem;
-    }
-
-    public boolean delete(Long id) throws IdException {
-        assertExists(id);
-        repository.deleteById(id);
-        LOGGER.info("delete: " + id);
-        return true;
     }
 
     private void assertExists(Long id) throws IdException {

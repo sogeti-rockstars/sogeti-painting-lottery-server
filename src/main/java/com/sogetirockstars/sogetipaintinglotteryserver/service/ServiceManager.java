@@ -55,17 +55,8 @@ public class ServiceManager {
         return winnerService;
     }
 
-    public void removeAllItemOccurances(LotteryItem item) {
-        this.lotteryService.removeAllItemOccurances(item);
-    }
-
-    public void removeAllWinnerOccurances(Winner winner) {
-        this.lotteryService.removeAllWinnerOccurances(winner);
-    }
-
     public void removeAllWinnerOccurances(Contestant contestant) {
         this.lotteryService.removeAllWinnerOccurances(contestant);
-        this.winnerService.delete(contestant);
     }
 
     public List<Contestant> getAllContestants() {
@@ -74,6 +65,14 @@ public class ServiceManager {
 
     public Contestant getContestantById(Long id) throws IdException {
         return this.contestantService.get(id);
+    }
+
+    public LotteryItem getLotteryItem(Long id) throws IdException {
+        return this.lotteryItemService.getItem(id);
+    }
+
+    public LotteryItem updateLotteryItem(LotteryItem lotteryItem) throws IdException {
+        return this.lotteryItemService.update(lotteryItem);
     }
 
     public Winner addWinner(long contestantId, Lottery lottery, int placement) throws IdException {
