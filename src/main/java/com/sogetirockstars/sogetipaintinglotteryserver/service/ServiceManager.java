@@ -55,6 +55,11 @@ public class ServiceManager {
         return winnerService;
     }
 
+    public void removeReferences(LotteryItem item) {
+        if (item != null)
+            winnerService.removeReferences(item);
+    }
+
     public void removeAllWinnerOccurances(Contestant contestant) {
         this.lotteryService.removeAllWinnerOccurances(contestant);
     }
@@ -71,11 +76,7 @@ public class ServiceManager {
         return this.lotteryItemService.getItem(id);
     }
 
-    public LotteryItem updateLotteryItem(LotteryItem lotteryItem) throws IdException {
-        lotteryService.get(lotteryItem.getLottery().getId()).getLotteryItems().add(lotteryItem);
-        return lotteryItemService.update(lotteryItem);
-    }
-
+    // Only used by config/mock-data, potentialy remove
     public Winner addWinner(long contestantId, Lottery lottery, int placement) throws IdException {
         return winnerService.addNew(contestantId, lottery, placement);
     }

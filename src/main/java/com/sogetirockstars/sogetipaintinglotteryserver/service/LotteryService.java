@@ -1,6 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.AllContestantsTakenException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.EmptyLotteryWinnerAssignmentException;
@@ -37,11 +38,11 @@ public class LotteryService {
         return repository.findById(id).get();
     }
 
-    public List<LotteryItem> getLotteryItems(Long id) throws IdException {
+    public Set<LotteryItem> getLotteryItems(Long id) throws IdException {
         return get(id).getLotteryItems();
     }
 
-    public List<Winner> getWinners(Long id) throws IdException {
+    public Set<Winner> getWinners(Long id) throws IdException {
         return get(id).getWinners();
     }
 
@@ -113,8 +114,10 @@ public class LotteryService {
     private Lottery mergeLotterys(Lottery origItem, Lottery newItem) {
         if (newItem.getTitle() != null)
             origItem.setTitle(newItem.getTitle());
-        if (newItem.getLotteryItems() != null)
+        if (newItem.getLotteryItems().size() > 0)
             origItem.setLotteryItems(newItem.getLotteryItems());
+        if (newItem.getWinners().size() > 0)
+            origItem.setWinners(newItem.getWinners());
         return origItem;
     }
 

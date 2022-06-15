@@ -1,9 +1,14 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Contestant {
@@ -17,7 +22,7 @@ public class Contestant {
     private String teleNumber;
 
     @OneToMany(mappedBy = "contestant", cascade = CascadeType.REMOVE)
-    private List<Winner> winners = new ArrayList<>();
+    private Set<Winner> winners = new HashSet<>();
 
     public Contestant() {
     }
@@ -76,20 +81,20 @@ public class Contestant {
         return teleNumber;
     }
 
-    public List<Winner> getWinner() {
+    public Set<Winner> getWinner() {
         return winners;
     }
 
-    public void setWinner(List<Winner> winners) {
+    public void setWinner(Set<Winner> winners) {
         this.winners = winners;
     }
 
     @Override
     public String toString() {
         return "Contestant [" +
-              "email="      + ( email      == null ? "null" : email      ) +
+              "id="         + ( id         == null ? "null" : id         ) +
+            ", email="      + ( email      == null ? "null" : email      ) +
             ", employeeId=" + ( employeeId == null ? "null" : employeeId ) +
-            ", id="         + ( id         == null ? "null" : id         ) +
             ", name="       + ( name       == null ? "null" : name       ) +
             ", teleNumber=" + ( teleNumber == null ? "null" : teleNumber ) +
             ", winners="    + winners.size() +
