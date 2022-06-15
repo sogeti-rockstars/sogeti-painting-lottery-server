@@ -36,7 +36,7 @@ public class LotteryItem {
     @OneToOne
     private Winner winner;
 
-	public LotteryItem() {
+    public LotteryItem() {
     }
 
     public LotteryItem(String itemName, String artistName) {

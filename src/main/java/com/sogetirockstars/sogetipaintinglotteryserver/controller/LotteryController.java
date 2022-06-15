@@ -2,6 +2,8 @@ package com.sogetirockstars.sogetipaintinglotteryserver.controller;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.AllContestantsTakenException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.EmptyLotteryWinnerAssignmentException;
@@ -66,7 +68,7 @@ public class LotteryController {
     @GetMapping(value = "{id}/winners")
     public ResponseEntity<?> getWinners(@PathVariable Long id) {
         try {
-            List<Winner> items = lotteryService.getWinners(id);
+            Set<Winner> items = lotteryService.getWinners(id);
             return new ResponseEntity<>(items, HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -76,7 +78,19 @@ public class LotteryController {
     @GetMapping(value = "{id}/items")
     public ResponseEntity<?> getLotteryItems(@PathVariable Long id) {
         try {
-            List<LotteryItem> items = lotteryService.getLotteryItems(id);
+            Set<LotteryItem> items = lotteryService.getLotteryItems(id);
+            return new ResponseEntity<>(items, HttpStatus.OK);
+        } catch (IdException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(value = "{id}/available-items")
+    public ResponseEntity<?> getAvailableLotteryItems(@PathVariable Long id) {
+        try {
+            Set<LotteryItem> unavailableItems = lotteryService.getWinners(id).stream().map(win -> win.getLotteryItem()).collect(Collectors.toSet());
+            Set<LotteryItem> items = lotteryService.getLotteryItems(id);
+            items.removeAll(unavailableItems);
             return new ResponseEntity<>(items, HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

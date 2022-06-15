@@ -45,14 +45,17 @@ public class LotteryItemService {
 
     public LotteryItem update(LotteryItem newItem) throws IdException {
         LotteryItem origItem = getItem(newItem.getId());
-        if (origItem.getLottery() != null && newItem.getLottery() != null && !origItem.getLottery().equals(newItem.getLottery()))
-            serviceManager.removeItemFromLottery(origItem);
-        LOGGER.info("update origItem: " + origItem.toString() + "update newItem: " + newItem.toString());
-        return repository.save(mergeItems(origItem, newItem));
+        mergeItems(origItem, newItem);
+        origItem = repository.saveAndFlush(origItem);
+        LOGGER.info("update:\norigItem: " + origItem.toString() + "\nnewItem: " + newItem.toString());
+        return origItem;
     }
 
     public boolean delete(Long id) throws IdException {
         LotteryItem item = getItem(id);
+        // Maybe it's possible to do this with pure hibernate, couldn't get it to work. This does.
+        // The goal is to remove a winners chosen item wthout removing the winner.
+        serviceManager.removeReferences(item);
         repository.deleteById(id);
         LOGGER.info("delete: " + item.toString());
         return true;

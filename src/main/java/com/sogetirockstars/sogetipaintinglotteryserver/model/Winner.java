@@ -1,9 +1,14 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.*;
 
 @Entity
 public class Winner {
@@ -11,16 +16,15 @@ public class Winner {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @ManyToOne
     private Contestant contestant;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Lottery lottery;
 
     private Integer placement;
 
-    @OneToOne(mappedBy="winner",cascade=CascadeType.REMOVE) 
+    @OneToOne
     private LotteryItem lotteryItem;
 
     public Winner() {
@@ -47,6 +51,11 @@ public class Winner {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public Lottery getLottery() {
         return lottery;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public Long getLotteryId() {
+        return lottery == null ? null : lottery.getId();
     }
 
     public void setLottery(Lottery lottery) {
@@ -76,19 +85,15 @@ public class Winner {
         this.lotteryItem = lotteryItem;
     }
 
-    @JsonInclude(value=JsonInclude.Include.NON_NULL)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     public LotteryItem getLotteryItem() {
         return lotteryItem;
     }
 
     @Override
     public String toString() {
-        return   "Winner [" +
-                        "contestant="  + (contestant == null ? "null" : contestant ) + 
-                        ", id="        + (id == null ? "null" :         id         ) +
-                        ", lottery="   + (lottery == null ? "null" :    lottery    ) +
-                        ", placement=" + (placement == null ? "null" :  placement  ) +
-                        ", itemArtist="+(lotteryItem == null ? "null" : lotteryItem.getArtistName() ) +
-                        "]";
+        return "Winner [" + "contestant=" + (contestant == null ? "null" : contestant) + ", id=" + (id == null ? "null" : id) + ", lottery="
+                + (lottery == null ? "null" : lottery) + ", placement=" + (placement == null ? "null" : placement) + ", itemArtist="
+                + (lotteryItem == null ? "null" : lotteryItem.getArtistName()) + "]";
     }
 }

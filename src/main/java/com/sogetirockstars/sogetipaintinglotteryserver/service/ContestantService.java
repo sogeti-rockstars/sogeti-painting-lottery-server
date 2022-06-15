@@ -16,12 +16,10 @@ public class ContestantService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContestantService.class);
 
     private final ContestantRepository repository;
-    private final ServiceManager serviceManager;
 
     @Autowired
     public ContestantService(ContestantRepository repository, ServiceManager serviceManager) {
         this.repository = repository;
-        this.serviceManager = serviceManager;
         serviceManager.addService(this);
     }
 
@@ -37,7 +35,7 @@ public class ContestantService {
     // BUG: deleting a contestant who has a chosen art item deletes the art item too.
     public boolean delete(Long id) throws IdException {
         Contestant cont = get(id);
-        serviceManager.removeAllWinnerOccurances(cont);
+        // serviceManager.removeReferences(cont.get
         repository.deleteById(id);
         LOGGER.info("delete: " + cont.toString());
         return true;
@@ -77,6 +75,8 @@ public class ContestantService {
             origCont.setEmployeeId(newCont.getEmployeeId());
         if (newCont.getTeleNumber() != null)
             origCont.setTeleNumber(newCont.getTeleNumber());
+        if (newCont.getWinner() != null)
+            origCont.setWinner(newCont.getWinner());
 
         return origCont;
     }
