@@ -1,8 +1,14 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Lottery {
@@ -11,15 +17,12 @@ public class Lottery {
     private Long id;
 
     @OneToMany(mappedBy = "lottery", cascade = CascadeType.REMOVE)
-    private List<LotteryItem> lotteryItems = new ArrayList<>();
+    private Set<LotteryItem> lotteryItems = new HashSet<>();
 
-    @OneToMany(mappedBy = "lottery")
-    private List<Winner> winners = new ArrayList<>();
+    @OneToMany(mappedBy = "lottery", cascade = CascadeType.REMOVE)
+    private Set<Winner> winners = new HashSet<>();
+
     private String title;
-
-    public List<LotteryItem> getLotteryItems() {
-        return lotteryItems;
-    }
 
     public Lottery() {
     }
@@ -33,11 +36,11 @@ public class Lottery {
         this.title = title;
     }
 
-    public List<Winner> getWinners() {
+    public Set<Winner> getWinners() {
         return winners;
     }
 
-    public void setWinners(List<Winner> winners) {
+    public void setWinners(Set<Winner> winners) {
         this.winners = winners;
     }
 
@@ -61,8 +64,12 @@ public class Lottery {
         this.title = title;
     }
 
-    public void setLotteryItems(List<LotteryItem> lotteryItems) {
+    public void setLotteryItems(Set<LotteryItem> lotteryItems) {
         this.lotteryItems = lotteryItems;
+    }
+
+    public Set<LotteryItem> getLotteryItems() {
+        return lotteryItems;
     }
 
     public void addLotteryItems(LotteryItem lotteryItem) {
@@ -71,11 +78,7 @@ public class Lottery {
 
     @Override
     public String toString() {
-        return "[" +
-            "title=" + (title != null ? title : "null") +
-            " ,id="   + (id != null ? id : "null") +
-            " ,lotteryItems.size()="   + lotteryItems.size() +
-            " ,winners.size()="        + winners.size() +
-        "]";
+        return "[" + "title=" + (title != null ? title : "null") + " ,id=" + (id != null ? id : "null") + " ,lotteryItems.size()=" + lotteryItems.size()
+                + " ,winners.size()=" + winners.size() + "]";
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Lottery;
+import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Winner;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.WinnerRepository;
@@ -44,20 +45,26 @@ public class WinnerService {
         return repository.saveAndFlush(nWinner);
     }
 
-    public Winner update(Winner winner) throws IdException {
-        Winner origWinner = get(winner.getId());
-        LOGGER.info("update, origWinner: " + origWinner + "update, newWinner: " + origWinner);
-        Winner newWinner = repository.save(mergeWinners(origWinner, winner));
-        var lottItem = serviceManager.getLotteryItem(newWinner.getLotteryItem().getId());
-        lottItem.setWinner(newWinner);
-        serviceManager.updateLotteryItem(lottItem);
-        return newWinner;
+    public Winner update(Winner newWinner) throws IdException {
+        Winner origWinner = get(newWinner.getId());
+        mergeWinners(origWinner, newWinner);
+        origWinner.getLotteryItem().setWinner(newWinner);
+        origWinner = repository.saveAndFlush(origWinner);
+        LOGGER.info("update:\norigWinner: " + origWinner + "\nnewWinner: " + newWinner);
+        return origWinner;
     }
 
     public boolean delete(Long id) throws IdException {
         assertExists(id);
         repository.deleteById(id);
         return true;
+    }
+
+    public void removeReferences(LotteryItem item) {
+        getAll().stream().filter(winner -> item.equals(winner.getLotteryItem())).forEach(winner -> {
+            winner.setLotteryItem(null);
+            repository.save(winner);
+        });
     }
 
     private void assertExists(Long id) throws IdException {
