@@ -96,6 +96,26 @@ public class LotteryController {
         }
     }
 
+    @GetMapping(value = "{id}/guarantee-prize")
+    public ResponseEntity<?> getGuaranteePrize(@PathVariable Long id) {
+        try {
+            LotteryItem item = lotteryService.getGuaranteePrize(id);
+            return new ResponseEntity<>(item == null ? "" : item, HttpStatus.OK);
+        } catch (IdException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping(value = "{id}/guarantee-prize")
+    public ResponseEntity<?> setGuaranteePrize(@PathVariable Long id, @RequestBody LotteryItem guaranteeItem) {
+        try {
+            lotteryService.setGuaranteePrize(id, guaranteeItem);
+            return new ResponseEntity<>(lotteryService.getGuaranteePrize(id), HttpStatus.OK);
+        } catch (IdException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PutMapping(value = "{id}/spin")
     public ResponseEntity<?> spinTheWheelNoItem(@PathVariable Long id) {
         try {

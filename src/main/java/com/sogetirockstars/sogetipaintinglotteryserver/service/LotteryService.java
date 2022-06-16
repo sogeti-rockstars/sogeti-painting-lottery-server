@@ -108,6 +108,17 @@ public class LotteryService {
         return nWinner;
     }
 
+    public void setGuaranteePrize(Long id, LotteryItem guaranteeItem) throws IdException {
+        Lottery lott = get(id);
+        lott.setGuaranteePrize(guaranteeItem);
+        serviceManager.addLotteryItem(guaranteeItem);
+        repository.save(lott);
+    }
+
+    public LotteryItem getGuaranteePrize(Long id) throws IdException {
+        return get(id).getGuaranteePrize();
+    }
+
     // BUG: deleting a contestant who has a chosen art item deletes the art item too.
     public void removeAllWinnerOccurances(Contestant cont) {
         getAll().stream().filter(lott -> {

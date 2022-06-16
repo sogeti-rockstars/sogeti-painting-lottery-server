@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Lottery {
@@ -18,6 +19,9 @@ public class Lottery {
 
     @OneToMany(mappedBy = "lottery", cascade = CascadeType.REMOVE)
     private Set<LotteryItem> lotteryItems = new HashSet<>();
+
+    @OneToOne
+    private LotteryItem guaranteePrize;
 
     @OneToMany(mappedBy = "lottery", cascade = CascadeType.REMOVE)
     private Set<Winner> winners = new HashSet<>();
@@ -74,6 +78,14 @@ public class Lottery {
 
     public void addLotteryItems(LotteryItem lotteryItem) {
         this.lotteryItems.add(lotteryItem);
+    }
+
+    public LotteryItem getGuaranteePrize() {
+        return guaranteePrize;
+    }
+
+    public void setGuaranteePrize(LotteryItem guaranteePrize) {
+        this.guaranteePrize = guaranteePrize;
     }
 
     @Override
