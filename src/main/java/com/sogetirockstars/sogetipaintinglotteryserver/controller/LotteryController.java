@@ -78,8 +78,7 @@ public class LotteryController {
     @GetMapping(value = "{id}/items")
     public ResponseEntity<?> getLotteryItems(@PathVariable Long id) {
         try {
-            Set<LotteryItem> items = lotteryService.getLotteryItems(id);
-            return new ResponseEntity<>(items, HttpStatus.OK);
+            return new ResponseEntity<>(lotteryService.getLotteryItems(id), HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
