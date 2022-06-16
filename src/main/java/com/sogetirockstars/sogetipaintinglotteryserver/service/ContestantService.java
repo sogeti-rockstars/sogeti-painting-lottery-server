@@ -75,8 +75,10 @@ public class ContestantService {
             origCont.setEmployeeId(newCont.getEmployeeId());
         if (newCont.getTeleNumber() != null)
             origCont.setTeleNumber(newCont.getTeleNumber());
-        if (newCont.getWinner() != null)
-            origCont.setWinner(newCont.getWinner());
+        if (newCont.getWinners() != null)
+            origCont.setWinners(newCont.getWinners());
+        if (newCont.getOffice() != null)
+            origCont.setOffice(newCont.getOffice());
 
         return origCont;
     }
