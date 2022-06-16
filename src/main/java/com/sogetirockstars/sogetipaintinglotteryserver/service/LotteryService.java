@@ -80,6 +80,7 @@ public class LotteryService {
         if (contestants.size() == 0)
             throw new EmptyLotteryWinnerAssignmentException("No contestants in lottery " + lottery.getId());
 
+        serviceManager.ensureConsecutivePlacements(lottery.getWinners());
         List<Long> winnerIds = lottery.getWinners().stream().map(c -> c.getContestantId()).toList();
         List<Long> nonWinnerIds = contestants.stream().map(c -> c.getId()).filter(id -> !winnerIds.contains(id)).toList();
 
