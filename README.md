@@ -20,9 +20,9 @@ NOT TESTED
  
  
 ### Paths descriptions
-REQUEST PATH                                &emsp; => &emsp; ACTION/RESPONSE DESCIPTION
+REQUEST PATH                                                 ACTION/RESPONSE DESCIPTION
  
-/api/v1/info                                &emsp; => &emsp; Editable fields, e.g. about us, assosiation leadership etc.
+##### /api/v1/info                          &emsp; => &emsp; Editable fields, e.g. about us, assosiation leadership etc.
  
 GET:  /api/v1/info                          &emsp; => &emsp; All fields. (Not used currently)
  
@@ -46,7 +46,7 @@ POST: /api/v1/info/field/{fieldName}        &emsp; => &emsp; (Not used by client
  
  
  
-PATH: /api/v1/users
+##### /api/v1/users
  
 GET:/api/v1/users/current                   &emsp; => &emsp; Currently validated user: ADMIN/ [EVERYONE ELSE]
  
@@ -56,7 +56,7 @@ PUT:/api/v1/users/password                  &emsp; => &emsp; Changes the passwor
  
  
  
-PATH: /api/v1/contestant
+##### /api/v1/contestant
  
 GET:/api/v1/contestant                      &emsp; => &emsp; All contestants. Same regardless of lottery year chosen.
  
@@ -70,7 +70,7 @@ POST:/api/v1/contestant                     &emsp; => &emsp; Post new contestant
  
  
  
-PATH: /api/v1/lottery
+##### /api/v1/lottery
  
 GET:/api/v1/lottery                         &emsp; => &emsp; All lotteries.
  
@@ -93,7 +93,7 @@ GET:/api/v1/lottery/{id}/available-items    &emsp; => &emsp; Lottery items for l
 PUT:/api/v1/lottery/{id}/spin               &emsp; => &emsp; Add a randomly selected contestant as a winner to the lottery with {id}
  
  
-PATH: /api/v1/item
+##### /api/v1/item
  
 GET:/api/v1/item                            &emsp; => &emsp; All lottery items
  
@@ -111,7 +111,7 @@ PUT:/api/v1/item/update-image/{id}          &emsp; => &emsp; Add an image to the
  
  
  
-PATH: /api/v1/winner
+##### /api/v1/winner
  
 GET:/api/v1/winner                          &emsp; => &emsp; All winners (Not currently used by client)
  
