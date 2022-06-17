@@ -1,6 +1,9 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
@@ -21,6 +24,13 @@ public class WinnerService {
 
     private final WinnerRepository repository;
     private final ServiceManager serviceManager;
+
+    private final Comparator<Winner> winnerComparator = new Comparator<>() {
+        @Override
+        public int compare(Winner left, Winner right) {
+            return left.getPlacement().compareTo(right.getPlacement());
+        }
+    };
 
     @Autowired
     public WinnerService(WinnerRepository repository, LotteryRepository lotteryRepo, ServiceManager serviceManager) {
@@ -49,14 +59,20 @@ public class WinnerService {
         Winner origWinner = get(newWinner.getId());
         mergeWinners(origWinner, newWinner);
         origWinner.getLotteryItem().setWinner(newWinner);
+
+        Set<Winner> lotteryWinners = serviceManager.getWinnersByLotteryId(origWinner.getLottery().getId());
+        ensureConsecutivePlacements(lotteryWinners);
+
         origWinner = repository.saveAndFlush(origWinner);
         LOGGER.info("update:\norigWinner: " + origWinner + "\nnewWinner: " + newWinner);
         return origWinner;
     }
 
     public boolean delete(Long id) throws IdException {
-        assertExists(id);
+        Winner winner = get(id);
+        Set<Winner> lotteryWinners = serviceManager.getWinnersByLotteryId(winner.getLottery().getId());
         repository.deleteById(id);
+        ensureConsecutivePlacements(lotteryWinners);
         return true;
     }
 
@@ -65,6 +81,16 @@ public class WinnerService {
             winner.setLotteryItem(null);
             repository.save(winner);
         });
+    }
+
+    public void ensureConsecutivePlacements(Set<Winner> winners) {
+        List<Winner> winnnerList = new ArrayList<>(winners);
+        winnnerList.sort(winnerComparator);
+        int placement = 0;
+        for (Winner winner : winnnerList) {
+            winner.setPlacement(placement++);
+        }
+        repository.saveAll(winnnerList);
     }
 
     private void assertExists(Long id) throws IdException {

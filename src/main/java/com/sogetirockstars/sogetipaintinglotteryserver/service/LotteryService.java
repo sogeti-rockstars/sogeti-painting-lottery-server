@@ -2,6 +2,7 @@ package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.AllContestantsTakenException;
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.EmptyLotteryWinnerAssignmentException;
@@ -38,8 +39,17 @@ public class LotteryService {
         return repository.findById(id).get();
     }
 
+    // This is an ugly work-around for misconfigured hibernate stuff...Please fix
     public Set<LotteryItem> getLotteryItems(Long id) throws IdException {
-        return get(id).getLotteryItems();
+        Set<LotteryItem> allItems = get(id).getLotteryItems();
+        Set<LotteryItem> unavailableItems = getWinners(id).stream().map(win -> {
+            LotteryItem item = win.getLotteryItem();
+            if (item != null)
+                item.setWinner(win);
+            return item;
+        }).filter(item -> item != null).collect(Collectors.toSet());
+        allItems.addAll(unavailableItems);
+        return allItems;
     }
 
     public Set<Winner> getWinners(Long id) throws IdException {
@@ -80,6 +90,7 @@ public class LotteryService {
         if (contestants.size() == 0)
             throw new EmptyLotteryWinnerAssignmentException("No contestants in lottery " + lottery.getId());
 
+        serviceManager.ensureConsecutivePlacements(lottery.getWinners());
         List<Long> winnerIds = lottery.getWinners().stream().map(c -> c.getContestantId()).toList();
         List<Long> nonWinnerIds = contestants.stream().map(c -> c.getId()).filter(id -> !winnerIds.contains(id)).toList();
 
@@ -95,6 +106,17 @@ public class LotteryService {
 
         LOGGER.info("spinTheWheelNoItem: Lottery:" + lottery.toString() + ", winner:" + nWinner.toString());
         return nWinner;
+    }
+
+    public void setGuaranteePrize(Long id, LotteryItem guaranteeItem) throws IdException {
+        Lottery lott = get(id);
+        lott.setGuaranteePrize(guaranteeItem);
+        serviceManager.addLotteryItem(guaranteeItem);
+        repository.save(lott);
+    }
+
+    public LotteryItem getGuaranteePrize(Long id) throws IdException {
+        return get(id).getGuaranteePrize();
     }
 
     // BUG: deleting a contestant who has a chosen art item deletes the art item too.

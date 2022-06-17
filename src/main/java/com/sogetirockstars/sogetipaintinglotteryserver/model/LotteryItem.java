@@ -118,6 +118,10 @@ public class LotteryItem {
         this.technique = technique;
     }
 
+    public boolean isAvailable() {
+        return winner == null;
+    }
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public Winner getWinner() {
         return winner;

@@ -1,6 +1,7 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.Contestant;
@@ -39,25 +40,13 @@ public class ServiceManager {
         this.winnerService = winnerService;
     }
 
-    public LotteryService getLotteryService() {
-        return lotteryService;
-    }
-
-    public LotteryItemService getLotteryItemService() {
-        return lotteryItemService;
-    }
-
-    public ContestantService getContestantService() {
-        return contestantService;
-    }
-
-    public WinnerService getWinnerService() {
-        return winnerService;
-    }
-
     public void removeReferences(LotteryItem item) {
         if (item != null)
             winnerService.removeReferences(item);
+    }
+
+    public void ensureConsecutivePlacements(Set<Winner> winners) {
+        winnerService.ensureConsecutivePlacements(winners);
     }
 
     public void removeAllWinnerOccurances(Contestant contestant) {
@@ -66,6 +55,10 @@ public class ServiceManager {
 
     public List<Contestant> getAllContestants() {
         return this.contestantService.getAll();
+    }
+
+    public Set<Winner> getWinnersByLotteryId(Long lottId) throws IdException {
+        return lotteryService.get(lottId).getWinners();
     }
 
     public Contestant getContestantById(Long id) throws IdException {

@@ -78,8 +78,7 @@ public class LotteryController {
     @GetMapping(value = "{id}/items")
     public ResponseEntity<?> getLotteryItems(@PathVariable Long id) {
         try {
-            Set<LotteryItem> items = lotteryService.getLotteryItems(id);
-            return new ResponseEntity<>(items, HttpStatus.OK);
+            return new ResponseEntity<>(lotteryService.getLotteryItems(id), HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -92,6 +91,26 @@ public class LotteryController {
             Set<LotteryItem> items = lotteryService.getLotteryItems(id);
             items.removeAll(unavailableItems);
             return new ResponseEntity<>(items, HttpStatus.OK);
+        } catch (IdException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(value = "{id}/guarantee-prize")
+    public ResponseEntity<?> getGuaranteePrize(@PathVariable Long id) {
+        try {
+            LotteryItem item = lotteryService.getGuaranteePrize(id);
+            return new ResponseEntity<>(item == null ? "" : item, HttpStatus.OK);
+        } catch (IdException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping(value = "{id}/guarantee-prize")
+    public ResponseEntity<?> setGuaranteePrize(@PathVariable Long id, @RequestBody LotteryItem guaranteeItem) {
+        try {
+            lotteryService.setGuaranteePrize(id, guaranteeItem);
+            return new ResponseEntity<>(lotteryService.getGuaranteePrize(id), HttpStatus.OK);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

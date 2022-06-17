@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 @Entity
 public class Contestant {
     @Id
@@ -20,6 +22,7 @@ public class Contestant {
     private String name;
     private String email;
     private String teleNumber;
+    private String office;
 
     @OneToMany(mappedBy = "contestant", cascade = CascadeType.REMOVE)
     private Set<Winner> winners = new HashSet<>();
@@ -61,32 +64,46 @@ public class Contestant {
         this.teleNumber = teleNumber;
     }
 
+    public void setOffice(String office) {
+        this.office = office;
+    }
+
+    public void setWinners(Set<Winner> winners) {
+        this.winners = winners;
+    }
+
     public Long getId() {
         return id;
     }
 
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     public String getEmployeeId() {
         return employeeId;
     }
 
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     public String getName() {
         return name;
     }
 
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     public String getEmail() {
         return email;
     }
 
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     public String getTeleNumber() {
         return teleNumber;
     }
 
-    public Set<Winner> getWinner() {
-        return winners;
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public String getOffice() {
+        return office;
     }
 
-    public void setWinner(Set<Winner> winners) {
-        this.winners = winners;
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public Set<Winner> getWinners() {
+        return winners;
     }
 
     @Override
