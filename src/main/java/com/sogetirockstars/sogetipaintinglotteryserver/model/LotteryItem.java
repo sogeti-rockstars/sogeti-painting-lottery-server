@@ -1,16 +1,8 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.persistence.*;
 
 /**
  * Painting
@@ -26,7 +18,7 @@ public class LotteryItem {
     private String artistName;
     private String size; // Example 12x12cm, string sounds reasonable for now.
     private String frameDescription;
-    private String value; // String so we can store currency and formatting for now.
+    private String itemValue; // String so we can store currency and formatting for now.
     private String technique;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,7 +41,7 @@ public class LotteryItem {
         this.artistName = artistName;
         this.size = size;
         this.frameDescription = frameDescription;
-        this.value = value;
+        this.itemValue = value;
         this.technique = technique;
     }
 
@@ -82,8 +74,8 @@ public class LotteryItem {
         return frameDescription;
     }
 
-    public String getValue() {
-        return value;
+    public String getItemValue() {
+        return itemValue;
     }
 
     public String getTechnique() {
@@ -110,8 +102,8 @@ public class LotteryItem {
         this.frameDescription = frameDescription;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setItemValue(String value) {
+        this.itemValue = value;
     }
 
     public void setTechnique(String technique) {
@@ -133,10 +125,16 @@ public class LotteryItem {
 
     @Override
     public String toString() {
-        return "LotteryItem [" + "artistName=" + (artistName == null ? "null" : artistName) + ", frameDescription="
-                + (frameDescription == null ? "null" : frameDescription) + ", id=" + (id == null ? "null" : id) + ", itemName="
-                + (itemName == null ? "null" : itemName) + ", lottery=" + (lottery == null ? "null" : lottery) + ", size=" + (size == null ? "null" : size)
-                + ", technique=" + (technique == null ? "null" : technique) + ", value=" + (value == null ? "null" : value) + ", winnerid="
-                + (winner == null ? "null" : winner.getId()) + "]";
+        return "LotteryItem{" +
+                "id=" + id +
+                ", itemName='" + itemName + '\'' +
+                ", artistName='" + artistName + '\'' +
+                ", size='" + size + '\'' +
+                ", frameDescription='" + frameDescription + '\'' +
+                ", itemValue='" + itemValue + '\'' +
+                ", technique='" + technique + '\'' +
+                ", lottery=" + lottery +
+                ", winner=" + winner +
+                '}';
     }
 }
