@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.PhotoWriteException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.AssociationInfo;
@@ -60,7 +61,7 @@ public class MockDataConfig {
                             + "Vi är den bästa föreningen för konst och inom konstbaserade saker, utmärkt CSR och non-profit förening för "
                             + "alla människors lika värde och nytta."));
 
-            contestants = fakeContestants();
+            contestants = fakeContestants(50);
             lotteries = fakeLotteries();
 
             lotteryRepo.saveAll(lotteries);
@@ -73,7 +74,7 @@ public class MockDataConfig {
                 for (int u = 0; u <= lotteries.size() - i; u++) {
                     LotteryItem curItem = curItems.get(u);
 
-                    Winner nWinner = serviceManager.addWinner(contestants.get(u).getId(), curLottery, u);
+                    Winner nWinner = serviceManager.addWinner(contestants.get(u).getId(), curLottery, u + 1);
                     curLottery.getWinners().add(nWinner);
                     lotteryRepo.saveAndFlush(curLottery);
 
@@ -98,29 +99,11 @@ public class MockDataConfig {
         return List.of(22, 21, 20, 19, 18, 17, 16, 15).stream().map(ye -> new Lottery("Norrkonst 20" + ye)).toList();
     }
 
-    private List<Contestant> fakeContestants() {
+    private List<Contestant> fakeContestants(int length) {
         List<Contestant> contestants = new LinkedList<>();
 
-        // IntStream
-        // .range(0, 100)
-        // .forEach(i -> {
-        contestants.addAll(List.of(new Contestant("Alice Alisson", "00001", "070 - 0001 123", "email01@example.com"),
-                new Contestant("Bob Bobsson", "00002", "070 - 0001 124", "email02@example.com"),
-                new Contestant("Charlie Charlston", "00003", "070 - 0001 125", "email03@example.com"),
-                new Contestant("Dorothea Dotesson", "00004", "070 - 0001 126", "email04@example.com"),
-                new Contestant("Dorothea Abc", "00005", "070 - 0001 127", "email05@example.com"),
-                new Contestant("Dorothea Foo", "00006", "070 - 0001 128", "email06@example.com"),
-                new Contestant("Dorothea Bar", "00007", "070 - 0001 129", "email07@example.com"),
-                new Contestant("Dorothea Oloffson", "00008", "070 - 0001 130", "email08@example.com"),
-                new Contestant(getRandomName(), "00007", "070 - 0001 129", "email07@example.com"),
-                new Contestant(getRandomName(), "00007", "070 - 0001 129", "email07@example.com"),
-                new Contestant(getRandomName(), "00007", "070 - 0001 129", "email07@example.com"),
-                new Contestant(getRandomName(), "00007", "070 - 0001 129", "email07@example.com"),
-                new Contestant(getRandomName(), "00007", "070 - 0001 129", "email07@example.com"),
-                new Contestant(getRandomName(), "00007", "070 - 0001 129", "email07@example.com"),
-                new Contestant(getRandomName(), "00007", "070 - 0001 129", "email07@example.com"),
-                new Contestant(getRandomName(), "00007", "070 - 0001 129", "email07@example.com")));
-        // });
+        IntStream.range(0, length).forEach(i -> contestants.add(gnrtRandomEmployee()));
+
         return contestants;
     }
 
@@ -165,6 +148,23 @@ public class MockDataConfig {
             System.err.println("Mock data failed to be created");
             System.exit(1);
         }
+    }
+
+    private Contestant gnrtRandomEmployee() {
+        String name = getRandomName();
+        return new Contestant(name, getRandomEmployeeId(), getRandomTeleNr(), name + "@example.com", "Sundvall");
+    }
+
+    private String getRandomEmployeeId() {
+        Integer randPart1 = rand.nextInt(1000000);
+        return String.format("%06d", randPart1);
+    }
+
+    private String getRandomTeleNr() {
+        Integer randPart1 = rand.nextInt(10000);
+        Integer randPart2 = rand.nextInt(1000);
+        return String.format("070-%04d-%03d", randPart1, randPart2);
+
     }
 
     private String getRandomName() {

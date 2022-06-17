@@ -86,7 +86,7 @@ public class WinnerService {
     public void ensureConsecutivePlacements(Set<Winner> winners) {
         List<Winner> winnnerList = new ArrayList<>(winners);
         winnnerList.sort(winnerComparator);
-        int placement = 0;
+        int placement = 1;
         for (Winner winner : winnnerList) {
             winner.setPlacement(placement++);
         }

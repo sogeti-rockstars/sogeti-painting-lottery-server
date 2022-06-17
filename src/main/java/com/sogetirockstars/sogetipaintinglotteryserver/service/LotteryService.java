@@ -100,7 +100,7 @@ public class LotteryService {
         int randomContestantIdx = (int) (Math.random() * (nonWinnerIds.size()));
         Long winnerContestantId = nonWinnerIds.get(randomContestantIdx);
 
-        Winner nWinner = serviceManager.addWinner(winnerContestantId, lottery, winnerIds.size());
+        Winner nWinner = serviceManager.addWinner(winnerContestantId, lottery, winnerIds.size() + 1);
         lottery.getWinners().add(nWinner);
         repository.saveAndFlush(lottery);
 
