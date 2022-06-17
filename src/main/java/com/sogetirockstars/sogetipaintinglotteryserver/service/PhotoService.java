@@ -31,29 +31,12 @@ public class PhotoService {
     public PhotoService() {
     }
 
-    public void setPlaceholderPhoto(Long id) throws PhotoWriteException {
-        try {
-            LOGGER.info("setPlaceholderPhoto");
-            ensurePathExists();
-            Path placeholderPath = Paths.get(noImagePath).toAbsolutePath();
-            Path targetPath = photosPath.resolve(id.toString().trim());
-            Files.deleteIfExists(targetPath);
-            Files.createSymbolicLink(targetPath, placeholderPath);
-
-            LOGGER.info("targetPath:" + targetPath + " " + ", placeholderPath: " + placeholderPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new PhotoWriteException("Previously existing path failed being written to. Contact your system administrator.");
-        }
-    }
-
     public void savePhoto(Long id, InputStream photoInStream) throws PhotoWriteException {
         try {
             LOGGER.info("savePhoto:");
             ensurePathExists();
             Path filePath = photosPath.resolve(id.toString().trim());
             Files.copy(photoInStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-
             LOGGER.info("filePath: " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,8 +49,18 @@ public class PhotoService {
             ensurePathExists();
             return new FileInputStream(photosPath.resolve(id.toString()).toFile());
         } catch (FileNotFoundException e) {
-            throw new PhotoMissingException("Photo for item with id " + id + " does not exist.");
+            return getPlaceholderPhoto();
         } catch (IOException | PhotoWriteException e) {
+            e.printStackTrace();
+            throw new PhotoMissingException("Photo directory does not exist.");
+        }
+    }
+
+    private InputStream getPlaceholderPhoto() throws PhotoMissingException {
+        Path placeholderPath = Paths.get(noImagePath).toAbsolutePath();
+        try {
+            return new FileInputStream(placeholderPath.toFile());
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new PhotoMissingException("Photo directory does not exist.");
         }
