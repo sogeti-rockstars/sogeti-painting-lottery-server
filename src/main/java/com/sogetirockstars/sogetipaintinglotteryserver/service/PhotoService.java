@@ -8,38 +8,82 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.PhotoMissingException;
+import com.sogetirockstars.sogetipaintinglotteryserver.exception.PhotoWriteException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PhotoService {
-    private final static Path cache = Paths.get("target/classes/cache/photos");
+    private static final Logger LOGGER = LoggerFactory.getLogger(PhotoService.class);
+    @Value("${photobucket.path}")
+    private String configPhotosPath;
+
+    private String resourcePath = "src/main/resources/photo-service/";
+    private String noImagePath = resourcePath + "No-image-available.png";
+
+    private Path photosPath;
 
     public PhotoService() {
+    }
+
+    public void savePhoto(Long id, InputStream photoInStream) throws PhotoWriteException {
         try {
-            if (!Files.exists(cache))
-                Files.createDirectories(cache);
-        } catch (IOException e){
-            e.printStackTrace(); // This should never happen on a normally functioning machine, so let's discover it quickly if it were.
+            LOGGER.info("savePhoto:");
+            ensurePathExists();
+            Path filePath = photosPath.resolve(id.toString().trim());
+            Files.copy(photoInStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            LOGGER.info("filePath: " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new PhotoWriteException("Previously existing path failed being written to. Contact your system administrator.");
         }
     }
 
-    public void savePhoto(Long id, InputStream photoInStream) {
-        Path filePath = cache.resolve(id.toString().trim());
-        System.out.println("Saving photo to "+ filePath.toString() );
+    public InputStream getPhoto(Long id) throws PhotoMissingException {
         try {
-            Files.copy(photoInStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			e.printStackTrace();  // This should never happen on a normally functioning machine, so let's discover it quickly if it were.
-                                  // Maybe if we run out of diskspace?  // JQ: Vad vore bra error handling??
-		}
+            ensurePathExists();
+            return new FileInputStream(photosPath.resolve(id.toString()).toFile());
+        } catch (FileNotFoundException e) {
+            return getPlaceholderPhoto();
+        } catch (IOException | PhotoWriteException e) {
+            e.printStackTrace();
+            throw new PhotoMissingException("Photo directory does not exist.");
+        }
     }
 
-    public InputStream getPhoto(Long id) throws PhotoMissingException{
+    private InputStream getPlaceholderPhoto() throws PhotoMissingException {
+        Path placeholderPath = Paths.get(noImagePath).toAbsolutePath();
         try {
-			return new FileInputStream(cache.resolve(id.toString()).toFile());
-		} catch (FileNotFoundException e) {
-            throw new PhotoMissingException( "Photo for item with id " + id + " does not exist");
-		}
+            return new FileInputStream(placeholderPath.toFile());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            throw new PhotoMissingException("Photo directory does not exist.");
+        }
     }
+
+    private void ensurePathExists() throws IOException, PhotoWriteException {
+        if (photosPath != null)
+            return;
+        if (configPhotosPath == null)
+            throw new IOException("No path configured for saving photos!");
+
+        if (configPhotosPath.equals("###TEMPDIR###")) // For production enviroment
+            configPhotosPath = System.getProperty("java.io.tmpdir") + "/sogeti-lottery";
+
+        photosPath = Paths.get(configPhotosPath);
+
+        try {
+            if (!Files.exists(photosPath))
+                Files.createDirectories(photosPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new PhotoWriteException("Failed to create directory " + configPhotosPath + ".");
+        }
+    }
+
 }

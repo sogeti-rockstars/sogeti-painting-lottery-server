@@ -14,65 +14,34 @@ public class LotteryItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Internal object id;
 
-
-    // private String pictureUrl;
     private String itemName;
     private String artistName;
     private String size; // Example 12x12cm, string sounds reasonable for now.
     private String frameDescription;
-    private String value; // String so we can store currency and formatting for now.
+    private String itemValue; // String so we can store currency and formatting for now.
     private String technique;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Lottery lottery;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    public Lottery getLottery() {
-        return lottery;
-    }
-
-
-    public void setLottery(Lottery lottery) {
-        this.lottery = lottery;
-    }
-
-
-    public Long getLottery_id() {
-        if (this.lottery != null)
-            return lottery.getId();
-        else
-            return null;
-    }
-
+    @OneToOne
+    private Winner winner;
 
     public LotteryItem() {
     }
-
 
     public LotteryItem(String itemName, String artistName) {
         this.artistName = artistName;
         this.itemName = itemName;
     }
 
-    public LotteryItem(String pictureUrl, String itemName, String artistName,
-                       String size, String frameDescription, String value, String technique) {
-        // this.pictureUrl = pictureUrl;
+    public LotteryItem(String pictureUrl, String itemName, String artistName, String size, String frameDescription, String value, String technique) {
         this.itemName = itemName;
         this.artistName = artistName;
         this.size = size;
         this.frameDescription = frameDescription;
-        this.value = value;
-        this.technique = technique;
-    }
-
-    public LotteryItem(String pictureUrl, String itemName, String artistName,
-                       String size, String frameDescription, String value, String technique, Lottery lottery) {
-        this.itemName = itemName;
-        this.artistName = artistName;
-        this.size = size;
-        this.frameDescription = frameDescription;
-        this.value = value;
+        this.itemValue = value;
         this.technique = technique;
     }
 
@@ -80,9 +49,14 @@ public class LotteryItem {
         return id;
     }
 
-    // public String getPictureUrl() {
-    //     return pictureUrl;
-    // }
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Lottery getLottery() {
+        return lottery;
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
+    }
 
     public String getItemName() {
         return itemName;
@@ -100,8 +74,8 @@ public class LotteryItem {
         return frameDescription;
     }
 
-    public String getValue() {
-        return value;
+    public String getItemValue() {
+        return itemValue;
     }
 
     public String getTechnique() {
@@ -111,10 +85,6 @@ public class LotteryItem {
     public void setId(Long id) {
         this.id = id;
     }
-
-    // public void setPictureUrl(String pictureUrl) {
-    //     this.pictureUrl = pictureUrl;
-    // }
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
@@ -132,11 +102,39 @@ public class LotteryItem {
         this.frameDescription = frameDescription;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setItemValue(String value) {
+        this.itemValue = value;
     }
 
     public void setTechnique(String technique) {
         this.technique = technique;
+    }
+
+    public boolean isAvailable() {
+        return winner == null;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Winner getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Winner winner) {
+        this.winner = winner;
+    }
+
+    @Override
+    public String toString() {
+        return "LotteryItem{" +
+                "id=" + id +
+                ", itemName='" + itemName + '\'' +
+                ", artistName='" + artistName + '\'' +
+                ", size='" + size + '\'' +
+                ", frameDescription='" + frameDescription + '\'' +
+                ", itemValue='" + itemValue + '\'' +
+                ", technique='" + technique + '\'' +
+                ", lottery=" + lottery +
+                ", winner=" + winner +
+                '}';
     }
 }

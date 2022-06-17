@@ -1,39 +1,31 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 public class Winner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+
+    @ManyToOne
     private Contestant contestant;
+
+    @ManyToOne
+    private Lottery lottery;
 
     private Integer placement;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    private Lottery lottery;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    public Lottery getLottery() {
-        return lottery;
-    }
-
-    public Long getLottery_id() {
-        if (this.lottery != null)
-            return lottery.getId();
-        else
-            return null;
-    }
-
-    public void setLottery(Lottery lottery) {
-        this.lottery = lottery;
-    }
+    @OneToOne
+    private LotteryItem lotteryItem;
 
     public Winner() {
     }
@@ -56,6 +48,20 @@ public class Winner {
         return contestant;
     }
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public Lottery getLottery() {
+        return lottery;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public Long getLotteryId() {
+        return lottery == null ? null : lottery.getId();
+    }
+
+    public void setLottery(Lottery lottery) {
+        this.lottery = lottery;
+    }
+
     public Long getContestantId() {
         if (this.contestant != null)
             return contestant.getId();
@@ -75,4 +81,19 @@ public class Winner {
         this.placement = placement;
     }
 
+    public void setLotteryItem(LotteryItem lotteryItem) {
+        this.lotteryItem = lotteryItem;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public LotteryItem getLotteryItem() {
+        return lotteryItem;
+    }
+
+    @Override
+    public String toString() {
+        return "Winner [" + "contestant=" + (contestant == null ? "null" : contestant) + ", id=" + (id == null ? "null" : id) + ", lottery="
+                + (lottery == null ? "null" : lottery) + ", placement=" + (placement == null ? "null" : placement) + ", itemArtist="
+                + (lotteryItem == null ? "null" : lotteryItem.getArtistName()) + "]";
+    }
 }

@@ -1,27 +1,30 @@
 package com.sogetirockstars.sogetipaintinglotteryserver.service;
 
-import java.util.List;
-
 import com.sogetirockstars.sogetipaintinglotteryserver.exception.IdException;
 import com.sogetirockstars.sogetipaintinglotteryserver.model.LotteryItem;
 import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryItemRepository;
-import com.sogetirockstars.sogetipaintinglotteryserver.repository.LotteryRepository;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * ContestantService
  */
 @Service
 public class LotteryItemService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LotteryItemService.class);
+
     private final LotteryItemRepository repository;
-    private final LotteryRepository lotteryRepo;
+    private final ServiceManager serviceManager;
 
     @Autowired
-    public LotteryItemService(LotteryItemRepository repository, LotteryRepository lotteryRepo) {
+    public LotteryItemService(LotteryItemRepository repository, ServiceManager serviceManager) {
         this.repository = repository;
-        this.lotteryRepo = lotteryRepo;
+        serviceManager.addService(this);
+        this.serviceManager = serviceManager;
     }
 
     public List<LotteryItem> getAll() {
@@ -33,52 +36,36 @@ public class LotteryItemService {
         return repository.findById(id).get();
     }
 
-    public LotteryItem getRandomItem() throws IdException {
-        int size = this.getAll().size();
-        long id = (long) (Math.random() * (size));
-        List<LotteryItem> lotteryItems = this.getAll();
-        assertExists(lotteryItems.get((int) id).getId());
-        return lotteryItems.get((int) id);
-    }
-
     public LotteryItem add(LotteryItem item) {
-        item.setId(null);
-        return repository.save(item);
-    }
-
-    public List<LotteryItem> saveAllAndFlush(LotteryItem item) throws IdException {
-        assertExists(item.getId());
-        List<LotteryItem> items = repository.findAll();
-        items.set(Math.toIntExact(item.getId()), item);
-        return repository.saveAllAndFlush(items);
-    }
-
-    public LotteryItem save(LotteryItem item) throws IdException {
-        assertExists(item.getId());
+        repository.save(item);
+        LOGGER.info("add: " + item.toString());
         return repository.save(item);
     }
 
     public LotteryItem update(LotteryItem newItem) throws IdException {
-        assertExists(newItem.getId());
-        LotteryItem origItem = repository.getById(newItem.getId());
-        return repository.save(mergeItems(origItem, newItem));
+        LotteryItem origItem = getItem(newItem.getId());
+        mergeItems(origItem, newItem);
+        origItem = repository.saveAndFlush(origItem);
+        LOGGER.info("update:\norigItem: " + origItem.toString() + "\nnewItem: " + newItem.toString());
+        return origItem;
     }
 
     public boolean delete(Long id) throws IdException {
-        assertExists(id);
-        LotteryItem item = repository.findById(id).get();
-        lotteryRepo.findAll().stream().forEach(lott -> {
-            if (lott.getLotteryItems().remove(item))
-                lotteryRepo.save(lott);
-        });
-        lotteryRepo.flush();
+        LotteryItem item = getItem(id);
+        // Maybe it's possible to do this with pure hibernate, couldn't get it to work. This does.
+        // The goal is to remove a winners chosen item wthout removing the winner.
+        serviceManager.removeReferences(item);
         repository.deleteById(id);
+        LOGGER.info("delete: " + item.toString());
         return true;
     }
 
     private void assertExists(Long id) throws IdException {
-        if (!repository.existsById(id))
-            throw new IdException("Item with id " + id + " doesn't exist.");
+        if (repository.existsById(id))
+            return;
+        else
+            LOGGER.info("assertExists: " + id);
+        throw new IdException("Item with id " + id + " doesn't exist.");
     }
 
     // Todo: detta borde kunna göras snyggare?? Vi kanske skulle ha DTO:s ändå, det fanns tydligen sätt att skapa JSON
@@ -92,10 +79,14 @@ public class LotteryItemService {
             origItem.setSize(newItem.getSize());
         if (newItem.getFrameDescription() != null)
             origItem.setFrameDescription(newItem.getFrameDescription());
-        if (newItem.getValue() != null)
-            origItem.setValue(newItem.getValue());
+        if (newItem.getItemValue() != null)
+            origItem.setItemValue(newItem.getItemValue());
         if (newItem.getTechnique() != null)
             origItem.setTechnique(newItem.getTechnique());
+        if (newItem.getWinner() != null)
+            origItem.setWinner(newItem.getWinner());
+        if (newItem.getLottery() != null)
+            origItem.setLottery(newItem.getLottery());
 
         return origItem;
     }
