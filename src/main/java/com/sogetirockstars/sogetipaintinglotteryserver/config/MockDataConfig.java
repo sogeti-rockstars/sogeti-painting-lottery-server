@@ -73,7 +73,7 @@ public class MockDataConfig {
                 for (int u = 0; u <= lotteries.size() - i; u++) {
                     LotteryItem curItem = curItems.get(u);
 
-                    Winner nWinner = serviceManager.addWinner(contestants.get(u).getId(), curLottery, u);
+                    Winner nWinner = serviceManager.addWinner(contestants.get(u).getId(), curLottery, u + 1);
                     curLottery.getWinners().add(nWinner);
                     lotteryRepo.saveAndFlush(curLottery);
 
