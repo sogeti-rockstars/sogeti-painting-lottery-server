@@ -30,18 +30,12 @@ public class Contestant {
     public Contestant() {
     }
 
-    public Contestant(String name, String employeeId, String teleNumber, String email) {
+    public Contestant(String name, String employeeId, String teleNumber, String email, String office) {
         this.name = name;
         this.email = email;
         this.employeeId = employeeId;
         this.teleNumber = teleNumber;
-    }
-
-    public Contestant(String name, String employeeId, String teleNumber, String email, Lottery lottery) {
-        this.employeeId = employeeId;
-        this.name = name;
-        this.email = email;
-        this.teleNumber = teleNumber;
+        this.office = office;
     }
 
     public void setId(Long id) {
@@ -108,13 +102,8 @@ public class Contestant {
 
     @Override
     public String toString() {
-        return "Contestant [" +
-              "id="         + ( id         == null ? "null" : id         ) +
-            ", email="      + ( email      == null ? "null" : email      ) +
-            ", employeeId=" + ( employeeId == null ? "null" : employeeId ) +
-            ", name="       + ( name       == null ? "null" : name       ) +
-            ", teleNumber=" + ( teleNumber == null ? "null" : teleNumber ) +
-            ", winners="    + winners.size() +
-            "]";
+        return "Contestant [" + "id=" + (id == null ? "null" : id) + ", email=" + (email == null ? "null" : email) + ", employeeId="
+                + (employeeId == null ? "null" : employeeId) + ", name=" + (name == null ? "null" : name) + ", teleNumber="
+                + (teleNumber == null ? "null" : teleNumber) + ", winners=" + winners.size() + "]";
     }
 }
