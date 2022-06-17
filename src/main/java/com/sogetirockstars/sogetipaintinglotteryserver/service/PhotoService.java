@@ -31,29 +31,12 @@ public class PhotoService {
     public PhotoService() {
     }
 
-    public void setPlaceholderPhoto(Long id) throws PhotoWriteException {
-        // try {
-        // LOGGER.info("setPlaceholderPhoto");
-        // ensurePathExists();
-        // Path placeholderPath = Paths.get(noImagePath).toAbsolutePath();
-        // Path targetPath = photosPath.resolve(id.toString().trim());
-        // Files.deleteIfExists(targetPath);
-        // Files.createSymbolicLink(targetPath, placeholderPath);
-
-        // LOGGER.info("targetPath:" + targetPath + " " + ", placeholderPath: " + placeholderPath);
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // throw new PhotoWriteException("Previously existing path failed being written to. Contact your system administrator.");
-        // }
-    }
-
     public void savePhoto(Long id, InputStream photoInStream) throws PhotoWriteException {
         try {
             LOGGER.info("savePhoto:");
             ensurePathExists();
             Path filePath = photosPath.resolve(id.toString().trim());
             Files.copy(photoInStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-
             LOGGER.info("filePath: " + filePath);
         } catch (IOException e) {
             e.printStackTrace();

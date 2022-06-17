@@ -81,9 +81,6 @@ public class LotteryItemController {
             if (lotteryId == null)
                 throw new IdException("No lottery id given.");
             lotteryService.addItemToLottery(lotteryId, lotteryItem);
-            photoService.setPlaceholderPhoto(lotteryItem.getId());
-        } catch (PhotoWriteException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IdException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
